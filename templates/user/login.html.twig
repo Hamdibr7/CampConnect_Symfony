@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion - Camping Cool</title>
+  <style>
+    /* Variables de couleurs */
+    :root {
+      --primary: #2ecc71;
+      --secondary: #3498db;
+      --accent: #f39c12;
+      --light: #ecf0f1;
+      --dark: #34495e;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light);
+      background-image: url("/api/placeholder/400/320");
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 20px;
+      color: var(--dark);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 450px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .logo {
+      text-align: center;
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    .tagline {
+      text-align: center;
+      color: var(--dark);
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--dark);
+      font-size: 16px;
+    }
+    
+    .input-group {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #7f8c8d;
+      font-size: 18px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+      outline: none;
+    }
+    
+    .forgot-password {
+      text-align: right;
+      margin-top: 10px;
+    }
+    
+    .forgot-password a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+      margin: 30px 0 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #27ae60;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .separator {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #7f8c8d;
+    }
+    
+    .separator::before,
+    .separator::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .separator::before {
+      margin-right: 10px;
+    }
+    
+    .separator::after {
+      margin-left: 10px;
+    }
+    
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--dark);
+      font-size: 15px;
+    }
+    
+    .signup-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .other-login {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #f5f6fa;
+      transition: all 0.3s ease;
+      font-size: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .social-google:hover {
+      background-color: #ea4335;
+      color: white;
+    }
+    
+    .social-facebook:hover {
+      background-color: #3b5998;
+      color: white;
+    }
+    
+    .social-twitter:hover {
+      background-color: #1da1f2;
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+        margin: 0 15px;
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-up {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .form-group:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    
+    .form-group:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+    }
+    
+    .remember-me input {
+      width: auto;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo animate-up">🏕️</div>
+    <h1 class="animate-up">Connexion</h1>
+    <p class="tagline animate-up">Bon retour parmi nous !</p>
+    
+    <form method="post" action="{{ path('app_login') }}">
+      <div class="form-group animate-up">
+        <label for="email">Adresse email</label>
+        <div class="input-group">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="email" name="email" placeholder="votre@email.com" required autofocus>
+        </div>
+      </div>
+      
+      <div class="form-group animate-up">
+        <label for="password">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+       
+      </div>
+      
+      <div class="remember-me animate-up">
+        <input type="checkbox" id="remember_me" name="_remember_me">
+        <label for="remember_me">Se souvenir de moi</label>
+      </div>
+      
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+      
+      <button type="submit" class="btn animate-up">Se connecter</button>
+    </form>
+    
+    <div class="separator animate-up">ou</div>
+    
+    <div class="other-login animate-up">
+      <a href="#" class="social-btn social-google">G</a>
+      <a href="#" class="social-btn social-facebook">f</a>
+      <a href="#" class="social-btn social-twitter">t</a>
+    </div>
+    
+    <div class="signup-link animate-up">
+      Pas encore de compte ? <a href="{{ path('app_utilisateur_new') }}">Inscrivez-vous ici</a>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animation pour les éléments avec la classe animate-up
+      const animatedElements = document.querySelectorAll('.animate-up');
+      animatedElements.forEach((element) => {
+        element.style.opacity = 0;
+      });
+      
+      setTimeout(() => {
+        animatedElements.forEach((element, index) => {
+          setTimeout(() => {
+            element.style.opacity = 1;
+          }, 100 * index);
+        });
+      }, 300);
+    });
+  </script>
+</body>
+</html>

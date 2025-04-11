@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription - Camping Cool</title>
+  <style>
+    /* Variables de couleurs */
+    :root {
+      --primary: #2ecc71;
+      --secondary: #3498db;
+      --accent: #f39c12;
+      --light: #ecf0f1;
+      --dark: #34495e;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light);
+      background-image: url("/api/placeholder/400/320");
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 20px;
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 450px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      margin: 40px 0;
+    }
+    
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      position: relative;
+    }
+    
+    .logo {
+      text-align: center;
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    .tagline {
+      text-align: center;
+      color: var(--dark);
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--dark);
+      font-size: 16px;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+      outline: none;
+    }
+    
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+      margin: 30px 0 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+    }
+    
+    .btn:hover {
+      background-color: #27ae60;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .form-check {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+    }
+    
+    .form-check input {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    .form-error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--dark);
+      font-size: 15px;
+    }
+    
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .camping-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      font-size: 22px;
+    }
+    
+    .camping-icons span {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .camping-icons span:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+    
+    .camping-icons span:nth-child(3) {
+      animation-delay: 1s;
+    }
+    
+    .camping-icons span:nth-child(4) {
+      animation-delay: 1.5s;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    
+    .password-requirements {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 5px;
+      padding-left: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+        margin: 0 15px;
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-up {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    /* Correction pour le bouton d'inscription */
+    button.btn {
+      margin-top: 20px;
+    }
+    
+    /* Alignement des éléments du formulaire */
+    .styled-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo animate-up">🏕️</div>
+    <h1 class="animate-up">Rejoignez-nous</h1>
+    <p class="tagline animate-up">Créez votre compte et commencez l'aventure !</p>
+    
+    <div class="camping-icons animate-up">
+      <span>🏕️</span>
+      <span>🌲</span>
+      <span>⛺</span>
+      <span>🌄</span>
+    </div>
+    
+    {{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
+    {{ form_errors(form) }}
+
+      {% for field in form %}
+        {% if field.vars.name != '_token' %}
+          <div class="form-group animate-up">
+            {% if field.vars.name == 'email' %}
+              {{ form_label(field, 'Adresse email') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'votre@gmail.com'}}) }}
+            {% elseif field.vars.name == 'mdp' %}
+              {{ form_label(field, 'Mot de passe') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
+              <div class="password-requirements">Au moins 8 caractères, incluant lettres et chiffres</div>
+            {% elseif field.vars.name == 'confirmPassword' %}
+              {{ form_label(field, 'Confirmer le mot de passe') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
+            {% elseif field.vars.name == 'prenom' %}
+              {{ form_label(field, 'Prenom') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+            {% elseif field.vars.name == 'nom' %}
+              {{ form_label(field, 'Nom') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+            {% elseif field.vars.name == 'age' %}
+              {{ form_label(field, 'Âge') }}
+              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre âge'}}) }}
+            {% elseif field.vars.name == 'agreeTerms' %}
+              <div class="form-check">
+                {{ form_widget(field, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(field, "J'accepte les conditions d'utilisation", {'label_attr': {'class': 'form-check-label'}}) }}
+              </div>
+            {% else %}
+              {{ form_label(field) }}
+              {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+            {% endif %}
+            {{ form_errors(field) }}
+          </div>
+        {% endif %}
+      {% endfor %}
+      
+      <button type="submit" class="btn animate-up">modifier votre profil</button>
+    {{ form_end(form) }}
+    
+    <div class="login-link animate-up">
+      Déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici</a>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animation pour les éléments avec la classe animate-up
+      const animatedElements = document.querySelectorAll('.animate-up');
+      animatedElements.forEach((element) => {
+        element.style.opacity = 0;
+      });
+      
+      setTimeout(() => {
+        animatedElements.forEach((element, index) => {
+          setTimeout(() => {
+            element.style.opacity = 1;
+          }, 100 * index);
+        });
+      }, 300);
+      
+      // Sélection des champs du formulaire
+      const emailField = document.querySelector('[name$="[email]"]');
+      const passwordField = document.querySelector('[name$="[mdp]"]');
+      const confirmPasswordField = document.querySelector('[name$="[confirmPassword]"]');
+      const lastNameField = document.querySelector('[name$="[nom]"]');
+      const firstNameField = document.querySelector('[name$="[prenom]"]');
+      const ageField = document.querySelector('[name$="[age]"]');
+      
+      // Fonction pour créer et afficher les messages d'erreur
+      function showError(inputElement, message) {
+        // Supprime d'abord tout message d'erreur existant
+        const existingError = inputElement.parentElement.querySelector('.form-error');
+        if (existingError) {
+          existingError.remove();
+        }
+        
+        // Crée et ajoute le nouveau message d'erreur
+        const errorElement = document.createElement('div');
+        errorElement.classList.add('form-error');
+        errorElement.textContent = message;
+        inputElement.parentElement.appendChild(errorElement);
+        
+        // Ajoute une bordure rouge au champ
+        inputElement.style.borderColor = '#e74c3c';
+      }
+      
+      // Fonction pour supprimer les messages d'erreur
+      function removeError(inputElement) {
+        const errorElement = inputElement.parentElement.querySelector('.form-error');
+        if (errorElement) {
+          errorElement.remove();
+        }
+        
+        // Rétablit la bordure normale
+        inputElement.style.borderColor = '#ddd';
+      }
+      
+      // Fonction de validation d'email (doit être un Gmail)
+      function validateEmail(email) {
+        const regex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        return regex.test(email);
+      }
+      
+      // Fonction de validation de mot de passe
+      function validatePassword(mdp) {
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
+        return regex.test(mdp);
+      }
+      
+      // Fonction de validation de nom/prénom
+      function validateName(nom) {
+        if (nom.length > 7) {
+          return { valid: false, message: "Ne doit pas dépasser 7 caractères." };
+        }
+        
+        const regex = /^[A-Z][a-zA-Z]*$/;
+        if (!regex.test(nom)) {
+          return { valid: false, message: "Doit commencer par une majuscule et ne contenir que des lettres." };
+        }
+        
+        return { valid: true };
+      }
+
+        function validateName(prenom) {
+        if (prenom.length > 7) {
+          return { valid: false, message: "Ne doit pas dépasser 7 caractères." };
+        }
+        
+        const regex = /^[A-Z][a-zA-Z]*$/;
+        if (!regex.test(prenom)) {
+          return { valid: false, message: "Doit commencer par une majuscule et ne contenir que des lettres." };
+        }
+        
+        return { valid: true };
+      }
+      
+      // Fonction de validation d'âge
+      function validateAge(age) {
+        const ageNum = parseInt(age);
+        if (isNaN(ageNum)) {
+          return { valid: false, message: "L'âge doit être un nombre." };
+        }
+        
+        if (ageNum < 10 || ageNum > 99) {
+          return { valid: false, message: "L'âge doit être compris entre 10 et 99." };
+        }
+        
+        return { valid: true };
+      }
+      
+      // Validation de l'email
+      if (emailField) {
+        emailField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "L'email ne peut pas être vide.");
+          } else if (!validateEmail(this.value)) {
+            showError(this, "L'email doit être un Gmail valide (ex : nom@gmail.com).");
+          } else {
+            removeError(this);
+          }
+        });
+      }
+      
+      // Validation du mot de passe
+      if (passwordField) {
+        passwordField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "Le mot de passe ne peut pas être vide.");
+          } else if (!validatePassword(this.value)) {
+            showError(this, "Le mot de passe doit contenir au moins une lettre et un chiffre.");
+          } else {
+            removeError(this);
+          }
+          
+          // Vérifie également la confirmation du mot de passe si elle est remplie
+          if (confirmPasswordField && confirmPasswordField.value) {
+            if (confirmPasswordField.value !== this.value) {
+              showError(confirmPasswordField, "Les mots de passe ne correspondent pas.");
+            } else {
+              removeError(confirmPasswordField);
+            }
+          }
+        });
+      }
+      
+      // Validation de la confirmation du mot de passe
+      if (confirmPasswordField) {
+        confirmPasswordField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "Veuillez confirmer votre mot de passe.");
+          } else if (passwordField && this.value !== passwordField.value) {
+            showError(this, "Les mots de passe ne correspondent pas.");
+          } else {
+            removeError(this);
+          }
+        });
+      }
+      
+      // Validation du nom
+      if (lastNameField) {
+        lastNameField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "Le nom ne peut pas être vide.");
+          } else {
+            const validation = validateName(this.value);
+            if (!validation.valid) {
+              showError(this, validation.message);
+            } else {
+              removeError(this);
+            }
+          }
+        });
+      }
+      
+      // Validation du prénom
+      if (firstNameField) {
+        firstNameField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "Le prénom ne peut pas être vide.");
+          } else {
+            const validation = validateName(this.value);
+            if (!validation.valid) {
+              showError(this, validation.message);
+            } else {
+              removeError(this);
+            }
+          }
+        });
+      }
+      
+      // Validation de l'âge
+      if (ageField) {
+        ageField.addEventListener('input', function() {
+          if (this.value.trim() === '') {
+            showError(this, "L'âge ne peut pas être vide.");
+          } else {
+            const validation = validateAge(this.value);
+            if (!validation.valid) {
+              showError(this, validation.message);
+            } else {
+              removeError(this);
+            }
+          }
+        });
+      }
+      
+      // Validation du formulaire avant soumission
+      const form = document.querySelector('.styled-form');
+      if (form) {
+        form.addEventListener('submit', function(event) {
+          let hasErrors = false;
+          
+          // Vérifie tous les champs
+          const fields = [emailField, passwordField, confirmPasswordField, lastNameField, firstNameField, ageField];
+          
+          fields.forEach(field => {
+            if (field) {
+              // Déclenche l'événement input pour valider tous les champs
+              const inputEvent = new Event('input', { bubbles: true });
+              field.dispatchEvent(inputEvent);
+              
+              // Vérifie si le champ a une erreur
+              if (field.parentElement.querySelector('.form-error')) {
+                hasErrors = true;
+              }
+            }
+          });
+          
+          // Empêche la soumission si des erreurs sont présentes
+          if (hasErrors) {
+            event.preventDefault();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

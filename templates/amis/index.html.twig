@@ -1,0 +1,547 @@
+{# templates/amis/index.html.twig #}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Amis - Camping Cool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --accent-color: #f39c12;
+            --danger-color: #e74c3c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --gray-color: #95a5a6;
+            --light-gray: #f4f6f8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                              url('/assets/images/camping-bg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 0;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 20px 0 40px;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        .page-header::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 0 auto;
+        }
+
+        .flash-message {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 12px 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .friends-section {
+            margin-bottom: 50px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .section-header i {
+            font-size: 1.6em;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: var(--dark-color);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: white;
+        }
+
+        .user-avatar-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: var(--light-gray);
+        }
+
+        .user-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .user-age {
+            color: var(--gray-color);
+            font-size: 0.9em;
+        }
+
+        .user-status {
+            padding: 4px 8px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75em;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .user-actions {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--gray-color);
+            font-size: 1.1em;
+            padding: 30px 0;
+            font-style: italic;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px auto 20px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: var(--dark-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: fit-content;
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .back-btn:hover {
+            background-color: #1a252f;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .user-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .user-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 2.2em;
+            }
+        }
+
+        /* Badge pour indiquer le statut */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-waiting {
+            background-color: var(--accent-color);
+        }
+
+        .badge-friends {
+            background-color: var(--primary-color);
+        }
+
+        .badge-rejected {
+            background-color: var(--danger-color);
+        }
+
+        /* Animation de chargement */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Mes Amis de Camping</h1>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-message">
+                    <i class="fas fa-exclamation-circle"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="friends-section">
+            <div class="section-header">
+                <i class="fas fa-campground"></i>
+                <h2>Mes amis campeurs</h2>
+            </div>
+            {% if amis|length > 0 %}
+                <div class="user-grid">
+                    {% for relation in amis %}
+                        {% set ami = relation.utilisateurid1 == currentUser.id ? relation.destinataire : relation.demandeur %}
+                        <div class="user-card">
+                            <div class="user-header">
+                                <div class="user-avatar-container">
+                                    {% if ami.pdp %}
+                                        <img src="{{ asset('uploads/profiles/' ~ ami.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ ami.prenom|first|upper }}{{ ami.nom|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ ami.prenom }} {{ ami.nom }}</div>
+                                    <div class="user-age">{{ ami.age }} ans</div>
+                                    <span class="badge badge-friends">Ami</span>
+                                </div>
+                            </div>
+                            <div class="user-actions">
+                                <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-users-slash"></i>
+                    <p>Vous n'avez pas encore d'amis campeurs</p>
+                    <p>Explorez les utilisateurs ci-dessous pour commencer à vous connecter!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="friends-section">
+            <div class="section-header">
+                <i class="fas fa-envelope"></i>
+                <h2>Demandes d'amitié reçues</h2>
+            </div>
+            {% if demandesRecues|length > 0 %}
+                <div class="user-grid">
+                    {% for demande in demandesRecues %}
+                        {% set expediteur = demande.utilisateurid1 == currentUser.id ? demande.destinataire : demande.demandeur %}
+                        <div class="user-card">
+                            <div class="user-header">
+                                <div class="user-avatar-container">
+                                    {% if expediteur.pdp %}
+                                        <img src="{{ asset('uploads/profiles/' ~ expediteur.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ expediteur.prenom|first|upper }}{{ expediteur.nom|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ expediteur.prenom }} {{ expediteur.nom }}</div>
+                                    <div class="user-age">{{ expediteur.age }} ans</div>
+                                    <span class="badge badge-waiting">Demande reçue</span>
+                                </div>
+                            </div>
+                            <div class="user-actions">
+                                <a href="{{ path('app_amis_accepter', {'id': demande.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
+                                <a href="{{ path('app_amis_refuser', {'id': demande.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucune demande d'ami en attente</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="friends-section">
+            <div class="section-header">
+                <i class="fas fa-paper-plane"></i>
+                <h2>Demandes d'amitié envoyées</h2>
+            </div>
+            {% if demandesEnvoyees|length > 0 %}
+                <div class="user-grid">
+                    {% for demande in demandesEnvoyees %}
+                        {% set destinataire = demande.utilisateurid2 == currentUser.id ? demande.demandeur : demande.destinataire %}
+                        <div class="user-card">
+                            <div class="user-header">
+                                <div class="user-avatar-container">
+                                    {% if destinataire.pdp %}
+                                        <img src="{{ asset('uploads/profiles/' ~ destinataire.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ destinataire.prenom|first|upper }}{{ destinataire.nom|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ destinataire.prenom }} {{ destinataire.nom }}</div>
+                                    <div class="user-age">{{ destinataire.age }} ans</div>
+                                    <span class="badge badge-waiting">En attente</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-paper-plane"></i>
+                    <p>Aucune demande envoyée en attente</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="friends-section">
+            <div class="section-header">
+                <i class="fas fa-users"></i>
+                <h2>Découvrir d'autres campeurs</h2>
+            </div>
+            {% if utilisateurs|length > 0 %}
+                <div class="user-grid">
+                    {% for utilisateur in utilisateurs %}
+                        {% set relation = relationRepository.findDemande(currentUser.id, utilisateur.id) %}
+                        <div class="user-card">
+                            <div class="user-header">
+                                <div class="user-avatar-container">
+                                    {% if utilisateur.pdp %}
+                                        <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
+                                    <div class="user-age">{{ utilisateur.age }} ans</div>
+                                    {% if relation is not null %}
+                                        {% if relation.status == 'attente' %}
+                                            {% if relation.utilisateurid1 == currentUser.id %}
+                                                <span class="badge badge-waiting">Invitation envoyée</span>
+                                            {% else %}
+                                                <span class="badge badge-waiting">Vous a invité</span>
+                                            {% endif %}
+                                        {% elseif relation.status == 'amis' %}
+                                            <span class="badge badge-friends">Ami</span>
+                                        {% elseif relation.status == 'refusé' %}
+                                            <span class="badge badge-rejected">Invitation refusée</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="user-actions">
+                                {% if relation is null %}
+                                    <a href="{{ path('app_amis_inviter', {'id': utilisateur.id}) }}" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>
+                                {% elseif relation.status == 'attente' %}
+                                    {% if relation.utilisateurid1 == currentUser.id %}
+                                        <span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>
+                                    {% else %}
+                                        <a href="{{ path('app_amis_accepter', {'id': relation.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
+                                        <a href="{{ path('app_amis_refuser', {'id': relation.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+                                    {% endif %}
+                                {% elseif relation.status == 'amis' %}
+                                    <span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>
+                                {% elseif relation.status == 'refusé' %}
+                                    <span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <p>Aucun autre campeur disponible pour le moment</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <a href="{{ path('app_home') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Retour à l'accueil du camping</a>
+    </div>
+
+</body>
+</html>

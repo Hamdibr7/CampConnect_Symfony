@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Camping Cool{% endblock %}
+
+{% block body %}
+    <div class="back-to-list-top animate-up">
+        <a href="{{ path('app_utilisateur_index') }}">
+            <i class="fas fa-arrow-left"></i> Voir la liste des utilisateurs
+        </a>
+    </div>
+
+    {{ include('user/form.html.twig') }}
+
+    <style>
+        .back-to-list-top {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .back-to-list-top a {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .back-to-list-top a:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .back-to-list-top i {
+            margin-right: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .back-to-list-top {
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+{% endblock %}
