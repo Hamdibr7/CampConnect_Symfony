@@ -1,0 +1,216 @@
+{# templates/back/badge/show.html.twig #}
+{% extends 'CRUD.html.twig' %}
+
+{% block title %}Liste des Badges{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-bg: #2B2D3E;
+            --button-blue: #03A9F4;
+            --button-red: #FF5252;
+            --button-green: #8BC34A;
+        }
+
+        .pcoded-content {
+            margin-left: 200px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            width: calc(100% - 200px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: var(--primary-bg);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+
+        td:nth-child(1) { width: 10%; }
+        td:nth-child(2) { width: 15%; }
+        td:nth-child(3) { width: 30%; }  /* Updated: Description column bigger */
+        td:nth-child(4) { width: 10%; }
+        td:nth-child(5) { width: 25%; }  /* Updated: Image column bigger */
+        td:nth-child(6) { width: 10%; }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn-edit {
+            background-color: var(--button-blue);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--button-red);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background-color: var(--button-green);
+            color: white;
+            padding: 10px 15px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .img-thumbnail {
+            max-width: 100px;
+            max-height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .text-muted {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="pcoded-content">
+    <a href="{{ path('app_badge_new') }}" class="btn btn-add">
+        <i class="fas fa-plus"></i> Ajouter un Badge
+    </a>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card">
+        <h2><i class="fas fa-award"></i> Liste des Badges</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Réservations requises</th> {# ✅ ADDED COLUMN #}
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if badges is not empty %}
+                        {% for badge in badges %}
+                        <tr>
+                            <td>{{ badge.id }}</td>
+                            <td>{{ badge.nomBadge }}</td>
+                            <td>
+                                {% if badge.description %}
+                                    {{ badge.description|length > 50 ? badge.description|slice(0, 50) ~ '...' : badge.description }}
+                                {% else %}
+                                    <span class="text-muted">Aucune description</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ badge.reservationsRequises }}</td> {# ✅ NEW CELL #}
+                            <td>
+                                {% if badge.image %}
+                                    <img src="{{ asset('uploads/badges/' ~ badge.image) }}" class="img-thumbnail" alt="{{ badge.nomBadge }}">
+                                {% else %}
+                                    <span class="text-muted">Aucune image</span>
+                                {% endif %}
+                            </td>
+                            <td class="action-buttons">
+                                <a href="{{ path('app_badge_edit', {'id': badge.id}) }}" class="btn btn-edit">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_badge_delete', {'id': badge.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce badge ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
+                                    <button type="submit" class="btn btn-delete">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                <i class="fas fa-award"></i> Aucun badge trouvé dans la base de données
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

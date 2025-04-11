@@ -1,0 +1,146 @@
+{% extends 'CRUD.html.twig' %}
+
+{% block title %}Liste des Badges{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .table th, .table td {
+            padding: 4px;
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .btn {
+            width: auto;
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 2px 4px;
+        }
+
+        .badge-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 0.6rem;
+                padding: 1px 2px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block welc %}
+<div class="container-fluid mt-2">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Liste des Badges</h5>
+            <div class="d-flex gap-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom de badge" style="width: 300px;">
+                <a href="{{ path('app_badge_new') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-2">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show py-1 px-2" role="alert">
+                        <small>{{ message }}</small>
+                        <button type="button" class="btn-close p-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if badges is empty %}
+                <div class="alert alert-warning text-center py-1 px-2"><small>Aucun badge trouvé.</small></div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for badge in badges %}
+                            <tr>
+                                <td>{{ badge.id }}</td>
+                                <td>
+                                    {% if badge.image %}
+                                        <img src="{{ asset('images/' ~ badge.image) }}" alt="Image du badge" class="badge-image" title="{{ badge.nom }}">
+                                    {% else %}
+                                        <i class="fas fa-image text-muted" style="font-size: 0.8rem;"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-semibold">
+                                    {{ badge.nom|length > 15 ? badge.nom|slice(0, 15) ~ '...' : badge.nom }}
+                                </td>
+                                <td>
+                                    {{ badge.description|length > 20 ? badge.description|slice(0, 20) ~ '...' : badge.description }}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_badge_edit', {'id': badge.id}) }}" class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ path('app_badge_delete', {'id': badge.id}) }}" onsubmit="return confirm('Supprimer ce badge ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                let name = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+
+                if (name.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none"; 
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
