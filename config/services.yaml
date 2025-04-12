@@ -8,6 +8,11 @@ parameters:
 
 services:
 
+    App\Service\UserSessionService:
+        arguments:
+            $requestStack: '@request_stack'
+            $utilisateurRepository: '@App\Repository\UtilisateurRepository'
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

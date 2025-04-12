@@ -275,6 +275,8 @@
       {% endfor %}
       
       <button type="submit" class="btn animate-up">modifier votre profil</button>
+     <!-- Simple lien vers la route de suppression -->
+<a href="/utilisateur/{{ utilisateur.id }}/suppression" class="btn animate-up" style="background-color: #e74c3c; margin-top: 15px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ?');">Supprimer mon compte</a>
     {{ form_end(form) }}
     
     <div class="login-link animate-up">
@@ -289,6 +291,7 @@
       animatedElements.forEach((element) => {
         element.style.opacity = 0;
       });
+      
       
       setTimeout(() => {
         animatedElements.forEach((element, index) => {
@@ -513,6 +516,7 @@
         });
       }
     });
+    
   </script>
 </body>
 </html>

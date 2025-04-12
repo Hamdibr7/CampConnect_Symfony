@@ -2,178 +2,100 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Utilisateurs - Camping Cool</title>
+  <title>Dashboard - Camping Cool</title>
   <style>
-    /* Variables de couleurs */
-    :root {
-      --primary: #2ecc71;
-      --secondary: #3498db;
-      --accent: #f39c12;
-      --light: #ecf0f1;
-      --dark: #34495e;
-      --danger: #e74c3c;
+    /* Styles de base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--light);
-      background-image: url("/api/placeholder/400/320");
-      background-size: cover;
-      margin: 0;
-      padding: 20px;
-      color: var(--dark);
-    }
-    
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      background-color: rgba(255, 255, 255, 0.95);
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-    
-    h1 {
-      color: var(--primary);
-      text-align: center;
-      font-size: 32px;
-      margin-bottom: 30px;
-      text-transform: uppercase;
-      position: relative;
-    }
-    
-    h1:after {
-      content: "👥";
-      margin-left: 10px;
-    }
-    
-    .users-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    
-    .users-table thead {
-      background-color: var(--primary);
-      color: white;
-    }
-    
-    .users-table th {
-      padding: 15px;
-      text-align: left;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-    }
-    
-    .users-table td {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      font-size: 15px;
-      vertical-align: middle;
-    }
-    
-    .users-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-    
-    .users-table tbody tr:nth-child(even) {
-      background-color: rgba(46, 204, 113, 0.05);
-    }
-    
-    .users-table tbody tr:hover {
-      background-color: rgba(46, 204, 113, 0.1);
-    }
-    
-    .no-records {
-      text-align: center;
-      padding: 30px;
-      color: #7f8c8d;
-      font-style: italic;
-    }
-    
-    .actions {
       display: flex;
-      gap: 10px;
+      min-height: 100vh;
+      background-color: #f5f5f5;
     }
     
-    .btn-action {
-      padding: 8px 15px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      display: inline-block;
-    }
-    
-    .btn-view {
-      background-color: var(--secondary);
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
       color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 20px 0;
+      transition: all 0.3s;
     }
     
-    .btn-view:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
-    }
-    
-    .btn-edit {
-      background-color: var(--accent);
-      color: white;
-    }
-    
-    .btn-edit:hover {
-      background-color: #d35400;
-      transform: translateY(-2px);
-    }
-    
-    .btn-delete {
-      background-color: var(--danger);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-    }
-    
-    .btn-delete:hover {
-      background-color: #c0392b;
-      transform: translateY(-2px);
-    }
-    
-    .btn-create {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      font-size: 16px;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-block;
-      margin: 0 auto;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
-      text-decoration: none;
-    }
-    
-    .btn-create:hover {
-      background-color: #27ae60;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
-    }
-    
-    .create-container {
+    .sidebar-header {
+      padding: 0 20px 20px;
       text-align: center;
-      margin-top: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
+    .sidebar-header h3 {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+    
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .sidebar-menu li {
+      list-style: none;
+      padding: 10px 20px;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu li:hover {
+      background-color: #34495e;
+    }
+    
+    .sidebar-menu li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+    }
+    
+    .sidebar-menu li a i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .sidebar-menu li.active {
+      background-color: #3498db;
+    }
+    
+    /* Contenu principal */
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 20px;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Styles du tableau des utilisateurs (conservés de votre code) */
     .table-header {
       display: flex;
       justify-content: space-between;
@@ -183,150 +105,274 @@
     
     .search-container {
       position: relative;
-      width: 300px;
-    }
-    
-    .search-input {
-      width: 100%;
-      padding: 12px 15px 12px 40px;
-      border: 2px solid #ddd;
-      border-radius: 25px;
-      font-size: 15px;
-      transition: all 0.3s ease;
-    }
-    
-    .search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
-      outline: none;
     }
     
     .search-icon {
       position: absolute;
-      left: 15px;
+      left: 10px;
       top: 50%;
       transform: translateY(-50%);
-      color: #7f8c8d;
     }
     
-    .password-masked {
-      font-family: monospace;
-      letter-spacing: 1px;
+    .search-input {
+      padding: 8px 15px 8px 35px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 250px;
     }
     
-    /* Styles pour la photo de profil */
-    .user-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--primary);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .users-table th, .users-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .users-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+    
+    .users-table tr:hover {
+      background-color: #f5f5f5;
     }
     
     .user-avatar-placeholder {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
+      background-color: #3498db;
+      color: white;
       border-radius: 50%;
-      background-color: #ddd;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      color: #7f8c8d;
-      border: 2px solid #ddd;
+      font-weight: bold;
     }
     
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-        margin: 15px;
-      }
-      
-      .users-table {
-        overflow-x: auto;
-        display: block;
-      }
-      
-      .table-header {
-        flex-direction: column;
-        gap: 15px;
-      }
-      
-      .search-container {
-        width: 100%;
-      }
+    .btn-action {
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      margin-right: 5px;
+    }
+    
+    .btn-edit {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .btn-create {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    
+    .btn-create:hover {
+      background-color: #218838;
+    }
+    
+    .no-records {
+      text-align: center;
+      color: #6c757d;
+      padding: 20px;
+    }
+    
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+    
+    .alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+    
+    .create-container {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    /* Contenu caché */
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
+    
+    /* Nouveau style pour le bouton de déconnexion */
+    .btn-logout {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: #dc3545;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-left: 10px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-logout:hover {
+      background-color: #c82333;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Gestion des Utilisateurs</h1>
-    
-    <div class="table-header">
-      <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" placeholder="Rechercher un utilisateur...">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>Camping Cool</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="active" data-target="dashboard">
+        <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      </li>
+      <li data-target="utilisateurs">
+        <a href="#"><i class="fas fa-users"></i> Utilisateurs</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="main-content">
+    <div class="header">
+      <h2>Dashboard</h2>
+      <div class="user-info">
+        <span>Admin</span>
+        <a href="{{ path('app_login') }}" class="btn-logout">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
       </div>
     </div>
-    
-    <table class="users-table">
-      <thead>
-        <tr>
-          <th>Photo</th>
-          <th>Id</th>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Âge</th>
-          <th>Email</th>
-          <th>Mot de passe</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for utilisateur in utilisateurs %}
-          <tr>
-            <td>
-              {% if utilisateur.pdp %}
-                <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
 
+    <!-- Section Dashboard -->
+    <div class="content-section active" id="dashboard-content">
+      <div class="content">
+        <h3>Bienvenue sur votre Dashboard</h3>
+        <p>Ici vous pouvez voir les statistiques et les informations générales de votre application.</p>
+        <!-- Vous pouvez ajouter plus de contenu pour le dashboard ici -->
+      </div>
+    </div>
 
-              {% else %}
-                <div class="user-avatar-placeholder">
-                  {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
-                </div>
-              {% endif %}
-            </td>
-            <td>{{ utilisateur.id }}</td>
-            <td>{{ utilisateur.nom }}</td>
-            <td>{{ utilisateur.prenom }}</td>
-            <td>{{ utilisateur.Age }}</td>
-            <td>{{ utilisateur.email }}</td>
-            <td class="password-masked">••••••••</td>
-            <td class="actions">
-              <a href="{{ path('app_utilisateur_show', {'id': utilisateur.id}) }}" class="btn-action btn-view">Voir</a>
-              <a href="{{ path('app_utilisateur_edit', {'id': utilisateur.id}) }}" class="btn-action btn-edit">Modifier</a>
-              <form method="post" action="{{ path('app_utilisateur_delete', {'id': utilisateur.id}) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                <button class="btn-action btn-delete">Supprimer</button>
-              </form>
-            </td>
-          </tr>
-        {% else %}
-          <tr>
-            <td colspan="8" class="no-records">Aucun utilisateur trouvé</td>
-          </tr>
+    <!-- Section Utilisateurs (votre code original) -->
+    <div class="content-section" id="utilisateurs-content">
+      <div class="content">
+        <h1>Gestion des Utilisateurs</h1>
+
+        <div class="table-header">
+          <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Rechercher un utilisateur...">
+          </div>
+        </div>
+
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Id</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Âge</th>
+              <th>Email</th>
+              <th>Mot de passe</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for utilisateur in utilisateurs %}
+              <tr>
+                <td>
+                  {% if utilisateur.pdp %}
+                    <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                  {% else %}
+                    <div class="user-avatar-placeholder">
+                      {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
+                    </div>
+                  {% endif %}
+                </td>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>{{ utilisateur.prenom }}</td>
+                <td>{{ utilisateur.Age }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td class="password-masked">••••••••</td>
+                <td class="actions">
+                  <a href="{{ path('app_utilisateur_delete_from_index', {'id': utilisateur.id}) }}"
+                     class="btn-action btn-delete"
+                     onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                    Supprimer
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="8" class="no-records">Aucun utilisateur trouvé</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success">
+            {{ message }}
+          </div>
         {% endfor %}
-      </tbody>
-    </table>
-    
-    <div class="create-container">
-      <a href="{{ path('app_utilisateur_new') }}" class="btn-create">Ajouter un utilisateur</a>
+      </div>
     </div>
   </div>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Gestion des clics sur les éléments du menu
+      const menuItems = document.querySelectorAll('.sidebar-menu li');
+      
+      menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+          // Retirer la classe active de tous les éléments
+          menuItems.forEach(i => i.classList.remove('active'));
+          // Ajouter la classe active à l'élément cliqué
+          this.classList.add('active');
+          
+          // Masquer tous les contenus
+          document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+          });
+          
+          // Afficher le contenu correspondant
+          const target = this.getAttribute('data-target');
+          document.getElementById(`${target}-content`).classList.add('active');
+          
+          // Mettre à jour le titre du header
+          const headerTitle = document.querySelector('.header h2');
+          headerTitle.textContent = this.textContent.trim();
+        });
+      });
+
       // Animation d'entrée pour les lignes du tableau
       const tableRows = document.querySelectorAll('.users-table tbody tr');
       tableRows.forEach((row, index) => {
@@ -338,22 +384,24 @@
           row.style.transform = 'translateY(0)';
         }, 100 * index);
       });
-      
+
       // Fonctionnalité de recherche
       const searchInput = document.querySelector('.search-input');
-      searchInput.addEventListener('keyup', function() {
-        const searchText = this.value.toLowerCase();
-        const tableRows = document.querySelectorAll('.users-table tbody tr');
-        
-        tableRows.forEach(row => {
-          const text = row.textContent.toLowerCase();
-          if (text.includes(searchText)) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
+      if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+          const searchText = this.value.toLowerCase();
+          const tableRows = document.querySelectorAll('.users-table tbody tr');
+
+          tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchText)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
         });
-      });
+      }
     });
   </script>
 </body>

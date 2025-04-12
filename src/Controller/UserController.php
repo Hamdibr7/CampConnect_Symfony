@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+use App\Service\UserSessionService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Psr\Log\LoggerInterface;
@@ -35,11 +36,19 @@ use Psr\Log\LoggerInterface;
     }
 
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
-public function login(Request $request, UtilisateurRepository $utilisateurRepository): Response
+    public function login(Request $request, UtilisateurRepository $utilisateurRepository): Response
 {
     if ($request->isMethod('POST')) {
         $email = $request->request->get('email');
         $password = $request->request->get('password');
+        $rememberMe = $request->request->has('_remember_me');
+        
+        // Définir la durée de la session en fonction de "Se souvenir de moi"
+        $session = $request->getSession();
+        if ($rememberMe) {
+            // Configure la session pour durer 30 jours
+            $session->migrate(true, 2592000); // 30 jours en secondes
+        }
 
         // Vérification pour compte administrateur
         if ($email === 'admincamp@gmail.com' && $password === 'campconnect2025') {
@@ -48,7 +57,7 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
             
             if ($user) {
                 // Si l'administrateur existe en base, on utilise ses données
-                $request->getSession()->set('user', [
+                $session->set('user', [
                     'id' => $user->getId(),
                     'email' => $user->getEmail(),
                     'nom' => $user->getNom(),
@@ -56,18 +65,17 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
                 ]);
             } else {
                 // Sinon on crée une session admin sans référence à un utilisateur en base
-                $request->getSession()->set('user', [
+                $session->set('user', [
                     'email' => 'admincamp@gmail.com',
                     'nom' => 'Administrateur',
                     'isAdmin' => true
                 ]);
             }
             
-            // Ajouter un message flash pour l'administrateur
-            $this->addFlash('success', 'Bienvenue ! Vous êtes connecté en tant qu\'administrateur.');
+            
             
             // Redirection vers la page d'index des utilisateurs
-            return $this->redirectToRoute('app_utilisateur_index');
+            return $this->redirectToRoute('app_front_home');
         }
 
         // Recherche de l'utilisateur standard par email
@@ -75,18 +83,17 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
 
         if ($user && $user->getMdp() === $password) {
             // Stocker l'utilisateur en session
-            $request->getSession()->set('user', [
+            $session->set('user', [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'nom' => $user->getNom(),
                 'isAdmin' => false
             ]);
-
-            // Ajouter un message flash pour l'utilisateur standard
-            $this->addFlash('success', 'Bienvenue ' . $user->getNom() . ' ! Vous êtes connecté à votre compte.');
-            
-            // Redirection vers la page d'accueil après connexion réussie
-            return $this->redirectToRoute('app_home');
+  
+            // Redirection vers le frontoffice au lieu du dashboard
+           
+            // Redirection vers la page FrontOffice/index.html.twig
+            return $this->redirectToRoute('app_front_home');
         } else {
             // Message d'erreur
             $this->addFlash('error', 'Email ou mot de passe incorrect');
@@ -96,11 +103,44 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
     return $this->render('user/login.html.twig', [
         'last_email' => $request->request->get('email', '')
     ]);
-}
+    }
+    #[Route('/front', name: 'app_front_home')]
+    public function frontHome(Request $request, UtilisateurRepository $utilisateurRepository): Response
+    {
+        $session = $request->getSession();
+        $userData = $session->get('user');
+        
+        if (!$userData) {
+            return $this->redirectToRoute('app_login');
+        }
+    
+        // Si c'est l'admin, on crée un objet utilisateur minimal
+        if ($userData['isAdmin'] ?? false) {
+            $user = [
+                'nom' => 'Administrateur',
+                'prenom' => '',
+                'email' => $userData['email'],
+                'isAdmin' => true
+            ];
+        } else {
+            // Pour les utilisateurs normaux
+            $user = $utilisateurRepository->find($userData['id']);
+            if (!$user) {
+                $session->remove('user');
+                return $this->redirectToRoute('app_login');
+            }
+        }
+    
+        return $this->render('FrontOffice/index.html.twig', [
+            'user' => $user
+        ]);
+    }
+
     #[Route('/home', name: 'app_home')]
     public function home(Request $request, UtilisateurRepository $utilisateurRepository): Response
     {
         // Vérification de la session
+        //$user = $userSessionService->getUser();
         $session = $request->getSession();
         $userData = $session->get('user');
         
@@ -110,8 +150,13 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
     
         // Récupérer l'utilisateur complet depuis la base de données
         $user = $utilisateurRepository->find($userData['id']);
-    
-        return $this->render('user/home.html.twig', [
+     // Si l'utilisateur n'existe plus en base de données
+     if (!$user) {
+        $session->remove('user'); // Nettoyer la session
+        return $this->redirectToRoute('app_login');
+    }
+
+        return $this->render('FrontOffice/index.html.twig', [
             'user' => $user
         ]);
     }
@@ -196,14 +241,31 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
         ]);
     }
 
-    #[Route('/{id}', name: 'app_utilisateur_delete', methods: ['POST'])]
-    public function delete(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/suppression', name: 'app_utilisateur_suppression', methods: ['GET'])]
+    public function suppression(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$utilisateur->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($utilisateur);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_utilisateur_index', [], Response::HTTP_SEE_OTHER);
+        // Supprimer l'utilisateur sans vérification CSRF
+        $entityManager->remove($utilisateur);
+        $entityManager->flush();
+        
+        // Toujours déconnecter l'utilisateur après suppression
+        $request->getSession()->remove('user');
+        
+        // Ajouter un message flash pour informer l'utilisateur
+        $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+        
+        // Rediriger vers la page de connexion
+        return $this->redirectToRoute('app_login');
     }
+    #[Route('/{id}/delete', name: 'app_utilisateur_delete_from_index', methods: ['GET'])]
+public function deleteFromIndex(Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
+{
+    $entityManager->remove($utilisateur);
+    $entityManager->flush();
+
+   
+    
+    return $this->redirectToRoute('app_utilisateur_index');
+}
+
 }
