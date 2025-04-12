@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repository\BadgeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
 class Badge
@@ -28,19 +28,19 @@ class Badge
     private ?string $image = null;
 
     // Temporary property for handling uploaded image (not persisted to DB)
-private ?UploadedFile $imageFile = null;
+    private ?UploadedFile $imageFile = null;
 
-public function getImageFile(): ?UploadedFile
-{
-    return $this->imageFile;
-}
+    public function getImageFile(): ?UploadedFile
+    {
+        return $this->imageFile;
+    }
 
-public function setImageFile(?UploadedFile $imageFile): static
-{
-    $this->imageFile = $imageFile;
+    public function setImageFile(?UploadedFile $imageFile): static
+    {
+        $this->imageFile = $imageFile;
 
-    return $this;
-}
+        return $this;
+    }
 
     public function getId(): ?int
     {

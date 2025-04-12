@@ -16,13 +16,9 @@ class BadgeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom_badge', TextType::class, [
-                'label' => 'Nom du badge'
-            ])
+            ->add('nom_badge', TextType::class, ['label' => 'Nom du badge'])
             ->add('description')
-            ->add('reservations_requises', IntegerType::class, [
-                'label' => 'Réservations requises'
-            ])
+            ->add('reservations_requises', IntegerType::class, ['label' => 'Réservations requises'])
             ->add('imageFile', FileType::class, [
                 'label' => 'Image du badge',
                 'mapped' => false,
@@ -30,16 +26,11 @@ class BadgeType extends AbstractType
                 'constraints' => [
                     new File([
                         'maxSize' => '2M',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                            'image/webp'
-                        ],
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (jpg, png, webp)',
                     ])
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

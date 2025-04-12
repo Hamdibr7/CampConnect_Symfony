@@ -56,11 +56,11 @@
         }
 
         td:nth-child(1) { width: 10%; }
-        td:nth-child(2) { width: 15%; }
-        td:nth-child(3) { width: 30%; }  /* Updated: Description column bigger */
-        td:nth-child(4) { width: 10%; }
-        td:nth-child(5) { width: 25%; }  /* Updated: Image column bigger */
-        td:nth-child(6) { width: 10%; }
+        td:nth-child(2) { width: 20%; }  /* Increased width for Nom */
+        td:nth-child(3) { width: 30%; }  /* Increased width for Description */
+        td:nth-child(4) { width: 15%; }
+        td:nth-child(5) { width: 20%; }
+        td:nth-child(6) { width: 15%; }
 
         tr:hover {
             background-color: #f9f9f9;
@@ -162,7 +162,7 @@
                         <th>ID</th>
                         <th>Nom</th>
                         <th>Description</th>
-                        <th>Réservations requises</th> {# ✅ ADDED COLUMN #}
+                        <th>Nb Réservations</th>
                         <th>Image</th>
                         <th>Actions</th>
                     </tr>
@@ -170,36 +170,36 @@
                 <tbody>
                     {% if badges is not empty %}
                         {% for badge in badges %}
-                        <tr>
-                            <td>{{ badge.id }}</td>
-                            <td>{{ badge.nomBadge }}</td>
-                            <td>
-                                {% if badge.description %}
-                                    {{ badge.description|length > 50 ? badge.description|slice(0, 50) ~ '...' : badge.description }}
-                                {% else %}
-                                    <span class="text-muted">Aucune description</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ badge.reservationsRequises }}</td> {# ✅ NEW CELL #}
-                            <td>
-                                {% if badge.image %}
-                                    <img src="{{ asset('uploads/badges/' ~ badge.image) }}" class="img-thumbnail" alt="{{ badge.nomBadge }}">
-                                {% else %}
-                                    <span class="text-muted">Aucune image</span>
-                                {% endif %}
-                            </td>
-                            <td class="action-buttons">
-                                <a href="{{ path('app_badge_edit', {'id': badge.id}) }}" class="btn btn-edit">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </a>
-                                <form method="post" action="{{ path('app_badge_delete', {'id': badge.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce badge ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
-                                    <button type="submit" class="btn btn-delete">
-                                        <i class="fas fa-trash"></i> Supprimer
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>{{ badge.id }}</td>
+                                <td>{{ badge.nomBadge }}</td>
+                                <td>
+                                    {% if badge.description %}
+                                        {{ badge.description|length > 50 ? badge.description|slice(0, 50) ~ '...' : badge.description }}
+                                    {% else %}
+                                        <span class="text-muted">Aucune description</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ badge.reservationsRequises }}</td>
+                                <td>
+{% if badge.image %}
+    <img src="{{ asset('uploads/badges/' ~ badge.image) }}" alt="Badge" width="150">
+{% else %}
+    <p>Pas d'image</p>
+{% endif %}
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{{ path('app_badge_edit', {'id': badge.id}) }}" class="btn btn-edit">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <form method="post" action="{{ path('app_badge_delete', {'id': badge.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce badge ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ badge.id) }}">
+                                        <button type="submit" class="btn btn-delete">
+                                            <i class="fas fa-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
                         {% endfor %}
                     {% else %}
                         <tr>

@@ -36,46 +36,44 @@ class BadgeController extends AbstractController
         $badge = new Badge();
         $form = $this->createForm(BadgeType::class, $badge);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $imageFile */
             $imageFile = $form->get('imageFile')->getData();
-
+    
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+    
                 try {
                     $imageFile->move(
-                        $this->getParameter('badge_images_directory'),
+                        $this->getParameter('badge_images_directory'), // defined in services.yaml
                         $newFilename
                     );
-                    $badge->setImage($newFilename);
+    
+                    $badge->setImage($newFilename); // save filename, not full path
                 } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image');
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image : ' . $e->getMessage());
                 }
             }
-
+    
             $entityManager->persist($badge);
             $entityManager->flush();
-
+    
             $this->addFlash('success', 'Badge créé avec succès!');
             return $this->redirectToRoute('app_badge_index');
         }
-
+    
         return $this->render('back/badge/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+    
 
     #[Route('/{id}/edit', name: 'app_badge_edit', methods: ['GET', 'POST'])]
-    public function edit(
-        Request $request,
-        Badge $badge,
-        EntityManagerInterface $entityManager,
-        SluggerInterface $slugger
-    ): Response {
+    public function edit(Request $request, Badge $badge, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
         $form = $this->createForm(BadgeType::class, $badge);
         $form->handleRequest($request);
 
@@ -86,34 +84,27 @@ class BadgeController extends AbstractController
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                $fullPath = $this->getParameter('badge_images_directory') . DIRECTORY_SEPARATOR . $newFilename;
 
                 try {
-                    if ($badge->getImage()) {
-                        $oldImagePath = $this->getParameter('badge_images_directory').'/'.$badge->getImage();
-                        if (file_exists($oldImagePath)) {
-                            unlink($oldImagePath);
-                        }
+                    if ($badge->getImage() && file_exists($badge->getImage())) {
+                        unlink($badge->getImage());
                     }
 
-                    $imageFile->move(
-                        $this->getParameter('badge_images_directory'),
-                        $newFilename
-                    );
-                    $badge->setImage($newFilename);
+                    $imageFile->move($this->getParameter('badge_images_directory'), $newFilename);
+                    $badge->setImage($newFilename); // just the filename
+
                 } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors du remplacement de l\'image : '.$e->getMessage());
+                    $this->addFlash('error', 'Erreur lors du remplacement de l\'image : ' . $e->getMessage());
                     return $this->redirectToRoute('app_badge_edit', ['id' => $badge->getId()]);
                 }
             }
 
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'Badge mis à jour avec succès !');
-                return $this->redirectToRoute('app_badge_index');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour : '.$e->getMessage());
-            }
+            $entityManager->flush();
+            $this->addFlash('success', 'Badge mis à jour avec succès !');
+            return $this->redirectToRoute('app_badge_index');
         }
 
         return $this->render('back/badge/edit.html.twig', [
@@ -123,18 +114,12 @@ class BadgeController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_badge_delete', methods: ['POST'])]
-    public function delete(
-        Request $request,
-        Badge $badge,
-        EntityManagerInterface $entityManager
-    ): Response {
-        if ($this->isCsrfTokenValid('delete'.$badge->getId(), $request->request->get('_token'))) {
+    public function delete(Request $request, Badge $badge, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $badge->getId(), $request->request->get('_token'))) {
             try {
-                if ($badge->getImage()) {
-                    $imagePath = $this->getParameter('badge_images_directory').'/'.$badge->getImage();
-                    if (file_exists($imagePath)) {
-                        unlink($imagePath);
-                    }
+                if ($badge->getImage() && file_exists($badge->getImage())) {
+                    unlink($badge->getImage());
                 }
 
                 $entityManager->remove($badge);
@@ -142,7 +127,7 @@ class BadgeController extends AbstractController
 
                 $this->addFlash('success', 'Le badge a été supprimé avec succès !');
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la suppression : '.$e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
             }
         } else {
             $this->addFlash('error', 'Token CSRF invalide, suppression annulée.');
