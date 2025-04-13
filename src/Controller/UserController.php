@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Service\UserSessionService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Service\PasswordHashService;
+use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 #[Route('/utilisateur')]
  class UserController extends AbstractController
@@ -40,49 +41,59 @@ use Psr\Log\LoggerInterface;
 #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
 public function login(Request $request, UtilisateurRepository $utilisateurRepository, PasswordHashService $passwordHashService): Response
 {
-   
     if ($request->isMethod('POST')) {
+        // Vérification reCAPTCHA
+        $recaptchaResponse = $request->request->get('g-recaptcha-response');
+        $recaptchaSecret = '6Lck0hYrAAAAAIIJgVW1sOFdirYVO1mS3Lkp1Ppj'; // ⚠️ Remplace par ta vraie clé secrète
+        $client = new Client();
+
+        $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+            'form_params' => [
+                'secret' => $recaptchaSecret,
+                'response' => $recaptchaResponse,
+                'remoteip' => $request->getClientIp(),
+            ]
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        if (!$result['success']) {
+            $this->addFlash('error', 'Veuillez confirmer que vous n\'êtes pas un robot.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Suite login standard
         $email = $request->request->get('email');
         $password = $request->request->get('password');
         $rememberMe = $request->request->has('_remember_me');
-        
-        // Définir la durée de la session en fonction de "Se souvenir de moi"
+
         $session = $request->getSession();
         if ($rememberMe) {
-            // Configure la session pour durer 30 jours
-            $session->migrate(true, 2592000); // 30 jours en secondes
+            $session->migrate(true, 2592000); // 30 jours
         }
 
-        // Vérification pour compte administrateur
         if ($email === 'admincamp@gmail.com' && $password === 'campconnect2025') {
-            // Code existant pour admin...
             $session->set('user', [
                 'email' => 'admincamp@gmail.com',
                 'nom' => 'Administrateur',
                 'isAdmin' => true
             ]);
-              // Message de succès pour l'admin
-              $this->addFlash('success', 'Bienvenue, Administrateur !');
+            $this->addFlash('success', 'Bienvenue, Administrateur !');
             return $this->redirectToRoute('app_front_home');
         }
 
-        // Recherche de l'utilisateur standard par email
         $user = $utilisateurRepository->findOneBy(['email' => $email]);
 
-        // Modifiez cette ligne pour utiliser le service de hashage
         if ($user && $passwordHashService->isPasswordValid($user, $password)) {
-            // Stocker l'utilisateur en session
             $session->set('user', [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'nom' => $user->getNom(),
                 'isAdmin' => false
             ]);
-  // Message de succès pour l'utilisateur
-  $this->addFlash('success', 'Connexion réussie ! Bienvenue ' . $user->getPrenom() . '.');
+            $this->addFlash('success', 'Connexion réussie ! Bienvenue ' . $user->getPrenom() . '.');
             return $this->redirectToRoute('app_front_home');
         } else {
-            // Message d'erreur
             $this->addFlash('error', 'Email ou mot de passe incorrect');
         }
     }

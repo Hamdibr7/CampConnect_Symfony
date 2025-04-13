@@ -324,7 +324,9 @@
       <div class="remember-me animate-up">
         <input type="checkbox" id="remember_me" name="_remember_me">
         <label for="remember_me">Se souvenir de moi</label>
+        <div class="g-recaptcha" data-sitekey="6Lck0hYrAAAAAPJUMKML_v97h5bUFOnfK3LuE9j7"></div>
       </div>
+      
       
       <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
       
@@ -361,5 +363,6 @@
       }, 300);
     });
   </script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>

@@ -1,12 +1,29 @@
-{# templates/amis/index.html.twig #}
-
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Amis - Camping Cool</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <meta charset="utf-8">
+    <title>Mes Amis - CampConnect</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="{{ asset('template/img/favicon.ico') }}" rel="icon">
+  
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('template/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('template/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
+
+    <!-- Style personnalisé pour la page amis -->
     <style>
         :root {
             --primary-color: #2ecc71;
@@ -20,7 +37,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--light-color);
             color: var(--dark-color);
             margin: 0;
@@ -31,7 +48,7 @@
             background-attachment: fixed;
         }
 
-        .container {
+        .content-container {
             width: 90%;
             max-width: 1200px;
             margin: auto;
@@ -62,14 +79,24 @@
         }
 
         .flash-message {
-            background-color: var(--danger-color);
-            color: white;
-            padding: 12px 15px;
-            margin-bottom: 25px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
             text-align: center;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         @keyframes fadeIn {
@@ -98,6 +125,7 @@
             margin-right: 15px;
             color: var(--primary-color);
         }
+        
 
         h2 {
             font-size: 1.8em;
@@ -282,27 +310,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-            
-            .user-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-        }
-
-        @media (max-width: 576px) {
-            .user-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .page-header h1 {
-                font-size: 2.2em;
-            }
-        }
-
         /* Badge pour indiquer le statut */
         .badge {
             display: inline-block;
@@ -339,42 +346,166 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .flash-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
 
-.flash-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content-container {
+                width: 95%;
+            }
+            
+            .user-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+        @media (max-width: 576px) {
+            .user-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 2.2em;
+            }
+        }
     </style>
 </head>
-<body>
 
-    <div class="container">
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-light pt-3 d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center">
+                        <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+                        <p class="text-body px-3">|</p>
+                        <p><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center text-lg-right">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="text-primary pl-3" href="#">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    
+    <!-- Messages flash -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    
+ <!-- Navbar Start -->
+  <div class="container-fluid position-relative nav-bar p-0">
+    <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+      <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+        <a href="#" class="navbar-brand">
+          <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
+        </a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+          <div class="navbar-nav ml-auto py-0">
+            <a href="#" class="nav-item nav-link">Home</a>
+            <a href="#" class="nav-item nav-link">About</a>
+            <a href="#" class="nav-item nav-link">Services</a>
+            <a href="#" class="nav-item nav-link">Tour Packages</a>
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+              <div class="dropdown-menu border-0 rounded-0 m-0">
+                <a href="#" class="dropdown-item">Blog Grid</a>
+                <a href="#" class="dropdown-item">Blog Detail</a>
+                <a href="#" class="dropdown-item">Destination</a>
+                <a href="#" class="dropdown-item">Travel Guides</a>
+                <a href="#" class="dropdown-item">Testimonial</a>
+              </div>
+            </div>
+            <a href="#" class="nav-item nav-link">Contact</a>
+
+            <!-- Menu utilisateur avec dropdown -->
+            {% if user is defined and user %}
+              <div class="nav-item dropdown user-nav-item">
+                <a href="#" class="nav-link dropdown-toggle user-nav-link" data-toggle="dropdown">
+                  {% if user.pdp is defined and user.pdp %}
+                    <img src="{{ asset('uploads/profiles/' ~ user.pdp) }}" alt="Profile" class="profile-mini">
+                  {% elseif user.isAdmin is defined and user.isAdmin %}
+                    <i class="fas fa-user-shield mr-1"></i> Administrateur
+                  {% else %}
+                    <div class="user-avatar-placeholder">
+                      {{ user.prenom is defined ? user.prenom|first|upper : '' }}{{ user.nom is defined ? user.nom|first|upper : '' }}
+                    </div>
+                  {% endif %}
+
+                  {% if user.isAdmin is not defined or not user.isAdmin %}
+                    {% if user.prenom is defined or user.nom is defined %}
+                      {{ user.prenom|default('') }} {{ user.nom|default('') }}
+                    {% endif %}
+                  {% endif %}
+                </a>
+
+                <div class="dropdown-menu border-0 rounded-0 m-0 user-dropdown-menu">
+                  {% if user.isAdmin is defined and user.isAdmin %}
+                    <a class="dropdown-item user-dropdown-item disabled">
+                      <i class="fas fa-crown"></i> Admin connecté
+                    </a>
+                    <a href="{{ path('app_utilisateur_index') }}" class="dropdown-item user-dropdown-item">
+                      <i class="fas fa-users-cog"></i> Dashboard
+                    </a>
+                  {% else %}
+                    <a href="{{ path('app_utilisateur_edit', {'id': user.id}) }}" class="dropdown-item user-dropdown-item">
+                      <i class="fa fa-edit"></i> Modifier Profil
+                    </a>
+                    <a href="{{ path('app_amis') }}" class="dropdown-item user-dropdown-item">
+                      <i class="fa fa-users"></i> Mes amis
+                    </a>
+                  {% endif %}
+                  <div class="dropdown-divider"></div>
+                  <a href="{{ path('app_logout') }}" class="dropdown-item user-dropdown-item">
+                    <i class="fa fa-sign-out-alt"></i> Déconnexion
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <!-- Navbar End -->
+
+
+    <!-- Contenu principal de la page Amis -->
+    <div class="content-container">
         <div class="page-header">
-         <a href="{{ path('app_home') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Retour à l'accueil du camping</a>
             <h1>Mes Amis de Camping</h1>
+            <!-- Ajoutez ce bouton juste avant la section Footer -->
+<a href="{{ path('app_front_home') }}" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Retour à la page précédente
+</a>
         </div>
 
-         {% for label, messages in app.flashes %}
-  {% for message in messages %}
-    <div class="flash-message flash-{{ label }}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endfor %}
-
-
+        <!-- Section Mes amis campeurs -->
         <div class="friends-section">
             <div class="section-header">
                 <i class="fas fa-campground"></i>
@@ -401,10 +532,10 @@
                                     <span class="badge badge-friends">Ami</span>
                                 </div>
                             </div>
-                           <div class="user-actions">
-    <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
-    <a href="{{ path('app_amis_retirer', {'id': relation.id}) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet ami ?');"><i class="fas fa-user-minus"></i> Retirer</a>
-</div>
+                            <div class="user-actions">
+                                <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
+                                <a href="{{ path('app_amis_retirer', {'id': relation.id}) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet ami ?');"><i class="fas fa-user-minus"></i> Retirer</a>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -417,6 +548,7 @@
             {% endif %}
         </div>
 
+        <!-- Section Demandes d'amitié reçues -->
         <div class="friends-section">
             <div class="section-header">
                 <i class="fas fa-envelope"></i>
@@ -458,6 +590,7 @@
             {% endif %}
         </div>
 
+        <!-- Section Demandes d'amitié envoyées -->
         <div class="friends-section">
             <div class="section-header">
                 <i class="fas fa-paper-plane"></i>
@@ -495,6 +628,7 @@
             {% endif %}
         </div>
 
+        <!-- Section Découvrir d'autres campeurs -->
         <div class="friends-section">
             <div class="section-header">
                 <i class="fas fa-users"></i>
@@ -559,9 +693,66 @@
                 </div>
             {% endif %}
         </div>
-
-       
     </div>
 
-</body>
-</html>
+    
+  <!-- Footer Start -->
+  <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
+    <div class="row pt-5">
+      <div class="col-lg-3 col-md-6 mb-5">
+        <a href="" class="navbar-brand">
+          <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
+        </a>
+        <p>Rejoignez notre communauté pour découvrir les meilleurs sites de camping et partager vos aventures avec d'autres passionnés de plein air.</p>
+        <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Suivez-nous</h6>
+        <div class="d-flex justify-content-start">
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Nos Services</h5>
+        <div class="d-flex flex-column justify-content-start">
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Réservations</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Événements</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Communauté</a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Liens Utiles</h5>
+        <div class="d-flex flex-column justify-content-start">
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>À propos</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>FAQ</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Témoignages</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Partenaires</a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact</h5>
+        <p><i class="fa fa-map-marker-alt mr-2"></i>123 Rue du Camping, 75000 Paris</p>
+        <p><i class="fa fa-phone-alt mr-2"></i>+33 1 23 45 67 89</p>
+        <p><i class="fa fa-envelope mr-2"></i>info@campconnect.com</p>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
+    <div class="row">
+      <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
+        <p class="m-0 text-white-50">Copyright &copy; <a href="#">CampConnect</a>. Tous droits réservés.</p>
+      </div>
+      <div class="col-lg-6 text-center text-md-right">
+        <p class="m-0 text-white-50">Conçu par <a href="#">CampConnect</a></p>
+      </div>
+    </div>
+  </div>
+  <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script>

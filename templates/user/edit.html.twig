@@ -1,8 +1,28 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
-  <title>Inscription - Camping Cool</title>
+  <title>Modification du profil - CampConnect</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="Free HTML Templates" name="keywords">
+  <meta content="Free HTML Templates" name="description">
+
+  <!-- Favicon -->
+  <link href="{{ asset('template/img/favicon.ico') }}" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="{{ asset('template/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('template/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet" />
+  <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
+
   <style>
     /* Variables de couleurs */
     :root {
@@ -12,32 +32,36 @@
       --light: #ecf0f1;
       --dark: #34495e;
     }
-    
+
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: var(--light);
-      background-image: url("/api/placeholder/400/320");
-      background-size: cover;
-      background-position: center;
-      margin: 0;
-      padding: 20px;
       color: var(--dark);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin: 0;
+      padding: 0;
     }
-    
-    .container {
+
+    .form-container {
       max-width: 450px;
       width: 100%;
       background-color: rgba(255, 255, 255, 0.95);
       border-radius: 15px;
       padding: 40px 30px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      margin: 40px 0;
+      margin: 40px auto;
     }
-    
+
+    .edit-profile-section {
+      background-color: var(--light);
+      background-image: url("/api/placeholder/400/320");
+      background-size: cover;
+      background-position: center;
+      padding: 50px 0;
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     h1 {
       color: var(--primary);
       text-align: center;
@@ -46,24 +70,24 @@
       text-transform: uppercase;
       position: relative;
     }
-    
+
     .logo {
       text-align: center;
       font-size: 48px;
       margin-bottom: 20px;
     }
-    
+
     .tagline {
       text-align: center;
       color: var(--dark);
       margin-bottom: 30px;
       font-size: 18px;
     }
-    
+
     .form-group {
       margin-bottom: 25px;
     }
-    
+
     label {
       display: block;
       margin-bottom: 8px;
@@ -71,8 +95,10 @@
       color: var(--dark);
       font-size: 16px;
     }
-    
-    input, select, textarea {
+
+    input,
+    select,
+    textarea {
       width: 100%;
       padding: 15px;
       border: 2px solid #ddd;
@@ -81,13 +107,15 @@
       transition: all 0.3s ease;
       box-sizing: border-box;
     }
-    
-    input:focus, select:focus, textarea:focus {
+
+    input:focus,
+    select:focus,
+    textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
       outline: none;
     }
-    
+
     .btn {
       background-color: var(--primary);
       color: white;
@@ -105,51 +133,51 @@
       letter-spacing: 1px;
       box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
     }
-    
+
     .btn:hover {
       background-color: #27ae60;
       transform: translateY(-3px);
       box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
     }
-    
+
     .btn:active {
       transform: translateY(1px);
     }
-    
+
     .form-check {
       display: flex;
       align-items: center;
       margin: 8px 0;
     }
-    
+
     .form-check input {
       width: auto;
       margin-right: 10px;
     }
-    
+
     .form-error {
       color: #e74c3c;
       font-size: 14px;
       margin-top: 5px;
     }
-    
+
     .login-link {
       text-align: center;
       margin-top: 20px;
       color: var(--dark);
       font-size: 15px;
     }
-    
+
     .login-link a {
       color: var(--primary);
       text-decoration: none;
       font-weight: bold;
     }
-    
+
     .login-link a:hover {
       text-decoration: underline;
     }
-    
+
     .camping-icons {
       display: flex;
       justify-content: center;
@@ -157,43 +185,90 @@
       margin-bottom: 25px;
       font-size: 22px;
     }
-    
+
     .camping-icons span {
       animation: float 3s ease-in-out infinite;
     }
-    
+
     .camping-icons span:nth-child(2) {
       animation-delay: 0.5s;
     }
-    
+
     .camping-icons span:nth-child(3) {
       animation-delay: 1s;
     }
-    
+
     .camping-icons span:nth-child(4) {
       animation-delay: 1.5s;
     }
-    
+
     @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0);
+      }
     }
-    
+
     .password-requirements {
       font-size: 12px;
       color: #7f8c8d;
       margin-top: 5px;
       padding-left: 5px;
     }
-    
-    @media (max-width: 768px) {
-      .container {
-        padding: 30px 20px;
-        margin: 0 15px;
+
+    /* Correction pour le bouton d'inscription */
+    button.btn {
+      margin-top: 20px;
+    }
+
+    /* Alignement des éléments du formulaire */
+    .styled-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .flash-message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .flash-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
-    
+
+    .animate-up {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -205,72 +280,208 @@
       }
     }
     
-    .animate-up {
-      animation: fadeInUp 0.6s ease forwards;
-    }
-    
-    /* Correction pour le bouton d'inscription */
-    button.btn {
-      margin-top: 20px;
-    }
-    
-    /* Alignement des éléments du formulaire */
-    .styled-form {
+    /* User menu styles */
+    .user-nav-item {
       display: flex;
-      flex-direction: column;
-      gap: 15px;
+      align-items: center;
+    }
+    
+    .user-nav-link .profile-mini {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 5px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+    
+    .user-dropdown-menu {
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border: none;
+      min-width: 200px;
+    }
+    
+    .user-dropdown-item {
+      padding: 10px 20px;
+      transition: all 0.3s;
+    }
+    
+    .user-dropdown-item:hover {
+      background-color: #f8f9fa;
+      color: var(--primary);
+    }
+    
+    .user-dropdown-item i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    .user-avatar-placeholder {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      border: 2px solid var(--primary);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /////////////
-    .flash-message {
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  font-weight: bold;
-  text-align: center;
-  animation: fadeIn 0.4s ease;
-}
-
-.flash-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.flash-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 30px 20px;
+        margin: 0 15px;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="logo animate-up">🏕️</div>
-    <h1 class="animate-up">Rejoignez-nous</h1>
-    <p class="tagline animate-up">Créez votre compte et commencez l'aventure !</p>
-    
-    <div class="camping-icons animate-up">
-      <span>🏕️</span>
-      <span>🌲</span>
-      <span>⛺</span>
-      <span>🌄</span>
+  <!-- Topbar Start -->
+  <div class="container-fluid bg-light pt-3 d-none d-lg-block">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+          <div class="d-inline-flex align-items-center">
+            <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+            <p class="text-body px-3">|</p>
+            <p><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</p>
+          </div>
+        </div>
+        <div class="col-lg-6 text-center text-lg-right">
+          <div class="d-inline-flex align-items-center">
+            <a class="text-primary px-3" href="#">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a class="text-primary px-3" href="#">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a class="text-primary px-3" href="#">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a class="text-primary px-3" href="#">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a class="text-primary pl-3" href="#">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-    {% for label, messages in app.flashes %}
-  {% for message in messages %}
-    <div class="flash-message flash-{{ label }}">
-      {{ message }}
-    </div>
+  </div>
+  <!-- Topbar End -->
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="flash-message flash-{{ label }}">
+        {{ message }}
+      </div>
+    {% endfor %}
   {% endfor %}
-{% endfor %}
-    {{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
-    {{ form_errors(form) }}
+
+  <!-- Navbar Start -->
+  <div class="container-fluid position-relative nav-bar p-0">
+    <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+      <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+        <a href="#" class="navbar-brand">
+          <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
+        </a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+          <div class="navbar-nav ml-auto py-0">
+            <a href="#" class="nav-item nav-link">Home</a>
+            <a href="#" class="nav-item nav-link">About</a>
+            <a href="#" class="nav-item nav-link">Services</a>
+            <a href="#" class="nav-item nav-link">Tour Packages</a>
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+              <div class="dropdown-menu border-0 rounded-0 m-0">
+                <a href="#" class="dropdown-item">Blog Grid</a>
+                <a href="#" class="dropdown-item">Blog Detail</a>
+                <a href="#" class="dropdown-item">Destination</a>
+                <a href="#" class="dropdown-item">Travel Guides</a>
+                <a href="#" class="dropdown-item">Testimonial</a>
+              </div>
+            </div>
+            <a href="#" class="nav-item nav-link">Contact</a>
+
+            <!-- Menu utilisateur avec dropdown -->
+            {% if user is defined and user %}
+              <div class="nav-item dropdown user-nav-item">
+                <a href="#" class="nav-link dropdown-toggle user-nav-link" data-toggle="dropdown">
+                  {% if user.pdp is defined and user.pdp %}
+                    <img src="{{ asset('uploads/profiles/' ~ user.pdp) }}" alt="Profile" class="profile-mini">
+                  {% elseif user.isAdmin is defined and user.isAdmin %}
+                    <i class="fas fa-user-shield mr-1"></i> Administrateur
+                  {% else %}
+                    <div class="user-avatar-placeholder">
+                      {{ user.prenom is defined ? user.prenom|first|upper : '' }}{{ user.nom is defined ? user.nom|first|upper : '' }}
+                    </div>
+                  {% endif %}
+
+                  {% if user.isAdmin is not defined or not user.isAdmin %}
+                    {% if user.prenom is defined or user.nom is defined %}
+                      {{ user.prenom|default('') }} {{ user.nom|default('') }}
+                    {% endif %}
+                  {% endif %}
+                </a>
+
+                <div class="dropdown-menu border-0 rounded-0 m-0 user-dropdown-menu">
+                  {% if user.isAdmin is defined and user.isAdmin %}
+                    <a class="dropdown-item user-dropdown-item disabled">
+                      <i class="fas fa-crown"></i> Admin connecté
+                    </a>
+                    <a href="{{ path('app_utilisateur_index') }}" class="dropdown-item user-dropdown-item">
+                      <i class="fas fa-users-cog"></i> Dashboard
+                    </a>
+                  {% else %}
+                    <a href="{{ path('app_utilisateur_edit', {'id': user.id}) }}" class="dropdown-item user-dropdown-item">
+                      <i class="fa fa-edit"></i> Modifier Profil
+                    </a>
+                    <a href="{{ path('app_amis') }}" class="dropdown-item user-dropdown-item">
+                      <i class="fa fa-users"></i> Mes amis
+                    </a>
+                  {% endif %}
+                  <div class="dropdown-divider"></div>
+                  <a href="{{ path('app_logout') }}" class="dropdown-item user-dropdown-item">
+                    <i class="fa fa-sign-out-alt"></i> Déconnexion
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <!-- Navbar End -->
+
+  <!-- Edit Profile Section Start -->
+  <section class="edit-profile-section">
+    <div class="form-container">
+      <div class="logo animate-up">🏕️</div>
+      <h1 class="animate-up">Modification du profil</h1>
+      <p class="tagline animate-up">Mettez à jour vos informations personnelles</p>
+
+      <div class="camping-icons animate-up">
+        <span>🏕️</span>
+        <span>🌲</span>
+        <span>⛺</span>
+        <span>🌄</span>
+      </div>
+
+      {{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
+      {{ form_errors(form) }}
 
       {% for field in form %}
         {% if field.vars.name != '_token' %}
@@ -307,20 +518,92 @@
           </div>
         {% endif %}
       {% endfor %}
-      
-      
-      <button type="submit" class="btn animate-up">modifier votre profil</button>
-     <!-- Simple lien vers la route de suppression -->
-<a href="/utilisateur/{{ utilisateur.id }}/suppression" class="btn animate-up" style="background-color: #e74c3c; margin-top: 15px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ?');">Supprimer mon compte</a>
-    {{ form_end(form) }}
-    <!-- Bouton de retour -->
-<a href="javascript:history.back()" class="btn animate-up" style="background-color: #95a5a6; margin-top: 15px;">Retour</a>
 
-    <div class="login-link animate-up">
-      Déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici</a>
+      <button type="submit" class="btn animate-up">Modifier votre profil</button>
+      <!-- Lien vers la route de suppression -->
+      <a href="/utilisateur/{{ utilisateur.id }}/suppression" class="btn animate-up" style="background-color: #e74c3c; margin-top: 15px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ?');">Supprimer mon compte</a>
+      {{ form_end(form) }}
+      
+      <!-- Bouton de retour -->
+      <a href="javascript:history.back()" class="btn animate-up" style="background-color: #95a5a6; margin-top: 15px;">Retour</a>
+    </div>
+  </section>
+  <!-- Edit Profile Section End -->
+
+  <!-- Footer Start -->
+  <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
+    <div class="row pt-5">
+      <div class="col-lg-3 col-md-6 mb-5">
+        <a href="" class="navbar-brand">
+          <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
+        </a>
+        <p>Rejoignez notre communauté pour découvrir les meilleurs sites de camping et partager vos aventures avec d'autres passionnés de plein air.</p>
+        <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Suivez-nous</h6>
+        <div class="d-flex justify-content-start">
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Nos Services</h5>
+        <div class="d-flex flex-column justify-content-start">
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Réservations</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Événements</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Communauté</a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Liens Utiles</h5>
+        <div class="d-flex flex-column justify-content-start">
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>À propos</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>FAQ</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Témoignages</a>
+          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Partenaires</a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-5">
+        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact</h5>
+        <p><i class="fa fa-map-marker-alt mr-2"></i>123 Rue du Camping, 75000 Paris</p>
+        <p><i class="fa fa-phone-alt mr-2"></i>+33 1 23 45 67 89</p>
+        <p><i class="fa fa-envelope mr-2"></i>info@campconnect.com</p>
+      </div>
     </div>
   </div>
-  
+  <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
+    <div class="row">
+      <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
+        <p class="m-0 text-white-50">Copyright &copy; <a href="#">CampConnect</a>. Tous droits réservés.</p>
+      </div>
+      <div class="col-lg-6 text-center text-md-right">
+        <p class="m-0 text-white-50">Conçu par <a href="#">CampConnect</a></p>
+      </div>
+    </div>
+  </div>
+  <!-- Footer End -->
+
+  <!-- Back to Top -->
+  <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script>
+  <script src="{{ asset('template/lib/owlcarousel/owl.carousel.min.js') }}"></script>
+  <script src="{{ asset('template/lib/tempusdominus/js/moment.min.js') }}"></script>
+  <script src="{{ asset('template/lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+  <script src="{{ asset('template/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+  <!-- Contact Javascript File -->
+  <script src="{{ asset('template/mail/jqBootstrapValidation.min.js') }}"></script>
+  <script src="{{ asset('template/mail/contact.js') }}"></script>
+
+  <!-- Template Javascript -->
+  <script src="{{ asset('template/js/main.js') }}"></script>
+
+  <!-- Script personnalisé pour l'animation -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Animation pour les éléments avec la classe animate-up
@@ -328,8 +611,7 @@
       animatedElements.forEach((element) => {
         element.style.opacity = 0;
       });
-      
-      
+
       setTimeout(() => {
         animatedElements.forEach((element, index) => {
           setTimeout(() => {
@@ -337,7 +619,7 @@
           }, 100 * index);
         });
       }, 300);
-      
+
       // Sélection des champs du formulaire
       const emailField = document.querySelector('[name$="[email]"]');
       const passwordField = document.querySelector('[name$="[mdp]"]');
@@ -345,7 +627,7 @@
       const lastNameField = document.querySelector('[name$="[nom]"]');
       const firstNameField = document.querySelector('[name$="[prenom]"]');
       const ageField = document.querySelector('[name$="[age]"]');
-      
+
       // Fonction pour créer et afficher les messages d'erreur
       function showError(inputElement, message) {
         // Supprime d'abord tout message d'erreur existant
@@ -353,81 +635,68 @@
         if (existingError) {
           existingError.remove();
         }
-        
+
         // Crée et ajoute le nouveau message d'erreur
         const errorElement = document.createElement('div');
         errorElement.classList.add('form-error');
         errorElement.textContent = message;
         inputElement.parentElement.appendChild(errorElement);
-        
+
         // Ajoute une bordure rouge au champ
         inputElement.style.borderColor = '#e74c3c';
       }
-      
+
       // Fonction pour supprimer les messages d'erreur
       function removeError(inputElement) {
         const errorElement = inputElement.parentElement.querySelector('.form-error');
         if (errorElement) {
           errorElement.remove();
         }
-        
+
         // Rétablit la bordure normale
         inputElement.style.borderColor = '#ddd';
       }
-      
+
       // Fonction de validation d'email (doit être un Gmail)
       function validateEmail(email) {
         const regex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
         return regex.test(email);
       }
-      
+
       // Fonction de validation de mot de passe
       function validatePassword(mdp) {
         const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
         return regex.test(mdp);
       }
-      
+
       // Fonction de validation de nom/prénom
       function validateName(nom) {
         if (nom.length > 7) {
           return { valid: false, message: "Ne doit pas dépasser 7 caractères." };
         }
-        
+
         const regex = /^[A-Z][a-zA-Z]*$/;
         if (!regex.test(nom)) {
           return { valid: false, message: "Doit commencer par une majuscule et ne contenir que des lettres." };
         }
-        
+
         return { valid: true };
       }
 
-        function validateName(prenom) {
-        if (prenom.length > 7) {
-          return { valid: false, message: "Ne doit pas dépasser 7 caractères." };
-        }
-        
-        const regex = /^[A-Z][a-zA-Z]*$/;
-        if (!regex.test(prenom)) {
-          return { valid: false, message: "Doit commencer par une majuscule et ne contenir que des lettres." };
-        }
-        
-        return { valid: true };
-      }
-      
       // Fonction de validation d'âge
       function validateAge(age) {
         const ageNum = parseInt(age);
         if (isNaN(ageNum)) {
           return { valid: false, message: "L'âge doit être un nombre." };
         }
-        
+
         if (ageNum < 10 || ageNum > 99) {
           return { valid: false, message: "L'âge doit être compris entre 10 et 99." };
         }
-        
+
         return { valid: true };
       }
-      
+
       // Validation de l'email
       if (emailField) {
         emailField.addEventListener('input', function() {
@@ -440,8 +709,7 @@
           }
         });
       }
-      
-      // Validation du mot de passe
+
       if (passwordField) {
         passwordField.addEventListener('input', function() {
           if (this.value.trim() === '') {
