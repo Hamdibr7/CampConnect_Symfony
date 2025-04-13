@@ -40,6 +40,7 @@ use Psr\Log\LoggerInterface;
 #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
 public function login(Request $request, UtilisateurRepository $utilisateurRepository, PasswordHashService $passwordHashService): Response
 {
+   
     if ($request->isMethod('POST')) {
         $email = $request->request->get('email');
         $password = $request->request->get('password');
@@ -60,7 +61,8 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
                 'nom' => 'Administrateur',
                 'isAdmin' => true
             ]);
-            
+              // Message de succès pour l'admin
+              $this->addFlash('success', 'Bienvenue, Administrateur !');
             return $this->redirectToRoute('app_front_home');
         }
 
@@ -76,7 +78,8 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
                 'nom' => $user->getNom(),
                 'isAdmin' => false
             ]);
-  
+  // Message de succès pour l'utilisateur
+  $this->addFlash('success', 'Connexion réussie ! Bienvenue ' . $user->getPrenom() . '.');
             return $this->redirectToRoute('app_front_home');
         } else {
             // Message d'erreur
@@ -151,7 +154,8 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
     {
         // Supprimer l'utilisateur de la session
         $request->getSession()->remove('user');
-        
+          // Ajouter un message flash de déconnexion réussie
+    $this->addFlash('success', 'Vous avez été déconnecté avec succès.');
         return $this->redirectToRoute('app_login');
     }
 
@@ -169,6 +173,7 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
     
         if ($form->isSubmitted() && $form->isValid()) {
             // Hashage du mot de passe avant de sauvegarder
+           
             $plainPassword = $utilisateur->getMdp();
             $hashedPassword = $passwordHashService->hashPassword($utilisateur, $plainPassword);
             $utilisateur->setMdp($hashedPassword);
@@ -182,10 +187,10 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
     
             $entityManager->persist($utilisateur);
             $entityManager->flush();
-    
+            $this->addFlash('success', 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.');
             return $this->redirectToRoute('app_utilisateur_index', [], Response::HTTP_SEE_OTHER);
         }
-    
+       // $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
         return $this->render('user/new.html.twig', [
             'utilisateur' => $utilisateur,
             'form' => $form->createView(),
@@ -199,47 +204,47 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
             'utilisateur' => $utilisateur,
         ]);
     }
-
     #[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function edit(
+        Request $request, 
+        Utilisateur $utilisateur, 
+        EntityManagerInterface $entityManager, 
+        SluggerInterface $slugger,
+        PasswordHashService $passwordHashService
+    ): Response
     {
+        // Sauvegarde du mot de passe actuel hashé
+        $currentPasswordHash = $utilisateur->getMdp();
+        
+        // Vider le mot de passe pour ne pas afficher le hash
+        $utilisateur->setMdp('');
+        
         $form = $this->createForm(UserType::class, $utilisateur);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion de l'upload de la photo de profil
-            $pdpFile = $form->get('pdp')->getData();
+            // Vérifier si un nouveau mot de passe a été saisi
+            $newPassword = $utilisateur->getMdp();
             
-            if ($pdpFile instanceof UploadedFile) {
-                $originalFilename = pathinfo($pdpFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$pdpFile->guessExtension();
-    
-                try {
-                    $pdpFile->move(
-                        $this->getParameter('profile_directory'),
-                        $newFilename
-                    );
-                    
-                    // Supprimer l'ancienne photo si elle existe
-                    $oldFilename = $utilisateur->getPdp();
-                    if ($oldFilename) {
-                        $oldFilePath = $this->getParameter('profile_directory').'/'.$oldFilename;
-                        if (file_exists($oldFilePath)) {
-                            unlink($oldFilePath);
-                        }
-                    }
-                    
-                    $utilisateur->setPdp($newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de la photo de profil');
-                }
+            // Si le champ est vide, restaurer l'ancien mot de passe hashé
+            if (empty($newPassword)) {
+                $utilisateur->setMdp($currentPasswordHash);
+            } else {
+                // Sinon, hasher le nouveau mot de passe
+                $hashedPassword = $passwordHashService->hashPassword($utilisateur, $newPassword);
+                $utilisateur->setMdp($hashedPassword);
             }
-    
+            
+            // Gestion de l'upload de la photo de profil...
+            
             $entityManager->flush();
-    
-            // Rediriger vers la page d'accueil ou le profil
-            return $this->redirectToRoute('app_home');
+            
+            // Ajouter un message de succès
+            $this->addFlash('success', 'Votre profil a été mis à jour avec succès');
+            
+            
+            
+            return $this->redirectToRoute('app_front_home');
         }
     
         return $this->render('user/edit.html.twig', [
@@ -258,8 +263,9 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
         // Toujours déconnecter l'utilisateur après suppression
         $request->getSession()->remove('user');
         
-        // Ajouter un message flash pour informer l'utilisateur
-        $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+      // Ajouter un message flash avec un ton plus décontracté
+$this->addFlash('success', 'C’est triste de vous voir partir... Votre compte a été supprimé avec succès.');
+
         
         // Rediriger vers la page de connexion
         return $this->redirectToRoute('app_login');
