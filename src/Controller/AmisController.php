@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AmisController extends AbstractController
 {
@@ -141,4 +142,37 @@ class AmisController extends AbstractController
 
         return $this->redirectToRoute('app_amis');
     }
+    #[Route('/amis/retirer/{id}', name: 'app_amis_retirer')]
+public function retirer(Request $request, Amis $relation, EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository): Response
+{
+    $session = $request->getSession();
+    $userData = $session->get('user');
+
+    if (!$userData) {
+        return $this->redirectToRoute('app_login');
+    }
+
+    $currentUser = $utilisateurRepository->find($userData['id']);
+    if (!$currentUser) {
+        throw $this->createNotFoundException('Utilisateur non trouvé');
+    }
+
+    // Vérifier que l'utilisateur est bien impliqué dans cette relation d'amitié
+    if ($relation->getDemandeur()->getId() !== $currentUser->getId() && $relation->getDestinataire()->getId() !== $currentUser->getId()) {
+        throw $this->createAccessDeniedException('Vous n\'avez pas l\'autorisation de supprimer cette relation');
+    }
+
+    // Supprimer la relation d'amitié complètement
+    $entityManager->remove($relation);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Cet utilisateur a été retiré de vos amis');
+
+    return $this->redirectToRoute('app_amis');
+}
+    
+  
+
+
+
 }

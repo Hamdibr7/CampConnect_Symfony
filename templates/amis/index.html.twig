@@ -345,6 +345,7 @@
 
     <div class="container">
         <div class="page-header">
+         <a href="{{ path('app_home') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Retour à l'accueil du camping</a>
             <h1>Mes Amis de Camping</h1>
         </div>
 
@@ -382,9 +383,10 @@
                                     <span class="badge badge-friends">Ami</span>
                                 </div>
                             </div>
-                            <div class="user-actions">
-                                <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
-                            </div>
+                           <div class="user-actions">
+    <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
+    <a href="{{ path('app_amis_retirer', {'id': relation.id}) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet ami ?');"><i class="fas fa-user-minus"></i> Retirer</a>
+</div>
                         </div>
                     {% endfor %}
                 </div>
@@ -540,7 +542,7 @@
             {% endif %}
         </div>
 
-        <a href="{{ path('app_home') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Retour à l'accueil du camping</a>
+       
     </div>
 
 </body>

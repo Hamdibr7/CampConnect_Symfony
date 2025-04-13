@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
+use Symfony\Component\Validator\Constraints\File;
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -22,7 +23,18 @@ class UserType extends AbstractType
                 'label' => 'Photo de profil',
                 'mapped' => false,  // Nous ne l'associons pas directement à l'entité
                 'required' => false,
-            ]);
+                
+            'constraints' => [
+            new File([
+                'maxSize' => '2M',
+                'mimeTypes' => [
+                    'image/jpeg',
+                    'image/png',
+                ],
+                'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPG ou PNG)',
+            ])
+        ],
+    ]);
         ;
     }
 

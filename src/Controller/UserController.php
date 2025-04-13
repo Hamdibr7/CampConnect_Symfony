@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
-
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Service\UserSessionService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
+use App\Service\PasswordHashService;
 use Psr\Log\LoggerInterface;
 #[Route('/utilisateur')]
  class UserController extends AbstractController
@@ -35,8 +36,9 @@ use Psr\Log\LoggerInterface;
         ]);
     }
 
-    #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
-    public function login(Request $request, UtilisateurRepository $utilisateurRepository): Response
+// Méthode login modifiée
+#[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
+public function login(Request $request, UtilisateurRepository $utilisateurRepository, PasswordHashService $passwordHashService): Response
 {
     if ($request->isMethod('POST')) {
         $email = $request->request->get('email');
@@ -52,36 +54,21 @@ use Psr\Log\LoggerInterface;
 
         // Vérification pour compte administrateur
         if ($email === 'admincamp@gmail.com' && $password === 'campconnect2025') {
-            // Recherche de l'utilisateur admin par email (au cas où il existe en base)
-            $user = $utilisateurRepository->findOneBy(['email' => $email]);
+            // Code existant pour admin...
+            $session->set('user', [
+                'email' => 'admincamp@gmail.com',
+                'nom' => 'Administrateur',
+                'isAdmin' => true
+            ]);
             
-            if ($user) {
-                // Si l'administrateur existe en base, on utilise ses données
-                $session->set('user', [
-                    'id' => $user->getId(),
-                    'email' => $user->getEmail(),
-                    'nom' => $user->getNom(),
-                    'isAdmin' => true
-                ]);
-            } else {
-                // Sinon on crée une session admin sans référence à un utilisateur en base
-                $session->set('user', [
-                    'email' => 'admincamp@gmail.com',
-                    'nom' => 'Administrateur',
-                    'isAdmin' => true
-                ]);
-            }
-            
-            
-            
-            // Redirection vers la page d'index des utilisateurs
             return $this->redirectToRoute('app_front_home');
         }
 
         // Recherche de l'utilisateur standard par email
         $user = $utilisateurRepository->findOneBy(['email' => $email]);
 
-        if ($user && $user->getMdp() === $password) {
+        // Modifiez cette ligne pour utiliser le service de hashage
+        if ($user && $passwordHashService->isPasswordValid($user, $password)) {
             // Stocker l'utilisateur en session
             $session->set('user', [
                 'id' => $user->getId(),
@@ -90,9 +77,6 @@ use Psr\Log\LoggerInterface;
                 'isAdmin' => false
             ]);
   
-            // Redirection vers le frontoffice au lieu du dashboard
-           
-            // Redirection vers la page FrontOffice/index.html.twig
             return $this->redirectToRoute('app_front_home');
         } else {
             // Message d'erreur
@@ -103,7 +87,8 @@ use Psr\Log\LoggerInterface;
     return $this->render('user/login.html.twig', [
         'last_email' => $request->request->get('email', '')
     ]);
-    }
+}
+
     #[Route('/front', name: 'app_front_home')]
     public function frontHome(Request $request, UtilisateurRepository $utilisateurRepository): Response
     {
@@ -170,45 +155,37 @@ use Psr\Log\LoggerInterface;
         return $this->redirectToRoute('app_login');
     }
 
-
     #[Route('/new', name: 'app_utilisateur_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request, 
         EntityManagerInterface $entityManager,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        PasswordHashService $passwordHashService
     ): Response
     {
         $utilisateur = new Utilisateur();
         $form = $this->createForm(UserType::class, $utilisateur);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            // Hashage du mot de passe avant de sauvegarder
+            $plainPassword = $utilisateur->getMdp();
+            $hashedPassword = $passwordHashService->hashPassword($utilisateur, $plainPassword);
+            $utilisateur->setMdp($hashedPassword);
+            
             // Gestion de l'upload de la photo de profil
             $pdpFile = $form->get('pdp')->getData();
             
             if ($pdpFile instanceof UploadedFile) {
-                $originalFilename = pathinfo($pdpFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$pdpFile->guessExtension();
-
-                try {
-                    $pdpFile->move(
-                        $this->getParameter('profile_directory'),
-                        $newFilename
-                    );
-                    $utilisateur->setPdp($newFilename);
-                } catch (FileException $e) {
-                    // Gérer l'erreur si le déplacement du fichier échoue
-                    $this->addFlash('error', 'Erreur lors de l\'upload de la photo de profil');
-                }
+                // Code existant pour l'upload...
             }
-
+    
             $entityManager->persist($utilisateur);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_utilisateur_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('user/new.html.twig', [
             'utilisateur' => $utilisateur,
             'form' => $form->createView(),
@@ -224,17 +201,47 @@ use Psr\Log\LoggerInterface;
     }
 
     #[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(UserType::class, $utilisateur);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'upload de la photo de profil
+            $pdpFile = $form->get('pdp')->getData();
+            
+            if ($pdpFile instanceof UploadedFile) {
+                $originalFilename = pathinfo($pdpFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$pdpFile->guessExtension();
+    
+                try {
+                    $pdpFile->move(
+                        $this->getParameter('profile_directory'),
+                        $newFilename
+                    );
+                    
+                    // Supprimer l'ancienne photo si elle existe
+                    $oldFilename = $utilisateur->getPdp();
+                    if ($oldFilename) {
+                        $oldFilePath = $this->getParameter('profile_directory').'/'.$oldFilename;
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                        }
+                    }
+                    
+                    $utilisateur->setPdp($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de la photo de profil');
+                }
+            }
+    
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_utilisateur_index', [], Response::HTTP_SEE_OTHER);
+    
+            // Rediriger vers la page d'accueil ou le profil
+            return $this->redirectToRoute('app_home');
         }
-
+    
         return $this->render('user/edit.html.twig', [
             'utilisateur' => $utilisateur,
             'form' => $form,
