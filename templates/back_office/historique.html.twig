@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des Réclamations{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_back_reclamations') }}">Réclamations</a></li>
+            <li class="breadcrumb-item active">Historique</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Historique des Réclamations</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Réclamation</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in historique %}
+                    <tr>
+                        <td>{{ entry.date|date('Y-m-d') }}</td>
+                        <td>{{ entry.heure|date('H:i:s') }}</td>
+                        <td>
+                            {% if entry.reclamation %}
+                                <a href="{{ path('app_back_reclamation_view', {id: entry.reclamation.id}) }}">
+                                    Réclamation #{{ entry.reclamation.id }}
+                                </a>
+                            {% else %}
+                                Réclamation supprimée
+                            {% endif %}
+                        </td>
+                        <td>{{ entry.details }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">Aucun historique disponible</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

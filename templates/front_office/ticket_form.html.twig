@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Ticket - Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_front_reclamations') }}">Mes Réclamations</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_front_reclamation_tickets', {id: reclamation.id}) }}">Tickets - Réclamation #{{ reclamation.id }}</a></li>
+            <li class="breadcrumb-item active">Nouveau Ticket</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Nouveau Ticket</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" class="form-control" rows="5" required></textarea>
+                            <div class="form-text">
+                                Décrivez votre problème ou ajoutez des informations supplémentaires.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Créer le ticket</button>
+                            <a href="{{ path('app_front_reclamation_tickets', {id: reclamation.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

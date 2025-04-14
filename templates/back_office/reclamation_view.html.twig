@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_back_reclamations') }}">Réclamations</a></li>
+            <li class="breadcrumb-item active">Réclamation #{{ reclamation.id }}</li>
+        </ol>
+    </nav>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Détails de la Réclamation</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Description</h5>
+                    <p>{{ reclamation.description }}</p>
+
+                    <h5>Statut</h5>
+                    <p>
+                        <span class="badge bg-{{ reclamation.status == 'Traité' ? 'success' : (reclamation.status == 'En cours' ? 'warning' : 'info') }}">
+                            {{ reclamation.status }}
+                        </span>
+                    </p>
+
+                    <h5>Camping</h5>
+                    <p>{{ reclamation.camping.nom }}</p>
+
+                    <h5>Utilisateur</h5>
+                    <p>{{ reclamation.utilisateur.email }}</p>
+                </div>
+            </div>
+
+            {% set ticket = reclamation.tickets.first %}
+            {% if ticket %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Ticket</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ ticket.description }}</p>
+                        
+                        <form method="post" action="{{ path('app_back_ticket_status', {id: ticket.id}) }}" class="mt-3">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <select name="status" class="form-select">
+                                        <option value="En attente" {{ ticket.status == 'En attente' ? 'selected' : '' }}>En attente</option>
+                                        <option value="En cours" {{ ticket.status == 'En cours' ? 'selected' : '' }}>En cours</option>
+                                        <option value="Traité" {{ ticket.status == 'Traité' ? 'selected' : '' }}>Traité</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary">Mettre à jour le statut</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    Aucun ticket trouvé pour cette réclamation.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Historique</h3>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for entry in historique %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <small class="text-muted">{{ entry.date|date('d/m/Y H:i:s') }}</small>
+                                </div>
+                                <p class="mb-1">{{ entry.details }}</p>
+                            </div>
+                        {% else %}
+                            <div class="list-group-item">
+                                <p class="mb-0">Aucun historique disponible</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

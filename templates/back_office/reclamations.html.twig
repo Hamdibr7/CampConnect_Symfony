@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Réclamations{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestion des Réclamations</h1>
+        <a href="{{ path('app_back_historique') }}" class="btn btn-outline-primary">
+            Voir l'historique
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Utilisateur</th>
+                            <th>Camping</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reclamation in reclamations %}
+                            <tr>
+                                <td>{{ reclamation.id }}</td>
+                                <td>{{ reclamation.utilisateur.email }}</td>
+                                <td>{{ reclamation.camping.nom }}</td>
+                                <td>{{ reclamation.description|slice(0, 100) }}...</td>
+                                <td>
+                                    <span class="badge bg-{{ reclamation.status == 'Traité' ? 'success' : (reclamation.status == 'En cours' ? 'warning' : 'info') }}">
+                                        {{ reclamation.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_back_reclamation_view', {id: reclamation.id}) }}" class="btn btn-sm btn-primary">
+                                        Gérer
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucune réclamation trouvée</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
