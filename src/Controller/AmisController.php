@@ -16,35 +16,133 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class AmisController extends AbstractController
 {
     #[Route('/amis', name: 'app_amis')]
-    
     public function index(Request $request, AmisRepository $amisRepository, UtilisateurRepository $utilisateurRepository): Response
     {
         $session = $request->getSession();
         $userData = $session->get('user');
-
+    
         if (!$userData) {
             return $this->redirectToRoute('app_login');
         }
-
+    
         $currentUser = $utilisateurRepository->find($userData['id']);
         if (!$currentUser) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
         }
- // Utilisation de la méthode améliorée findAmisWithDetails pour obtenir les détails des amis
- $amis = $amisRepository->findAmisWithDetails($currentUser->getId());
- $demandesEnvoyees = $amisRepository->findDemandesEnvoyees($currentUser->getId());
- $demandesRecues = $amisRepository->findDemandesRecues($currentUser->getId());
- $utilisateurs = $utilisateurRepository->findAllExceptCurrent($currentUser->getId());
-
+    
+        // Récupérer les paramètres de recherche
+        $query = $request->query->get('query');
+        $filters = $request->query->all('filter');
+    
+        // Récupérer les relations d'amitié de l'utilisateur courant
+        $amis = $amisRepository->findAmisWithDetails($currentUser->getId());
+        $demandesEnvoyees = $amisRepository->findDemandesEnvoyees($currentUser->getId());
+        $demandesRecues = $amisRepository->findDemandesRecues($currentUser->getId());
+        $utilisateurs = $utilisateurRepository->findAllExceptCurrent($currentUser->getId());
+    
+      // Si une recherche est effectuée
+if (!empty($query)) {
+    // Si aucun filtre n'est sélectionné, activer tous les filtres par défaut
+    $activeFilters = empty($filters) ? ['amis', 'demandes', 'invitations', 'nouveaux'] : $filters;
+    
+    // Filtrer les amis
+    if (in_array('amis', $activeFilters)) {
+        $amis = $this->filterUsersByQuery($amis, $query);
+    } else {
+        $amis = [];
+    }
+    
+    // Filtrer les demandes reçues
+    if (in_array('demandes', $activeFilters)) {
+        $demandesRecues = $this->filterUsersByQuery($demandesRecues, $query);
+    } else {
+        $demandesRecues = [];
+    }
+    
+    // Filtrer les demandes envoyées
+    if (in_array('invitations', $activeFilters)) {
+        $demandesEnvoyees = $this->filterUsersByQuery($demandesEnvoyees, $query);
+    } else {
+        $demandesEnvoyees = [];
+    }
+    
+    // Filtrer les autres utilisateurs
+    if (in_array('nouveaux', $activeFilters)) {
+        $utilisateurs = $this->filterUsersByQuery($utilisateurs, $query);
+    } else {
+        $utilisateurs = [];
+    }
+} else if (!empty($filters)) {
+    // Si des filtres sont sélectionnés mais pas de requête
+    if (!in_array('amis', $filters)) $amis = [];
+    if (!in_array('demandes', $filters)) $demandesRecues = [];
+    if (!in_array('invitations', $filters)) $demandesEnvoyees = [];
+    if (!in_array('nouveaux', $filters)) $utilisateurs = [];
+}
         return $this->render('amis/index.html.twig', [
             'utilisateurs' => $utilisateurs,
+            'user' => $currentUser ,// Ajoutez cette lign
             'demandesEnvoyees' => $demandesEnvoyees,
             'demandesRecues' => $demandesRecues,
             'amis' => $amis,
-            'relationRepository' => $amisRepository ,// Passer ici le repository des relations
-            'currentUser' => $currentUser
-        
+            'relationRepository' => $amisRepository, // Passer ici le repository des relations
+            'currentUser' => $currentUser,
+  
         ]);
+    }
+    
+    /**
+     * Filtre une liste d'objets Amis ou Utilisateur selon une requête de recherche
+     */
+   /**
+ * Filtre une liste d'objets Amis ou Utilisateur selon un nom ou prénom
+ */
+private function filterUsersByQuery(array $items, string $query): array
+{
+    if (empty($query)) {
+        return $items; // Si pas de requête, retourner tous les éléments
+    }
+    
+    $query = strtolower(trim($query));
+    
+    return array_filter($items, function($item) use ($query) {
+        // Pour les objets Amis
+        if ($item instanceof Amis) {
+            // Vérifier le demandeur
+            $demandeur = $item->getDemandeur();
+            if ($demandeur instanceof Utilisateur) {
+                $prenomDemandeur = strtolower($demandeur->getPrenom() ?? '');
+                $nomDemandeur = strtolower($demandeur->getNom() ?? '');
+                
+                if (strpos($prenomDemandeur, $query) !== false || strpos($nomDemandeur, $query) !== false) {
+                    return true;
+                }
+            }
+            
+            // Vérifier le destinataire
+            $destinataire = $item->getDestinataire();
+            if ($destinataire instanceof Utilisateur) {
+                $prenomDestinataire = strtolower($destinataire->getPrenom() ?? '');
+                $nomDestinataire = strtolower($destinataire->getNom() ?? '');
+                
+                if (strpos($prenomDestinataire, $query) !== false || strpos($nomDestinataire, $query) !== false) {
+                    return true;
+                }
+            }
+            
+            return false;
+        } 
+        // Pour les objets Utilisateur
+        else if ($item instanceof Utilisateur) {
+            $prenom = strtolower($item->getPrenom() ?? '');
+            $nom = strtolower($item->getNom() ?? '');
+            
+            return strpos($prenom, $query) !== false || strpos($nom, $query) !== false;
+        }
+        
+        return false;
+    });
+
     }
 
     #[Route('/amis/inviter/{id}', name: 'app_amis_inviter')]

@@ -193,8 +193,23 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
             $pdpFile = $form->get('pdp')->getData();
             
             if ($pdpFile instanceof UploadedFile) {
-                // Code existant pour l'upload...
+                $originalFilename = pathinfo($pdpFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdpFile->guessExtension();
+            
+                try {
+                    $pdpFile->move(
+                        $this->getParameter('profile_directory'), // Utilise BIEN 'profile_directory' ici
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
+                }
+            
+                // On stocke le nom du fichier dans la base de données
+                $utilisateur->setPdp($newFilename);
             }
+            
     
             $entityManager->persist($utilisateur);
             $entityManager->flush();
@@ -215,55 +230,89 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
             'utilisateur' => $utilisateur,
         ]);
     }
-    #[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]#[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]
     public function edit(
-        Request $request, 
-        Utilisateur $utilisateur, 
-        EntityManagerInterface $entityManager, 
+        Request $request,
+        Utilisateur $utilisateur,
+        EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
-        PasswordHashService $passwordHashService
-    ): Response
-    {
-        // Sauvegarde du mot de passe actuel hashé
+        PasswordHashService $passwordHashService,
+        UtilisateurRepository $utilisateurRepository
+    ): Response {
+        $session = $request->getSession();
+        $userData = $session->get('user');
+    
+        if (!$userData) {
+            return $this->redirectToRoute('app_login');
+        }
+    
+        $currentUser = $utilisateurRepository->find($userData['id']);
+        if (!$currentUser) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+    
+        // Sauvegarder le mot de passe actuel (hashé) et la photo de profil actuelle
         $currentPasswordHash = $utilisateur->getMdp();
-        
-        // Vider le mot de passe pour ne pas afficher le hash
+        $currentPhoto = $utilisateur->getPdp();
+    
+        // Vider le champ mot de passe pour ne pas afficher le hash dans le formulaire
         $utilisateur->setMdp('');
-        
+    
         $form = $this->createForm(UserType::class, $utilisateur);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérifier si un nouveau mot de passe a été saisi
+            // Gérer le mot de passe
             $newPassword = $utilisateur->getMdp();
-            
-            // Si le champ est vide, restaurer l'ancien mot de passe hashé
             if (empty($newPassword)) {
                 $utilisateur->setMdp($currentPasswordHash);
             } else {
-                // Sinon, hasher le nouveau mot de passe
                 $hashedPassword = $passwordHashService->hashPassword($utilisateur, $newPassword);
                 $utilisateur->setMdp($hashedPassword);
             }
-            
-            // Gestion de l'upload de la photo de profil...
-            
+    
+            // Gérer l'image de profil
+            $pdpFile = $form->get('pdp')->getData();
+    
+            if ($pdpFile instanceof UploadedFile) {
+                $originalFilename = pathinfo($pdpFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pdpFile->guessExtension();
+    
+                try {
+                    // Supprimer l'ancienne image si elle existe
+                    if ($currentPhoto && file_exists($this->getParameter('profile_directory') . '/' . $currentPhoto)) {
+                        unlink($this->getParameter('profile_directory') . '/' . $currentPhoto);
+                    }
+    
+                    // Enregistrer la nouvelle image
+                    $pdpFile->move(
+                        $this->getParameter('profile_directory'),
+                        $newFilename
+                    );
+                    $utilisateur->setPdp($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors du téléchargement de la nouvelle image de profil.');
+                }
+            } else {
+                // Si aucune nouvelle image n'est envoyée, conserver l'ancienne
+                $utilisateur->setPdp($currentPhoto);
+            }
+    
             $entityManager->flush();
-            
-            // Ajouter un message de succès
-            $this->addFlash('success', 'Votre profil a été mis à jour avec succès');
-            
-            
-            
+    
+            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
             return $this->redirectToRoute('app_front_home');
         }
     
         return $this->render('user/edit.html.twig', [
             'utilisateur' => $utilisateur,
-            'form' => $form,
+            'form' => $form->createView(),
+            'currentUser' => $currentUser,
+            'user' => $currentUser,
         ]);
     }
-
+    
     #[Route('/{id}/suppression', name: 'app_utilisateur_suppression', methods: ['GET'])]
     public function suppression(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {

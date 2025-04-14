@@ -154,8 +154,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
+        if ($this->email === 'admincamp@gmail.com') {
+            return ['ROLE_ADMIN'];
+        }
+    
         return ['ROLE_USER'];
     }
+    
 
     public function eraseCredentials(): void
     {
