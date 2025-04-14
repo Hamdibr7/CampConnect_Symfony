@@ -13,7 +13,7 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 </head>
 
 <body>
-    
+
     <!-- Navbar Start -->
     <div class="container-fluid position-relative nav-bar p-0">
         <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
@@ -59,65 +59,56 @@
     </div>
     <!-- Header End -->
 
+    <!-- Packages Start -->
+    <div class="container-fluid py-5">
+        <div class="container pt-5 pb-3">
+            <div class="text-center mb-3 pb-3">
+                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">NOS EQUIPEMENTS</h6>
+                <h1>Trouvez les meilleurs équipements de camping</h1>
+            </div>
+            <div class="row">
+                {% for equipement in equipements %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="package-item bg-white mb-2">
+                        <img class="img-fluid" src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="{{ equipement.nomEquip }}">
 
-    
-
-
-    <<!-- Packages Start -->
-<div class="container-fluid py-5">
-    <div class="container pt-5 pb-3">
-        <div class="text-center mb-3 pb-3">
-            <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">NOS EQUIPEMENTS</h6>
-            <h1>Trouvez les meilleurs équipements de camping</h1>
-        </div>
-        <div class="row">
-            {% for equipement in equipements %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="package-item bg-white mb-2">
-                    <img class="img-fluid" src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="{{ equipement.nomEquip }}">
-
-                    <div class="p-4">
-                        <div class="d-flex justify-content-between mb-3">
-                            <small class="m-0"><i class="fa fa-box text-primary mr-2"></i>{{ equipement.qte_dispo }} disponibles</small>
-                            <small class="m-0"><i class="fas fa-tags text-primary mr-2"></i>{{ equipement.prix }} DT</small>
-                            <input type="hidden" class="equipement-id" value="{{ equipement.id }}">
-                            <input type="hidden" class="prix-unitaire" value="{{ equipement.prix }}">
-                        </div>
-                        <a class="h5 text-decoration-none" href="">{{ equipement.nomEquip }}</a>
-                        <p class="mt-2">{{ equipement.description }}</p>
-                        <div class="border-top mt-4 pt-4">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <!-- Boutons + et - avec compteur -->
-                                <div class="input-group quantity-selector" style="width: 120px;">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-primary btn-minus" type="button">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <small class="m-0"><i class="fa fa-box text-primary mr-2"></i>{{ equipement.qte_dispo }} disponibles</small>
+                                <small class="m-0"><i class="fas fa-tags text-primary mr-2"></i>{{ equipement.prix }} DT</small>
+                                <input type="hidden" class="equipement-id" value="{{ equipement.id }}">
+                                <input type="hidden" class="prix-unitaire" value="{{ equipement.prix }}">
+                            </div>
+                            <a class="h5 text-decoration-none" href="">{{ equipement.nomEquip }}</a>
+                            <p class="mt-2">{{ equipement.description }}</p>
+                            <div class="border-top mt-4 pt-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <!-- Boutons + et - avec compteur -->
+                                    <div class="input-group quantity-selector" style="width: 120px;">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-outline-primary btn-minus" type="button">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" class="form-control text-center quantity-input" value="1" min="1" max="{{ equipement.qte_dispo }}">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-primary btn-plus" type="button">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <input type="text" class="form-control text-center quantity-input" value="1" min="1" max="{{ equipement.qte_dispo }}">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary btn-plus" type="button">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    
+                                    <button class="btn btn-primary btn-sm btn-add-to-cart">Ajouter au panier</button>
                                 </div>
-                                
-                                <button class="btn btn-primary btn-sm btn-add-to-cart">Ajouter au panier</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
-</div>
-<!-- Packages End -->
-
-
-
-
-    
+    <!-- Packages End -->
 
 
     <!-- Footer Start -->
@@ -127,24 +118,15 @@
                 <a href="" class="navbar-brand">
                     <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
                 </a>
-                <p>Store Camp Connect – Votre boutique en ligne spécialisée dans les équipements de camping de qualité. Découvrez notre sélection de tentes, sacs de couchage, réchauds et accessoires outdoor pour toutes vos aventures en pleine nature. Livraison rapide et conseils d'experts pour des expéditions réussies !
-
-Équipez-vous. Explorez. Profitez.</p>
-                
-                
+                <p>Store Camp Connect – Votre boutique en ligne spécialisée dans les équipements de camping de qualité. Découvrez notre sélection de tentes, sacs de couchage, réchauds et accessoires outdoor pour toutes vos aventures en pleine nature. Livraison rapide et conseils d'experts pour des expéditions réussies !</p>
             </div>
-            
-            
-            
         </div>
     </div>
     <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
         <div class="row">
             <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
-                <p class="m-0 text-white-50">Copyright &copy; <a href="#">Domain</a>. All Rights Reserved.</a>
-                </p>
+                <p class="m-0 text-white-50">Copyright &copy; <a href="#">Domain</a>. All Rights Reserved.</p>
             </div>
-            
         </div>
     </div>
     <!-- Footer End -->
@@ -152,7 +134,6 @@
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -163,46 +144,12 @@
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
-
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -249,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (e.target.matches('.btn-add-to-cart')) {
-            const card = e.target.closest('.package-item') || e.target.closest('.product-card');
+            const card = e.target.closest('.package-item');
             const name = card.querySelector('a')?.textContent.trim() || 'Produit';
             const price = parseFloat(card.querySelector('.fa-tags').nextSibling.textContent.trim().split(' ')[0]) || 0;
             const quantity = parseInt(card.querySelector('.quantity-input').value);
@@ -262,225 +209,56 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 cart.push({ id, name, price, quantity, image });
             }
-
             total += price * quantity;
             updateCart();
             cartPopup.style.display = 'block';
         }
-
-        if (e.target.closest('.delete-item')) {
-            const btn = e.target.closest('.delete-item');
-            const index = parseInt(btn.dataset.index);
-            total -= cart[index].price * cart[index].quantity;
-            cart.splice(index, 1);
-            updateCart();
-            if (cart.length === 0) cartPopup.style.display = 'none';
-        }
     });
 
-    // Sécurité sur les inputs quantité
-    document.body.addEventListener('input', function (e) {
-        if (e.target.classList.contains('quantity-input')) {
-            let val = parseInt(e.target.value);
-            const min = parseInt(e.target.getAttribute('min')) || 1;
-            const max = parseInt(e.target.getAttribute('max')) || 99;
-
-            if (isNaN(val) || val < min) e.target.value = min;
-            else if (val > max) e.target.value = max;
-        }
-    });
-
+    // Mettre à jour le panier
     function updateCart() {
         const cartItems = document.getElementById('cartItems');
         cartItems.innerHTML = '';
 
-        cart.forEach((item, i) => {
-            const itemHTML = `
+        cart.forEach((item, index) => {
+            cartItems.innerHTML += `
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                        <img src="${item.image}" alt="${item.name}" style="width: 40px; height: 40px; object-fit: cover;" class="mr-2">
-                        <div>
-                            <div class="font-weight-bold">${item.name}</div>
-                            <small>${item.quantity} x ${item.price} DT</small>
-                        </div>
+                    <img src="${item.image}" alt="${item.name}" style="width: 40px; height: 40px; object-fit: cover;" class="mr-2">
+                    <div>
+                        <div class="font-weight-bold">${item.name}</div>
+                        <small>Prix: ${item.price} DT</small>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="font-weight-bold mr-3">${(item.quantity * item.price).toFixed(2)} DT</div>
-                        <button class="btn btn-sm btn-outline-danger delete-item" data-index="${i}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="99" data-index="${index}" style="width: 60px; text-align: center;">
+                    <div class="font-weight-bold ml-3">${(item.quantity * item.price).toFixed(2)} DT</div>
+                    <button class="btn btn-sm btn-outline-danger delete-item" data-index="${index}">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             `;
-            cartItems.insertAdjacentHTML('beforeend', itemHTML);
         });
 
         document.getElementById('cartTotal').textContent = total.toFixed(2) + ' DT';
     }
-});
-</script>
 
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+    // Suppression d'un article
     document.body.addEventListener('click', function (e) {
-        // Bouton +
-        if (e.target.closest('.btn-plus')) {
-            const input = e.target.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value) || 1;
-            const max = parseInt(input.max) || 99;
-            if (value < max) {
-                input.value = value + 1;
-            }
-        }
-
-        // Bouton -
-        if (e.target.closest('.btn-minus')) {
-            const input = e.target.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value) || 1;
-            const min = parseInt(input.min) || 1;
-            if (value > min) {
-                input.value = value - 1;
-            }
+        if (e.target.matches('.delete-item')) {
+            const index = e.target.dataset.index;
+            total -= cart[index].price * cart[index].quantity;
+            cart.splice(index, 1);
+            updateCart();
         }
     });
 
-    // Sécurisation de l'input en cas de saisie manuelle
+    // Mise à jour de la quantité dans le panier
     document.body.addEventListener('input', function (e) {
-        if (e.target.classList.contains('quantity-input')) {
-            let value = parseInt(e.target.value) || 1;
-            const min = parseInt(e.target.min) || 1;
-            const max = parseInt(e.target.max) || 99;
-
-            if (value < min) {
-                e.target.value = min;
-            } else if (value > max) {
-                e.target.value = max;
-            }
+        if (e.target.matches('.quantity-input')) {
+            const index = e.target.dataset.index;
+            const newQuantity = parseInt(e.target.value) || 1;
+            cart[index].quantity = newQuantity;
+            total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            updateCart();
         }
     });
 });
 </script>
-
-
-
-<script>
-    document.querySelectorAll('.ajouter-panier').forEach(button => {
-        button.addEventListener('click', function () {
-            const equipementDiv = this.closest('.equipement');
-
-            const equipementId = equipementDiv.querySelector('.equipement-id')?.value;
-            const prixUnitaire = equipementDiv.querySelector('.prix-unitaire')?.value;
-            const quantite = equipementDiv.querySelector('.quantite')?.value;
-
-            // 🐞 Débogage : Afficher les valeurs récupérées
-            console.log("Valeurs récupérées :");
-            console.log("ID Equipement :", equipementId);
-            console.log("Prix Unitaire :", prixUnitaire);
-            console.log("Quantité :", quantite);
-
-            if (!equipementId || !prixUnitaire || !quantite) {
-                alert("Erreur : données manquantes");
-                return;
-            }
-
-            const postData = {
-                id: equipementId,
-                prix: prixUnitaire,
-                quantite: quantite
-            };
-
-            // 🐞 Débogage : Afficher la requête envoyée
-            console.log("Données envoyées :", postData);
-
-            fetch('/ajouter-panier', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': '{{ csrf_token("ajouter_panier") }}'
-                },
-                body: JSON.stringify(postData)
-            })
-            .then(response => {
-                console.log("Statut réponse :", response.status);
-                return response.json();
-            })
-            .then(data => {
-                // 🐞 Débogage : Afficher la réponse reçue
-                console.log("Réponse du serveur :", data);
-
-                if (data.success) {
-                    alert('✅ Équipement ajouté au panier !');
-                } else {
-                    alert('❌ Erreur : ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('🔥 Erreur AJAX attrapée :', error);
-                alert('Erreur serveur.');
-            });
-        });
-    });
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('.btn-add-to-cart');
-
-    buttons.forEach(button => {
-        button.addEventListener('click', function () {
-            const card = this.closest('.package-item');
-            const equipementId = card.querySelector('.equipement-id').value;
-            const prixUnitaire = card.querySelector('.prix-unitaire').value;
-            const quantite = card.querySelector('.quantity-input').value;
-
-            fetch('/panier/ajouter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest' // utile si tu veux détecter les requêtes AJAX côté Symfony
-                },
-                body: JSON.stringify({
-                    equipement_id: equipementId,
-                    quantite: quantite,
-                    prix_unitaire: prixUnitaire // tu peux l’envoyer même si on ne l’utilise pas
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert('Erreur : ' + data.error);
-                } else {
-                    alert('✅ ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur AJAX :', error);
-                alert('❌ Une erreur est survenue lors de l’ajout au panier.');
-            });
-        });
-    });
-
-    // Bonus : incrémentation/décrémentation du compteur
-    document.querySelectorAll('.btn-plus').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const input = this.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value);
-            const max = parseInt(input.getAttribute('max'));
-            if (value < max) input.value = value + 1;
-        });
-    });
-
-    document.querySelectorAll('.btn-minus').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const input = this.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value);
-            if (value > 1) input.value = value - 1;
-        });
-    });
-});
-</script>
-
-
-
