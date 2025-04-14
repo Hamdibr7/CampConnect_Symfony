@@ -9,6 +9,7 @@ use App\Repository\PublicationRepository;
 use App\Repository\LikesRepository;
 use App\Repository\CommentaireRepository;
 use App\Repository\UtilisateurRepository;
+use App\Service\CloudinaryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Cloudinary\Cloudinary;
 
 #[Route('/publication')]
 class PublicationController extends AbstractController
@@ -24,12 +25,18 @@ class PublicationController extends AbstractController
     private $entityManager;
     private $security;
     private $utilisateurRepository;
+    private $cloudinary;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security, UtilisateurRepository $utilisateurRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        Security $security, 
+        UtilisateurRepository $utilisateurRepository,
+        Cloudinary $cloudinary
+    ) {
         $this->entityManager = $entityManager;
         $this->security = $security;
         $this->utilisateurRepository = $utilisateurRepository;
+        $this->cloudinary = $cloudinary;
     }
 
     #[Route('/new', name: 'app_publication_new', methods: ['POST'])]
@@ -41,46 +48,41 @@ class PublicationController extends AbstractController
             return new JsonResponse(['error' => 'Default user not found'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $publication = new Publication();
-        $type = $request->request->get('type_pub');
         $content = $request->request->get('content');
-        
-        $publication->setTypePub($type);
+        $type = $request->request->get('type_pub');
+        $mediaFile = $request->files->get('media');
+
+        $publication = new Publication();
         $publication->setUtilisateurid($user);
         $publication->setDate(new \DateTime());
-        $publication->setDescription($content); // Store the text content as description
+        $publication->setTypePub($type);
+        $publication->setContenu($content);
 
-        $mediaFile = $request->files->get('media');
-        if ($mediaFile && ($type === 'image' || $type === 'video')) {
-            $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $newFilename = $originalFilename.'-'.uniqid().'.'.$mediaFile->guessExtension();
-
+        if ($mediaFile) {
             try {
-                $mediaFile->move(
-                    $this->getParameter('uploads_directory'),
-                    $newFilename
+                $result = $this->cloudinary->uploadApi()->upload(
+                    $mediaFile->getRealPath(),
+                    ['resource_type' => $type === 'video' ? 'video' : 'image']
                 );
-                $publication->setMediaUrl($newFilename);
-                $publication->setMediaType($type);
-                $publication->setContenu('/uploads/' . $newFilename); // Store the full path in contenu
-            } catch (FileException $e) {
-                return new JsonResponse(['error' => 'Failed to upload media'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                $publication->setContenu($result['secure_url']);
+            } catch (\Exception $e) {
+                return new JsonResponse(['error' => 'Failed to upload media: ' . $e->getMessage()], 500);
             }
-        } else {
-            // If it's a text post or no media file
-            $publication->setContenu($content);
         }
 
-        $this->entityManager->persist($publication);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['success' => true]);
+        try {
+            $this->entityManager->persist($publication);
+            $this->entityManager->flush();
+            return new JsonResponse(['message' => 'Publication created successfully', 'id' => $publication->getId()]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to create publication: ' . $e->getMessage()], 500);
+        }
     }
 
     #[Route('/list', name: 'publication_list', methods: ['GET'])]
     public function list(PublicationRepository $publicationRepository): JsonResponse
     {
-        $publications = $publicationRepository->findBy([], ['date' => 'DESC']);
+        $publications = $publicationRepository->findByDateDesc();
         $data = [];
 
         foreach ($publications as $publication) {
@@ -88,7 +90,6 @@ class PublicationController extends AbstractController
             $likes = $publication->getLikess()->map(function($like) {
                 return [
                     'id' => $like->getId(),
-                    'type' => $like->getType(),
                     'user' => [
                         'id' => $like->getUtilisateurid()->getId(),
                         'nom' => $like->getUtilisateurid()->getNom(),
@@ -118,8 +119,6 @@ class PublicationController extends AbstractController
                 'contenu' => $publication->getContenu(),
                 'type_pub' => $publication->getTypePub(),
                 'date' => $publication->getDate()->format('Y-m-d H:i:s'),
-                'media_url' => $publication->getMediaUrl(),
-                'media_type' => $publication->getMediaType(),
                 'likes' => $likes,
                 'commentaires' => $commentaires,
                 'user' => [

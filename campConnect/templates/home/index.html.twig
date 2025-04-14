@@ -93,13 +93,13 @@
 <div class="post-container">
     {# Post Creation Form #}
     <div class="post-input bg-white p-4 rounded-3 mb-4 shadow-sm">
-        <form id="postForm" enctype="multipart/form-data">
+        <form id="post-form" enctype="multipart/form-data">
             <div class="d-flex gap-3">
                 <img src="{{ default_user.pdp }}" alt="{{ default_user.prenom }}" class="user-avatar">
                 <div class="flex-grow-1">
                     <div class="form-floating mb-3">
-                        <textarea id="postContent" class="form-control border-0 bg-light" style="height: 100px" placeholder="Quoi de neuf dans ta tente {{ default_user.prenom }} ?"></textarea>
-                        <label for="postContent">Quoi de neuf dans ta tente {{ default_user.prenom }} ?</label>
+                        <textarea id="content" class="form-control border-0 bg-light" style="height: 100px" placeholder="Quoi de neuf dans ta tente {{ default_user.prenom }} ?"></textarea>
+                        <label for="content">Quoi de neuf dans ta tente {{ default_user.prenom }} ?</label>
                     </div>
                     
                     <div class="post-type-selector">
@@ -116,13 +116,12 @@
                         </div>
                     </div>
                     
-                    <div id="mediaUpload" class="mt-3" style="display: none;">
+                    <div id="media-container" class="mt-3" style="display: none;">
                         <div class="input-group mb-3">
-                            <input type="file" id="postMedia" class="form-control" accept="image/*,video/*">
+                            <input type="file" id="media" class="form-control" accept="image/*,video/*">
                         </div>
                         <div class="media-container mt-2">
-                            <img id="imagePreview" class="media-content rounded" style="display: none;">
-                            <video id="videoPreview" class="media-content rounded" controls style="display: none;"></video>
+                            <div id="media-preview"></div>
                         </div>
                     </div>
                     
@@ -202,15 +201,11 @@
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const postForm = document.getElementById('postForm');
-    const postContent = document.getElementById('postContent');
-    const postMedia = document.getElementById('postMedia');
-    const imagePreview = document.getElementById('imagePreview');
-    const videoPreview = document.getElementById('videoPreview');
-    const mediaUpload = document.getElementById('mediaUpload');
+    const postForm = document.getElementById('post-form');
+    const mediaInput = document.getElementById('media');
+    const mediaPreview = document.getElementById('media-preview');
+    const mediaContainer = document.getElementById('media-container');
     let currentPostType = 'text';
-    let longPressTimer;
-    let activeReactionButton = null;
 
     // Handle post type selection
     document.querySelectorAll('[data-type]').forEach(button => {
@@ -221,86 +216,58 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPostType = type;
             
             if (type === 'text') {
-                mediaUpload.style.display = 'none';
-                postMedia.value = '';
-                imagePreview.style.display = 'none';
-                videoPreview.style.display = 'none';
+                mediaContainer.style.display = 'none';
+                mediaInput.value = '';
+                mediaPreview.innerHTML = '';
             } else {
-                mediaUpload.style.display = 'block';
-                postMedia.accept = type === 'image' ? 'image/*' : 'video/*';
+                mediaContainer.style.display = 'block';
+                mediaInput.accept = type === 'video' ? 'video/*' : 'image/*';
             }
         });
     });
 
-    // Handle media preview
-    postMedia.addEventListener('change', function() {
+    mediaInput.addEventListener('change', function() {
         const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (currentPostType === 'image') {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                    videoPreview.style.display = 'none';
-                } else if (currentPostType === 'video') {
-                    videoPreview.src = e.target.result;
-                    videoPreview.style.display = 'block';
-                    imagePreview.style.display = 'none';
-                }
-            }
-            reader.readAsDataURL(file);
+        if (!file) {
+            mediaPreview.innerHTML = '';
+            return;
         }
-    });
 
-    // Handle reactions
-    document.querySelectorAll('.reaction-button').forEach(button => {
-        button.addEventListener('mousedown', function(e) {
-            if (e.button === 0) { // Left click only
-                longPressTimer = setTimeout(() => {
-                    if (activeReactionButton) {
-                        activeReactionButton.querySelector('.reaction-options').style.display = 'none';
-                    }
-                    this.querySelector('.reaction-options').style.display = 'flex';
-                    activeReactionButton = this;
-                }, 500);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            mediaPreview.innerHTML = '';
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'max-w-full h-auto rounded-lg';
+                mediaPreview.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = e.target.result;
+                video.controls = true;
+                video.className = 'max-w-full h-auto rounded-lg';
+                mediaPreview.appendChild(video);
             }
-        });
-
-        button.addEventListener('mouseup', () => clearTimeout(longPressTimer));
-        button.addEventListener('mouseleave', () => clearTimeout(longPressTimer));
+        };
+        reader.readAsDataURL(file);
     });
 
-    // Handle reaction selection
-    document.querySelectorAll('.reaction-option').forEach(option => {
-        option.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const postId = this.closest('.reaction-button').dataset.postId;
-            const reaction = this.dataset.reaction;
-            toggleReaction(postId, reaction);
-            if (activeReactionButton) {
-                activeReactionButton.querySelector('.reaction-options').style.display = 'none';
-                activeReactionButton = null;
-            }
-        });
-    });
-
-    // Close reaction options when clicking outside
-    document.addEventListener('click', function(e) {
-        if (activeReactionButton && !activeReactionButton.contains(e.target)) {
-            activeReactionButton.querySelector('.reaction-options').style.display = 'none';
-            activeReactionButton = null;
-        }
-    });
-
-    // Handle post submission
     postForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const formData = new FormData();
         
-        formData.append('content', postContent.value);
+        const content = document.getElementById('content').value;
+        const mediaFile = document.getElementById('media').files[0];
+        
+        if (!content.trim()) {
+            alert('Please enter some content');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('content', content);
         formData.append('type_pub', currentPostType);
-        if (postMedia.files[0]) {
-            formData.append('media', postMedia.files[0]);
+        if (mediaFile) {
+            formData.append('media', mediaFile);
         }
 
         try {
@@ -308,27 +275,115 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             });
+
             const data = await response.json();
-            if (data.success) {
-                // Reset form
-                postContent.value = '';
-                document.querySelectorAll('[data-type]').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector('[data-type="text"]').classList.add('active');
-                postMedia.value = '';
-                imagePreview.style.display = 'none';
-                videoPreview.style.display = 'none';
-                mediaUpload.style.display = 'none';
-                currentPostType = 'text';
-                // Reload page to show new post
-                window.location.reload();
+            if (response.ok) {
+                // Clear form and preview
+                postForm.reset();
+                mediaPreview.innerHTML = '';
+                mediaContainer.style.display = 'none';
+                document.querySelector('[data-type="text"]').click(); // Reset to text type
+                
+                // Reload posts immediately
+                await loadPosts();
+            } else {
+                alert(data.error || 'Failed to create post');
             }
         } catch (error) {
             console.error('Error:', error);
+            alert('Failed to create post');
         }
     });
+
+    // Initial load of posts
+    loadPosts();
 });
+
+async function loadPosts() {
+    try {
+        const response = await fetch('/publication/list');
+        if (!response.ok) {
+            throw new Error('Failed to load posts');
+        }
+        
+        const posts = await response.json();
+        const postsContainer = document.getElementById('posts-container');
+        postsContainer.innerHTML = '';
+        
+        posts.forEach(post => {
+            const postElement = createPostElement(post);
+            postsContainer.appendChild(postElement);
+        });
+    } catch (error) {
+        console.error('Error loading posts:', error);
+    }
+}
+
+function createPostElement(post) {
+    const postDiv = document.createElement('div');
+    postDiv.className = 'post bg-white p-4 rounded-3 mb-4 shadow-sm';
+    
+    let contentHtml = '';
+    if (post.type_pub === 'text') {
+        contentHtml = `<p>${post.contenu}</p>`;
+    } else {
+        contentHtml = `
+            <div class="media-container">
+                ${post.type_pub === 'video' 
+                    ? `<video src="${post.contenu}" controls class="media-content"></video>`
+                    : `<img src="${post.contenu}" alt="" class="media-content">`
+                }
+            </div>`;
+    }
+
+    postDiv.innerHTML = `
+        <div class="d-flex gap-3 mb-3">
+            <img src="${post.user.pdp}" alt="${post.user.prenom}" class="user-avatar">
+            <div>
+                <h6 class="mb-1">${post.user.prenom} ${post.user.nom}</h6>
+                <small class="text-muted">${new Date(post.date).toLocaleString()}</small>
+            </div>
+        </div>
+        
+        ${contentHtml}
+        
+        <div class="post-actions">
+            <button onclick="toggleReaction('${post.id}')" class="btn btn-link" data-post-id="${post.id}">
+                <i class="far fa-heart"></i>
+                <span class="likes-count">${post.likes ? post.likes.length : 0}</span>
+            </button>
+            <button onclick="toggleComments('${post.id}')" class="btn btn-link">
+                <i class="far fa-comment"></i>
+                <span>${post.commentaires ? post.commentaires.length : 0}</span>
+            </button>
+        </div>
+        
+        <div id="comments-${post.id}" class="comments-section" style="display: none;">
+            <div class="comments-container">
+                ${post.commentaires ? post.commentaires.map(comment => `
+                    <div class="comment">
+                        <div class="d-flex gap-2 align-items-start">
+                            <img src="${comment.user.pdp}" alt="${comment.user.prenom}" class="user-avatar">
+                            <div>
+                                <h6 class="mb-1">${comment.user.prenom} ${comment.user.nom}</h6>
+                                <p class="mb-1">${comment.contenu}</p>
+                                <small class="text-muted">${new Date(comment.date).toLocaleString()}</small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('') : ''}
+            </div>
+            <form onsubmit="submitComment(event, '${post.id}')" class="mt-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Write a comment...">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    return postDiv;
+}
 
 // Toggle comments visibility
 function toggleComments(postId) {
