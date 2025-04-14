@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 #[ORM\Table(name: 'reclamation')]
@@ -113,12 +114,27 @@ class Reclamation
     public function removeTicket(Ticket $ticket): static
     {
         if ($this->tickets->removeElement($ticket)) {
-            // set the owning side to null (unless already changed)
             if ($ticket->getReclamation() === $this) {
                 $ticket->setReclamation(null);
             }
         }
 
         return $this;
+    }
+
+    //les mots interdits
+    #[Assert\Callback]
+    public function validateBadWords(ExecutionContextInterface $context, $payload)
+    {
+        $badWords = ['merde', 'con', 'idiot', 'pute', 'bordel','fuck', 'fuck you', 'bitch', 'hoe']; 
+        $descriptionLower = strtolower($this->description ?? '');
+
+        foreach ($badWords as $badWord) {
+            if (str_contains($descriptionLower, $badWord)) {
+                $context->buildViolation('La description contient un mot interdit : "' . $badWord . '"')
+                    ->atPath('description')
+                    ->addViolation();
+            }
+        }
     }
 }
