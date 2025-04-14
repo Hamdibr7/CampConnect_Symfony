@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .text { font-family: Arial, sans-serif; font-weight: bold; }
+        .camp { fill: #2C3E50; }
+        .connect { fill: #3498db; }
+    </style>
+    <g transform="translate(60, 35)">
+        <text class="text camp">Camp</text>
+        <text class="text connect" x="50">Connect</text>
+    </g>
+    <path d="M20,40 L40,10 L60,40 Z" fill="none" stroke="#2C3E50" stroke-width="2"/>
+    <path d="M30,40 L40,20 L50,40 Z" fill="#3498db"/>
+</svg> 

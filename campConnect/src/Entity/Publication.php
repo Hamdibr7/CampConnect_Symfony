@@ -13,24 +13,31 @@ use App\Entity\Likes;
 class Publication
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "publications")]
     #[ORM\JoinColumn(name: 'utilisateurid', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $utilisateurid;
+    private ?Utilisateur $utilisateurid = null;
 
     #[ORM\Column(type: "text")]
-    private string $contenu;
+    private string $contenu = '';
 
     #[ORM\Column(type: "string", length: 50)]
-    private string $type_pub;
+    private string $type_pub = 'text';
 
     #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $date;
+    private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: "text")]
-    private string $description;
+    private string $description = '';
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $media_url = null;
+
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    private ?string $media_type = null;
 
     #[ORM\OneToMany(mappedBy: "publicationid", targetEntity: Likes::class)]
     private Collection $likess;
@@ -42,29 +49,23 @@ class Publication
     {
         $this->likess = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->date = new \DateTime();
+        $this->type_pub = 'text';
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $value): self
-    {
-        $this->id = $value;
-
-        return $this;
-    }
-
-    public function getUtilisateurid(): Utilisateur
+    public function getUtilisateurid(): ?Utilisateur
     {
         return $this->utilisateurid;
     }
 
-    public function setUtilisateurid(Utilisateur $value): self
+    public function setUtilisateurid(?Utilisateur $utilisateurid): self
     {
-        $this->utilisateurid = $value;
-
+        $this->utilisateurid = $utilisateurid;
         return $this;
     }
 
@@ -73,10 +74,9 @@ class Publication
         return $this->contenu;
     }
 
-    public function setContenu(string $value): self
+    public function setContenu(string $contenu): self
     {
-        $this->contenu = $value;
-
+        $this->contenu = $contenu;
         return $this;
     }
 
@@ -85,22 +85,20 @@ class Publication
         return $this->type_pub;
     }
 
-    public function setTypePub(string $value): self
+    public function setTypePub(string $type_pub): self
     {
-        $this->type_pub = $value;
-
+        $this->type_pub = $type_pub;
         return $this;
     }
 
-    public function getDate(): \DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $value): self
+    public function setDate(\DateTimeInterface $date): self
     {
-        $this->date = $value;
-
+        $this->date = $date;
         return $this;
     }
 
@@ -109,10 +107,31 @@ class Publication
         return $this->description;
     }
 
-    public function setDescription(string $value): self
+    public function setDescription(string $description): self
     {
-        $this->description = $value;
+        $this->description = $description;
+        return $this;
+    }
 
+    public function getMediaUrl(): ?string
+    {
+        return $this->media_url;
+    }
+
+    public function setMediaUrl(?string $media_url): self
+    {
+        $this->media_url = $media_url;
+        return $this;
+    }
+
+    public function getMediaType(): ?string
+    {
+        return $this->media_type;
+    }
+
+    public function setMediaType(?string $media_type): self
+    {
+        $this->media_type = $media_type;
         return $this;
     }
 
@@ -127,19 +146,16 @@ class Publication
             $this->likess[] = $likes;
             $likes->setPublicationid($this);
         }
-
         return $this;
     }
 
     public function removeLikes(Likes $likes): self
     {
         if ($this->likess->removeElement($likes)) {
-            // Set the owning side to null (unless already changed)
             if ($likes->getPublicationid() === $this) {
                 $likes->setPublicationid(null);
             }
         }
-
         return $this;
     }
 
@@ -154,19 +170,16 @@ class Publication
             $this->commentaires[] = $commentaire;
             $commentaire->setPublicationid($this);
         }
-
         return $this;
     }
 
     public function removeCommentaire(Commentaire $commentaire): self
     {
         if ($this->commentaires->removeElement($commentaire)) {
-            // Set the owning side to null (unless already changed)
             if ($commentaire->getPublicationid() === $this) {
                 $commentaire->setPublicationid(null);
             }
         }
-
         return $this;
     }
 
@@ -174,5 +187,4 @@ class Publication
     {
         return $this->contenu;
     }
-
 }

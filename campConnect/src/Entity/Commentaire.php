@@ -10,8 +10,9 @@ use App\Entity\Utilisateur;
 class Commentaire
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Publication::class, inversedBy: "commentaires")]
     #[ORM\JoinColumn(name: 'publicationid', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -32,12 +33,12 @@ class Commentaire
         $this->date = new \DateTime(); // Initialize the date to the current date
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $value): self
+    public function setId(?int $value): self
     {
         $this->id = $value;
 

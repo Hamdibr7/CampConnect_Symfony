@@ -1,0 +1,493 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CampConnect - Accueil{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .post-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .media-container {
+        width: 100%;
+        max-width: 500px;
+        height: 300px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .media-content {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .reaction-button {
+        position: relative;
+        padding: 8px 15px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+    
+    .reaction-options {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        background: white;
+        border-radius: 20px;
+        padding: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: none;
+        z-index: 1000;
+        margin-bottom: 5px;
+        min-width: 240px;
+    }
+    
+    .reaction-option {
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        padding: 2px;
+    }
+    
+    .reaction-option:hover {
+        transform: scale(1.2);
+    }
+
+    .app-logo {
+        width: 240px;
+        height: auto;
+        padding: 10px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .comment .user-avatar {
+        width: 32px;
+        height: 32px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="post-container">
+    {# Post Creation Form #}
+    <div class="post-input bg-white p-4 rounded-3 mb-4 shadow-sm">
+        <form id="postForm" enctype="multipart/form-data">
+            <div class="d-flex gap-3">
+                <img src="{{ default_user.pdp }}" alt="{{ default_user.prenom }}" class="user-avatar">
+                <div class="flex-grow-1">
+                    <div class="form-floating mb-3">
+                        <textarea id="postContent" class="form-control border-0 bg-light" style="height: 100px" placeholder="Quoi de neuf dans ta tente {{ default_user.prenom }} ?"></textarea>
+                        <label for="postContent">Quoi de neuf dans ta tente {{ default_user.prenom }} ?</label>
+                    </div>
+                    
+                    <div class="post-type-selector">
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary active" data-type="text">
+                                <i class="fas fa-font me-2"></i>Texte
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-type="image">
+                                <i class="fas fa-image me-2"></i>Image
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-type="video">
+                                <i class="fas fa-video me-2"></i>Vidéo
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="mediaUpload" class="mt-3" style="display: none;">
+                        <div class="input-group mb-3">
+                            <input type="file" id="postMedia" class="form-control" accept="image/*,video/*">
+                        </div>
+                        <div class="media-container mt-2">
+                            <img id="imagePreview" class="media-content rounded" style="display: none;">
+                            <video id="videoPreview" class="media-content rounded" controls style="display: none;"></video>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill">
+                            <i class="fas fa-paper-plane me-2"></i>Publier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {# Posts Container #}
+    <div id="posts-container">
+        {% for post in posts %}
+            <div class="post bg-white p-4 rounded-3 mb-4 shadow-sm">
+                <div class="d-flex gap-3 mb-3">
+                    <img src="{{ post.utilisateurid.pdp }}" alt="{{ post.utilisateurid.prenom }}" class="user-avatar">
+                    <div>
+                        <h6 class="mb-1">{{ post.utilisateurid.prenom }} {{ post.utilisateurid.nom }}</h6>
+                        <small class="text-muted">{{ post.date|date('d/m/Y H:i') }}</small>
+                    </div>
+                </div>
+                
+                {% if post.getTypePub() == 'text' %}
+                    <p>{{ post.contenu }}</p>
+                {% else %}
+                    <div class="media-container">
+                        {% if post.getTypePub() == 'image' %}
+                            <img src="{{ post.contenu }}" alt="" class="media-content">
+                        {% else %}
+                            <video src="{{ post.contenu }}" controls class="media-content"></video>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                <div class="post-actions">
+                    <button onclick="toggleReaction('{{ post.id }}')" class="btn btn-link" data-post-id="{{ post.id }}">
+                        <i class="{% if app.user and post.likess is defined and post.likess|filter(like => like.utilisateurid.id == app.user.id)|length > 0 %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span class="likes-count">{{ post.likess is defined ? post.likess|length : 0 }}</span>
+                    </button>
+                    <button onclick="toggleComments('{{ post.id }}')" class="btn btn-link">
+                        <i class="far fa-comment"></i>
+                        <span>{{ post.commentaires is defined ? post.commentaires|length : 0 }}</span>
+                    </button>
+                </div>
+                
+                <div id="comments-{{ post.id }}" class="comments-section" style="display: none;">
+                    <div class="comments-container">
+                        {% for comment in post.commentaires %}
+                            <div class="comment">
+                                <div class="d-flex gap-2 align-items-start">
+                                    <img src="{{ comment.utilisateurid.pdp }}" alt="{{ comment.utilisateurid.prenom }}" class="user-avatar">
+                                    <div>
+                                        <h6 class="mb-1">{{ comment.utilisateurid.prenom }} {{ comment.utilisateurid.nom }}</h6>
+                                        <p class="mb-1">{{ comment.contenu }}</p>
+                                        <small class="text-muted">{{ comment.date|date('Y-m-d H:i:s') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <form onsubmit="submitComment(event, '{{ post.id }}')" class="mt-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Write a comment...">
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const postForm = document.getElementById('postForm');
+    const postContent = document.getElementById('postContent');
+    const postMedia = document.getElementById('postMedia');
+    const imagePreview = document.getElementById('imagePreview');
+    const videoPreview = document.getElementById('videoPreview');
+    const mediaUpload = document.getElementById('mediaUpload');
+    let currentPostType = 'text';
+    let longPressTimer;
+    let activeReactionButton = null;
+
+    // Handle post type selection
+    document.querySelectorAll('[data-type]').forEach(button => {
+        button.addEventListener('click', function() {
+            const type = this.dataset.type;
+            document.querySelectorAll('[data-type]').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            currentPostType = type;
+            
+            if (type === 'text') {
+                mediaUpload.style.display = 'none';
+                postMedia.value = '';
+                imagePreview.style.display = 'none';
+                videoPreview.style.display = 'none';
+            } else {
+                mediaUpload.style.display = 'block';
+                postMedia.accept = type === 'image' ? 'image/*' : 'video/*';
+            }
+        });
+    });
+
+    // Handle media preview
+    postMedia.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (currentPostType === 'image') {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    videoPreview.style.display = 'none';
+                } else if (currentPostType === 'video') {
+                    videoPreview.src = e.target.result;
+                    videoPreview.style.display = 'block';
+                    imagePreview.style.display = 'none';
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle reactions
+    document.querySelectorAll('.reaction-button').forEach(button => {
+        button.addEventListener('mousedown', function(e) {
+            if (e.button === 0) { // Left click only
+                longPressTimer = setTimeout(() => {
+                    if (activeReactionButton) {
+                        activeReactionButton.querySelector('.reaction-options').style.display = 'none';
+                    }
+                    this.querySelector('.reaction-options').style.display = 'flex';
+                    activeReactionButton = this;
+                }, 500);
+            }
+        });
+
+        button.addEventListener('mouseup', () => clearTimeout(longPressTimer));
+        button.addEventListener('mouseleave', () => clearTimeout(longPressTimer));
+    });
+
+    // Handle reaction selection
+    document.querySelectorAll('.reaction-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const postId = this.closest('.reaction-button').dataset.postId;
+            const reaction = this.dataset.reaction;
+            toggleReaction(postId, reaction);
+            if (activeReactionButton) {
+                activeReactionButton.querySelector('.reaction-options').style.display = 'none';
+                activeReactionButton = null;
+            }
+        });
+    });
+
+    // Close reaction options when clicking outside
+    document.addEventListener('click', function(e) {
+        if (activeReactionButton && !activeReactionButton.contains(e.target)) {
+            activeReactionButton.querySelector('.reaction-options').style.display = 'none';
+            activeReactionButton = null;
+        }
+    });
+
+    // Handle post submission
+    postForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        
+        formData.append('content', postContent.value);
+        formData.append('type_pub', currentPostType);
+        if (postMedia.files[0]) {
+            formData.append('media', postMedia.files[0]);
+        }
+
+        try {
+            const response = await fetch('/publication/new', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) {
+                // Reset form
+                postContent.value = '';
+                document.querySelectorAll('[data-type]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('[data-type="text"]').classList.add('active');
+                postMedia.value = '';
+                imagePreview.style.display = 'none';
+                videoPreview.style.display = 'none';
+                mediaUpload.style.display = 'none';
+                currentPostType = 'text';
+                // Reload page to show new post
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+// Toggle comments visibility
+function toggleComments(postId) {
+    const commentsSection = document.getElementById(`comments-${postId}`);
+    commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+}
+
+// Submit comment
+function submitComment(event, postId) {
+    event.preventDefault();
+    const form = event.target;
+    const input = form.querySelector('input');
+    const content = input.value.trim();
+    
+    if (!content) {
+        console.error('Comment cannot be empty');
+        return;
+    }
+
+    console.log('Submitting comment:', { postId, content });
+
+    fetch(`/publication/${postId}/comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: content })
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server error: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Comment success:', data);
+        if (data.success) {
+            const commentsContainer = document.querySelector(`#comments-${postId} .comments-container`);
+            const commentHtml = `
+                <div class="comment">
+                    <div class="d-flex gap-2 align-items-start">
+                        <img src="${data.comment.user.pdp}" alt="${data.comment.user.prenom}" class="user-avatar">
+                        <div>
+                            <h6 class="mb-1">${data.comment.user.prenom} ${data.comment.user.nom}</h6>
+                            <p class="mb-1">${content}</p>
+                            <small class="text-muted">${new Date().toLocaleString()}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            commentsContainer.insertAdjacentHTML('beforeend', commentHtml);
+            input.value = '';
+            
+            // Update comment count
+            const commentButton = form.closest('.post').querySelector('button:nth-child(2) span');
+            const currentCount = parseInt(commentButton.textContent);
+            commentButton.textContent = currentCount + 1;
+        } else {
+            console.error('Failed to submit comment:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting comment:', error);
+    });
+}
+
+// Toggle reaction
+function toggleReaction(postId) {
+    fetch(`/publication/${postId}/reaction`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const reactionButton = document.querySelector(`button[data-post-id="${postId}"]`);
+            const likesCount = reactionButton.querySelector('.likes-count');
+            const icon = reactionButton.querySelector('i');
+            
+            // Update likes count
+            likesCount.textContent = data.likesCount;
+            
+            // Toggle icon
+            icon.classList.toggle('fas');
+            icon.classList.toggle('far');
+        } else {
+            console.error('Failed to toggle reaction:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling reaction:', error);
+    });
+}
+</script>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="nav-item active">
+        <img src="{{ default_user.pdp }}" alt="{{ default_user.prenom }}" class="user-avatar">
+        <span>{{ default_user.prenom }} {{ default_user.nom }}</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-campground nav-icon"></i>
+        <span>Campement</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-shopping-cart nav-icon"></i>
+        <span>Boutique d'Equipement</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-comments nav-icon"></i>
+        <span>Messagerie</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-users nav-icon"></i>
+        <span>Amis</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-calendar-check nav-icon"></i>
+        <span>Reservation</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-exclamation-circle nav-icon"></i>
+        <span>Reclamation</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-bell nav-icon"></i>
+        <span>Notifications</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-award nav-icon"></i>
+        <span>Badges</span>
+    </div>
+    
+    <div class="nav-item">
+        <i class="fas fa-sign-out-alt nav-icon"></i>
+        <span>Se Deconnecter</span>
+    </div>
+{% endblock %}
+
+{% block contacts %}
+    <h5 class="mb-4">Contacts</h5>
+    {% for user in users %}
+        <div class="nav-item">
+            <img src="{{ user.pdp }}" alt="{{ user.prenom }}" class="user-avatar">
+            <span>{{ user.prenom }} {{ user.nom }}</span>
+        </div>
+    {% endfor %}
+{% endblock %} 

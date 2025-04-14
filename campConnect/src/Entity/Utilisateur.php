@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Reclamation;
 
 #[ORM\Entity]
@@ -38,6 +39,14 @@ class Utilisateur
 
     #[ORM\Column(type: "string")]
     private string $badges;
+
+    public function __construct()
+    {
+        $this->campings = new ArrayCollection();
+        $this->publications = new ArrayCollection();
+        $this->amiss = new ArrayCollection();
+        $this->amisAsTarget = new ArrayCollection();
+    }
 
     public function getId()
     {
