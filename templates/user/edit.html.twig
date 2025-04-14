@@ -333,6 +333,93 @@
             object-fit: cover;
             border: 2px solid var(--primary);
         }
+/* Espace entre la navbar et l'alerte */
+.alert-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Aligne l'alerte au début de la page, mais peut aussi être ajusté à 'center' si nécessaire */
+  height: 40%; /* Vous pouvez ajuster cette hauteur si nécessaire */
+  width: 100%;
+  margin-top: 20px; /* Ajustez cet espace pour l'espacement entre la navbar et l'alerte */
+}
+
+/* Alerte */
+.alert {
+  margin-bottom: 10px; /* Espace entre l'alerte et le formulaire */
+  margin-top: 10px; /* Si vous souhaitez un petit espace entre l'alerte et ce qui la précède */
+  max-width: 500px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* Formulaire */
+.form-container {
+  margin-top: 10px; /* Ajuste l'espace entre l'alerte et le formulaire */
+}
+.photo-preview-container {
+    text-align: center;
+    margin-bottom: -10px;
+     margin-top: -98px;
+}
+
+.custom-file-upload {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    transition: all 0.3s;
+}
+
+.custom-file-upload:hover {
+    border-color: #2ecc71;
+    background: #f0fff4;
+}
+
+/* Style personnalisé pour le champ fichier */
+.form-control-file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.form-control-file + label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 5px;
+}
+
+.form-control-file + label:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+/* Style pour l'aperçu de la photo */
+.current-photo-preview {
+    border: 2px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.current-photo-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+
         
   </style>
 </head>
@@ -459,6 +546,18 @@
     </div>
   </div>
   <!-- Navbar End -->
+     <!-- Ajoutez ceci juste avant ou après la section des icônes de camping dans votre fichier edit.html.twig -->
+<div class="alert-container">
+  <div class="alert alert-info animate-up">
+    <strong><i class="fa fa-info-circle"></i> Information sur le mot de passe :</strong>
+    <ul style="margin-bottom: 0; padding-left: 20px; margin-top: 5px;">
+      <li>Pour conserver votre mot de passe actuel, tapez le mot de passe actuel.</li>
+      <li>Pour changer votre mot de passe, saisissez un nouveau mot de passe.</li>
+    </ul>
+  </div>
+</div>
+
+
 
   <!-- Edit Profile Section Start -->
   <section class="edit-profile-section">
@@ -473,45 +572,53 @@
         <span>⛺</span>
         <span>🌄</span>
       </div>
+      <!-- Ajoutez ceci juste avant ou après la section des icônes de camping dans votre fichier edit.html.twig -->
+
 
       {{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
       {{ form_errors(form) }}
-
-      {% for field in form %}
-        {% if field.vars.name != '_token' %}
-          <div class="form-group animate-up">
-            {% if field.vars.name == 'email' %}
-              {{ form_label(field, 'Adresse email') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'votre@gmail.com'}}) }}
-            {% elseif field.vars.name == 'mdp' %}
-              {{ form_label(field, 'Mot de passe') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
-              <div class="password-requirements">Au moins 8 caractères, incluant lettres et chiffres</div>
-            {% elseif field.vars.name == 'confirmPassword' %}
-              {{ form_label(field, 'Confirmer le mot de passe') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
-            {% elseif field.vars.name == 'prenom' %}
-              {{ form_label(field, 'Prenom') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
-            {% elseif field.vars.name == 'nom' %}
-              {{ form_label(field, 'Nom') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
-            {% elseif field.vars.name == 'age' %}
-              {{ form_label(field, 'Âge') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre âge'}}) }}
-            {% elseif field.vars.name == 'agreeTerms' %}
-              <div class="form-check">
-                {{ form_widget(field, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(field, "J'accepte les conditions d'utilisation", {'label_attr': {'class': 'form-check-label'}}) }}
-              </div>
-            {% else %}
-              {{ form_label(field) }}
-              {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+{% for field in form %}
+    {% if field.vars.name != '_token' %}
+        <div class="form-group animate-up">
+            {# Champ Photo de Profil - Version améliorée avec prévisualisation #}
+            {% if field.vars.name == 'pdp' %}
+                <div class="photo-preview-container">
+                    {# Aperçu de la photo #}
+                    <div id="current-photo" style="margin-bottom: 15px; text-align: center;">
+                        <strong>Photo de profil</strong>
+                        <div style="margin-top: 10px;">
+                            {% if utilisateur.pdp %}
+                                <img id="photo-preview" src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" 
+                                     alt="Photo actuelle" 
+                                     style="max-width: 150px; max-height: 150px; border-radius: 5px; object-fit: cover;">
+                                <p style="margin-top: 5px; font-size: 0.9em;">{{ utilisateur.pdp }}</p>
+                            {% else %}
+                                <img id="photo-preview" src="{{ asset('template/img/default-profile.png') }}" 
+                                     alt="Photo par défaut" 
+                                     style="max-width: 150px; max-height: 150px; border-radius: 5px; object-fit: cover;">
+                                <p style="margin-top: 5px; font-size: 0.9em;">Aucune photo</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {# Champ de sélection de fichier avec style personnalisé #}
+                    <div class="custom-file-upload">
+                        {{ form_label(field, 'Changer la photo') }}
+                        {{ form_widget(field, {'attr': {
+                            'class': 'form-control-file',
+                            'onchange': 'previewPhoto(this)'
+                        }}) }}
+                        <small class="form-text text-muted">Formats acceptés: JPG, PNG (Max 2MB)</small>
+                    </div>
+                </div>
+            
+            {# ... (gardez le reste de vos champs comme avant) ... #}
+            
             {% endif %}
             {{ form_errors(field) }}
-          </div>
-        {% endif %}
-      {% endfor %}
+        </div>
+    {% endif %}
+{% endfor %}
 
       <button type="submit" class="btn animate-up">Modifier votre profil</button>
       <!-- Lien vers la route de suppression -->
@@ -817,5 +924,26 @@
     });
     
   </script>
+  <script>
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        const fileName = input.files[0].name;
+        
+        reader.onload = function(e) {
+            // Met à jour l'image de prévisualisation
+            document.getElementById('photo-preview').src = e.target.result;
+            
+            // Met à jour le nom du fichier affiché
+            const fileNameElement = document.querySelector('#current-photo p');
+            if (fileNameElement) {
+                fileNameElement.textContent = fileName;
+            }
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 </body>
 </html>

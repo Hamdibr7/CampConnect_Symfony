@@ -245,6 +245,49 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.photo-preview-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.custom-file-upload {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    transition: all 0.3s;
+}
+
+.custom-file-upload:hover {
+    border-color: #2ecc71;
+    background: #f0fff4;
+}
+
+/* Style personnalisé pour le champ fichier */
+.form-control-file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.form-control-file + label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 5px;
+}
+
+.form-control-file + label:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
 
   </style>
 </head>
@@ -267,48 +310,77 @@
     </div>
   {% endfor %}
 {% endfor %}
+{{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
+{{ form_errors(form) }}
 
-    {{ form_start(form, {'attr': {'class': 'styled-form'}}) }}
-    {{ form_errors(form) }}
+{# Champ Photo de Profil #}
+<div class="form-group animate-up">
+    <div class="photo-preview-container">
+        {# Aperçu de la photo #}
+        <div id="current-photo" style="margin-bottom: 15px; text-align: center;">
+            <strong>Photo de profil</strong>
+            <div style="margin-top: 10px;">
+                <img id="photo-preview" src="{{ asset('template/img/default-profile.png') }}" 
+                     alt="Photo par défaut" 
+                     style="max-width: 150px; max-height: 150px; border-radius: 5px; object-fit: cover;">
+                <p id="photo-filename" style="margin-top: 5px; font-size: 0.9em;">Aucune photo sélectionnée</p>
+            </div>
+        </div>
+        
+        {# Champ de sélection de fichier #}
+        <div class="custom-file-upload">
+            {{ form_label(form.pdp, 'Choisir une photo') }}
+            {{ form_widget(form.pdp, {'attr': {
+                'class': 'form-control-file',
+                'onchange': 'previewPhoto(this)'
+            }}) }}
+            <small class="form-text text-muted">Formats acceptés: JPG, PNG (Max 2MB)</small>
+        </div>
+    </div>
+    {{ form_errors(form.pdp) }}
+</div>
 
-      {% for field in form %}
-        {% if field.vars.name != '_token' %}
-          <div class="form-group animate-up">
-            {% if field.vars.name == 'email' %}
-              {{ form_label(field, 'Adresse email') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'votre@gmail.com'}}) }}
-            {% elseif field.vars.name == 'mdp' %}
-              {{ form_label(field, 'Mot de passe') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
-              <div class="password-requirements">Au moins 8 caractères, incluant lettres et chiffres</div>
-            {% elseif field.vars.name == 'confirmPassword' %}
-              {{ form_label(field, 'Confirmer le mot de passe') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
-            {% elseif field.vars.name == 'prenom' %}
-              {{ form_label(field, 'Prenom') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
-            {% elseif field.vars.name == 'nom' %}
-              {{ form_label(field, 'Nom') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
-            {% elseif field.vars.name == 'age' %}
-              {{ form_label(field, 'Âge') }}
-              {{ form_widget(field, {'attr': {'class': 'form-control', 'placeholder': 'Votre âge'}}) }}
-            {% elseif field.vars.name == 'agreeTerms' %}
-              <div class="form-check">
-                {{ form_widget(field, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(field, "J'accepte les conditions d'utilisation", {'label_attr': {'class': 'form-check-label'}}) }}
-              </div>
-            {% else %}
-              {{ form_label(field) }}
-              {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
-            {% endif %}
-            {{ form_errors(field) }}
-          </div>
-        {% endif %}
-      {% endfor %}
-      
-      <button type="submit" class="btn animate-up">S'inscrire</button>
-    {{ form_end(form) }}
+{# Champ Nom #}
+<div class="form-group animate-up">
+    {{ form_label(form.nom, 'Nom') }}
+    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+    {{ form_errors(form.nom) }}
+</div>
+
+{# Champ Prénom #}
+<div class="form-group animate-up">
+    {{ form_label(form.prenom, 'Prénom') }}
+    {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+    {{ form_errors(form.prenom) }}
+</div>
+
+{# Champ Âge #}
+<div class="form-group animate-up">
+    {{ form_label(form.age, 'Âge') }}
+    {{ form_widget(form.age, {'attr': {'class': 'form-control', 'placeholder': 'Votre âge'}}) }}
+    {{ form_errors(form.age) }}
+</div>
+
+{# Champ Email #}
+<div class="form-group animate-up">
+    {{ form_label(form.email, 'Adresse email') }}
+    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@gmail.com'}}) }}
+    {{ form_errors(form.email) }}
+</div>
+
+{# Champ Mot de passe #}
+<div class="form-group animate-up">
+    {{ form_label(form.mdp, 'Mot de passe') }}
+    {{ form_widget(form.mdp, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
+    <div class="password-requirements">Au moins 8 caractères, incluant lettres et chiffres</div>
+    {{ form_errors(form.mdp) }}
+</div>
+
+
+
+
+<button type="submit" class="btn animate-up">S'inscrire</button>
+{{ form_end(form) }}
     
     <div class="login-link animate-up">
       Déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici</a>
@@ -547,5 +619,23 @@
       }
     });
   </script>
+    <script>
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        const fileName = input.files[0].name;
+        
+        reader.onload = function(e) {
+            // Met à jour l'image de prévisualisation
+            document.getElementById('photo-preview').src = e.target.result;
+            
+            // Met à jour le nom du fichier affiché
+            document.getElementById('photo-filename').textContent = fileName;
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 </body>
 </html>

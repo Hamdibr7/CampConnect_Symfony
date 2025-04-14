@@ -3,6 +3,8 @@
 namespace App\Controller;
 use App\Entity\Utilisateur;
 use App\Form\UserType;
+
+use App\Entity\Notification;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +36,7 @@ use Psr\Log\LoggerInterface;
         
         return $this->render('user/index.html.twig', [
             'utilisateurs' => $utilisateurRepository->findAll(),
+            
         ]);
     }
 
@@ -121,6 +124,7 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
                 'email' => $userData['email'],
                 'isAdmin' => true
             ];
+           
         } else {
             // Pour les utilisateurs normaux
             $user = $utilisateurRepository->find($userData['id']);
@@ -131,7 +135,8 @@ public function login(Request $request, UtilisateurRepository $utilisateurReposi
         }
     
         return $this->render('FrontOffice/index.html.twig', [
-            'user' => $user
+            'user' => $user,
+           
         ]);
     }
 
@@ -340,5 +345,26 @@ public function deleteFromIndex(Utilisateur $utilisateur, EntityManagerInterface
     
     return $this->redirectToRoute('app_utilisateur_index');
 }
+
+   /* #[Route('/', name: 'app_home')]
+    public function noti(EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+    
+        if ($user) {
+            // Récupérer les notifications de l'utilisateur
+            $notifications = $entityManager->getRepository(Notification::class)
+                ->findBy(['utilisateur' => $user], ['date_creation' => 'DESC']);
+        } else {
+            // Si l'utilisateur n'est pas connecté, on définit une variable vide
+            $notifications = [];
+        }
+    
+        return $this->render('FrontOffice/index.html.twig', [
+            'user' => $user,
+            'notifications' => $notifications, // Passer la variable notifications ici
+        ]);
+    }*/
+    
 
 }

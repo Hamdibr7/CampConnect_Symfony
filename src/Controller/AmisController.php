@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+use App\Entity\Notification;
 class AmisController extends AbstractController
 {
     #[Route('/amis', name: 'app_amis')]
@@ -208,6 +208,17 @@ private function filterUsersByQuery(array $items, string $query): array
 
         $demande->setStatus('amis');
         $entityManager->flush();
+        
+       
+    // Créer la notification pour l'utilisateur demandeur
+  //  $message = $demande->getDestinataire()->getPrenom() . ' ' . $demande->getDestinataire()->getNom() . ' a accepté votre invitation.';
+    //$notification = new Notification($message, $demande->getDemandeur());
+
+    // Sauvegarder la notification dans la base de données
+   // $entityManager->persist($notification);
+  //  $entityManager->flush();
+
+
 
         $this->addFlash('success', 'Invitation acceptée');
 
@@ -269,7 +280,7 @@ public function retirer(Request $request, Amis $relation, EntityManagerInterface
     return $this->redirectToRoute('app_amis');
 }
     
-  
+
 
 
 
