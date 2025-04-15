@@ -196,7 +196,7 @@
     <div class="container py-5">
         <div class="text-center mb-3 pb-3">
             <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Your Bookings</h6>
-            <h1>Recent Reservations</h1>
+            <h1>Réservations Récentes</h1>
         </div>
 
         <div class="row">
@@ -224,23 +224,23 @@
                             <h4 class="text-primary text-center">{{ reservation.camping.nom }}</h4>
 
                             <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>Start Date:</span>
+                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>Date de début :</span>
                                 <span>{{ reservation.camping.Date_Deb|date('M d, Y') }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>End Date:</span>
+                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>Date de fin :</span>
                                 <span>{{ reservation.camping.Date_Fin|date('M d, Y') }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fa fa-map-marker-alt text-primary mr-2"></i>Location:</span>
+                                <span><i class="fa fa-map-marker-alt text-primary mr-2"></i>Emplacement :</span>
                                 <span>{{ reservation.camping.ville }}, {{ reservation.camping.pays }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between mb-3">
-                                <span><i class="fa fa-dollar-sign text-primary mr-2"></i>Amount:</span>
-                                <span>${{ reservation.montant|number_format(2) }}</span>
+                                <span><i class="fa fa-dollar-sign text-primary mr-2"></i>Montant :</span>
+                                <span>DT  {{ reservation.montant|number_format(2) }}</span>
                             </div>
 
                             <div class="text-center mt-3">
@@ -248,7 +248,7 @@
         <form method="post" action="{{ path('reservation_delete', {'id': reservation.id}) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('delete ' ~ reservation.id) }}">
             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                <i class="fa fa-times mr-1"></i> Cancel
+                <i class="fa fa-times mr-1"></i> Annuler
             </button>
         </form>
     {% else %}

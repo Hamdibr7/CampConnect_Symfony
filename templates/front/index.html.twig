@@ -207,7 +207,7 @@
 <div class="container-fluid py-5">
     <div class="container pt-5 pb-3">
         <div class="text-center mb-3 pb-3">
-            <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Packages</h6>
+            <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Campings</h6>
             <h1>Des Opportunités de Camping Passionnantes Pour Vous</h1>
         </div>
         <div class="row">
@@ -234,7 +234,7 @@
     </p>
 
     <div class="border-top pt-3 d-flex justify-content-between align-items-center">
-        <h5 class="m-0 text-primary">${{ camping.montant }}</h5>
+        <h5 class="m-0 text-primary"> DT  {{ camping.montant }}</h5>
 
         {% if camping.Date_Deb > date() %}
             <a href="{{ path('reservation_new', {'camping_id': camping.id}) }}" class="btn btn-primary btn-sm">Réserver</a>
@@ -440,7 +440,7 @@
                     <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>About</a>
                     <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Destination</a>
                     <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Services</a>
-                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Packages</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Campings</a>
                     <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
                     <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Testimonial</a>
                     <a class="text-white-50" href="#"><i class="fa fa-angle-right mr-2"></i>Blog</a>
