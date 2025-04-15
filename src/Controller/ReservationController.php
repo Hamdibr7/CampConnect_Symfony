@@ -21,9 +21,7 @@ class ReservationController extends AbstractController
     {
         $campings = $campingRepository->findAll();
 
-        return $this->render('front/index.html.twig', [
-            'campings' => $campings,
-        ]);
+        return $this->render('front/index.html.twig', [  'campings' => $campings,]);
     }
 
     #[Route('/list', name: 'reservation_index', methods: ['GET'])]
@@ -35,7 +33,6 @@ class ReservationController extends AbstractController
             'reservations' => $reservations,
         ]);
     }
-
     #[Route('/new/{camping_id}', name: 'reservation_new', methods: ['GET', 'POST'])]
     public function new(int $camping_id, CampingRepository $campingRepository, EntityManagerInterface $em): Response
     {
@@ -56,6 +53,9 @@ class ReservationController extends AbstractController
         $this->addFlash('success', 'Reservation created successfully!');
         return $this->redirectToRoute('reservation_index'); 
     }
+    
+
+    
     
     #[Route('/{id}/delete', name: 'reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $em): Response
@@ -79,5 +79,14 @@ class ReservationController extends AbstractController
         $this->addFlash('success', 'Reservation canceled successfully.');
         return $this->redirectToRoute('reservation_index');
     }
+    #[Route('/admin/reservation', name: 'admin_reservations_list')]
+    public function RESBack(ReservationRepository $reservationRepository): Response
+   {
+        $reservations = $reservationRepository->findAll();
+
+     return $this->render('back/reservation/show.html.twig', [
+           'reservations' => $reservations,
+      ]);
+  }
     
 }

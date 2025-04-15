@@ -3,7 +3,6 @@
 {% block title %}Ajouter un nouveau badge{% endblock %}
 
 {% block body %}
-    {# Flash messages placed correctly inside the body block #}
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">
             <i class="fas fa-check-circle"></i> {{ message }}
@@ -25,18 +24,25 @@
         <div class="mb-3">
             {{ form_label(form.nom_badge) }}
             {{ form_widget(form.nom_badge, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.nom_badge) }}
         </div>
+        
         <div class="mb-3">
             {{ form_label(form.description) }}
             {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.description) }}
         </div>
+        
         <div class="mb-3">
             {{ form_label(form.reservations_requises) }}
             {{ form_widget(form.reservations_requises, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.reservations_requises) }}
         </div>
+        
         <div class="mb-3">
             {{ form_label(form.imageFile) }}
             {{ form_widget(form.imageFile, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(form.imageFile) }}
         </div>
 
         <button class="btn btn-success" type="submit">

@@ -202,57 +202,64 @@
         <div class="row">
             {% if reservations is defined and reservations|length > 0 %}
                 {% for reservation in reservations %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="reservation-card bg-white p-4 shadow rounded h-100">
-                        <!-- Image Section -->
-                        <div class="text-center mb-3">
-                            {% if reservation.camping.image %}
-                                <img class="img-fluid rounded-circle" 
-                                     src="{{ asset('uploads/' ~ reservation.camping.image) }}" 
-                                     style="width: 80px; height: 80px; object-fit: cover;" 
-                                     alt="{{ reservation.camping.nom }}"
-                                     onerror="this.onerror=null;this.src='{{ asset('img/default-camping.jpg') }}'">
-                            {% else %}
-                                <img class="img-fluid rounded-circle" 
-                                     src="{{ asset('img/default-camping.jpg') }}" 
-                                     style="width: 80px; height: 80px; object-fit: cover;" 
-                                     alt="Default camping image">
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Reservation Details -->
-                        <h4 class="text-primary text-center">{{ reservation.camping.nom }}</h4>
-                        
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fa fa-calendar-alt text-primary mr-2"></i>Start Date:</span>
-                            <span>{{ reservation.camping.Date_Deb|date('M d, Y') }}</span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fa fa-calendar-alt text-primary mr-2"></i>End Date:</span>
-                            <span>{{ reservation.camping.Date_Fin|date('M d, Y') }}</span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fa fa-map-marker-alt text-primary mr-2"></i>Location:</span>
-                            <span>{{ reservation.camping.ville }}, {{ reservation.camping.pays }}</span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between mb-3">
-                            <span><i class="fa fa-dollar-sign text-primary mr-2"></i>Amount:</span>
-                            <span>${{ reservation.montant|number_format(2) }}</span>
-                        </div>
-                        
-                        <div class="text-center">
-                            <form method="post" action="{{ path('reservation_delete', {'id': reservation.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete ' ~ reservation.id) }}">
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                                    <i class="fa fa-times mr-1"></i> Cancel
-                                </button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="reservation-card bg-white p-4 shadow rounded h-100">
+                            <!-- Image -->
+                            <div class="text-center mb-3">
+                                {% if reservation.camping.image %}
+                                    <img class="img-fluid rounded-circle"
+                                         src="{{ asset('uploads/badges/' ~ reservation.camping.image) }}"
+                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                         alt="{{ reservation.camping.nom }}"
+                                         onerror="this.onerror=null;this.src='{{ asset('img/default-camping.jpg') }}'">
+                                {% else %}
+                                    <img class="img-fluid rounded-circle"
+                                         src="{{ asset('img/default-camping.jpg') }}"
+                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                         alt="Default camping image">
+                                {% endif %}
+                            </div>
+
+                            <!-- Reservation Details -->
+                            <h4 class="text-primary text-center">{{ reservation.camping.nom }}</h4>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>Start Date:</span>
+                                <span>{{ reservation.camping.Date_Deb|date('M d, Y') }}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fa fa-calendar-alt text-primary mr-2"></i>End Date:</span>
+                                <span>{{ reservation.camping.Date_Fin|date('M d, Y') }}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fa fa-map-marker-alt text-primary mr-2"></i>Location:</span>
+                                <span>{{ reservation.camping.ville }}, {{ reservation.camping.pays }}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <span><i class="fa fa-dollar-sign text-primary mr-2"></i>Amount:</span>
+                                <span>${{ reservation.montant|number_format(2) }}</span>
+                            </div>
+
+                            <div class="text-center mt-3">
+    {% if reservation.camping.Date_Deb|date("Y-m-d") > "now"|date("Y-m-d") %}
+        <form method="post" action="{{ path('reservation_delete', {'id': reservation.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete ' ~ reservation.id) }}">
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                <i class="fa fa-times mr-1"></i> Cancel
+            </button>
+        </form>
+    {% else %}
+        <div class="btn btn-sm" style="background-color: #f8d7da; color: #721c24; cursor: not-allowed;" disabled>
+            <i class="fa fa-ban mr-1"></i> Annulation indisponible
+        </div>
+    {% endif %}
+</div>
+
                         </div>
                     </div>
-                </div>
                 {% endfor %}
             {% else %}
                 <div class="col-12">
@@ -268,6 +275,8 @@
         </div>
     </div>
 </div>
+
+
 
 
 
