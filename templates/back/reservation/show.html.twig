@@ -4,6 +4,12 @@
 
 {% block css %}
     {{ parent() }}
+        <style>
+        .custom-card-width {
+            max-width: 1000px;
+            margin: auto;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -45,7 +51,7 @@
                                     <td>{{ reservation.montant|number_format(3, '.', ' ') }} DT</td>
                                     <td>
                                         {% if reservation.camping.image %}
-                                            <img src="{{ asset('uploads/campings/' ~ reservation.camping.image) }}"
+                                            <img src="{{ asset('uploads/badges/' ~ reservation.camping.image) }}"
                                                  alt="{{ reservation.camping.nom }}"
                                                  style="height: 60px; border-radius: 8px;"
                                                  class="shadow-sm border">
