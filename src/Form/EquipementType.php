@@ -25,7 +25,7 @@ class EquipementType extends AbstractType
                 'label' => 'Quantité disponible',
             ])
             ->add('prix', NumberType::class, [
-                'label' => 'Prix (€)',
+                'label' => 'Prix (dt)',
                 'scale' => 2,
             ])
             ->add('imageFile', FileType::class, [

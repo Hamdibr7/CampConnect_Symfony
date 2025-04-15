@@ -182,7 +182,7 @@
                             <td>{{ equipement.id }}</td>
                             <td>{{ equipement.nomEquip }}</td>
                             <td>{{ equipement.qte_dispo }}</td>
-                            <td>{{ equipement.prix|number_format(2, ',', ' ') }} €</td>
+                            <td>{{ equipement.prix|number_format(2, ',', ' ') }} dt</td>
                             <td>
                                 {% if equipement.image %}
                                 <img src="{{ asset('uploads/equipements/' ~ equipement.image) }}" class="img-thumbnail" alt="{{ equipement.nomEquip }}">

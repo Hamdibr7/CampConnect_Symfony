@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>TRAVELER - Free Travel Website Template</title>
+    <title>CampConnect</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -13,7 +13,7 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -27,25 +27,75 @@
 </head>
 
 <body>
-
-    <!-- Navbar Start -->
-    <div class="container-fluid position-relative nav-bar p-0">
-        <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
-            <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
-                <a href="" class="navbar-brand">
-                    <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
-                    <div class="navbar-nav ml-auto py-0">
-                    </div>
-                </div>
-            </nav>
+<!-- Topbar Start -->
+<div class="container-fluid bg-light pt-3 d-none d-lg-block">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+        <div class="d-inline-flex align-items-center">
+          <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+          <p class="text-body px-3">|</p>
+          <p><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</p>
         </div>
+      </div>
+      <div class="col-lg-6 text-center text-lg-right">
+        <div class="d-inline-flex align-items-center">
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a class="text-primary pl-3" href="#">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
     </div>
-    <!-- Navbar End -->
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Navbar Start -->
+<div class="container-fluid position-relative nav-bar p-0">
+    <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+        <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+            <a href="/" class="navbar-brand">
+                <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                <div class="navbar-nav ml-auto py-0">
+                    <a href="/" class="nav-item nav-link ">Accueil</a>
+                    <a href="/about" class="nav-item nav-link">À propos</a>
+                    <a href="/services" class="nav-item nav-link">Services</a>
+                    <a href="/admin/equipement/Store" class="nav-item nav-link active">Équipements</a>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Autres</a>
+                        <div class="dropdown-menu border-0 rounded-0 m-0">
+                            <a href="/blog" class="dropdown-item">Blog</a>
+                            <a href="/guides" class="dropdown-item">Guides</a>
+                            <a href="/destinations" class="dropdown-item">Destinations</a>
+                            <a href="/avis" class="dropdown-item">Avis</a>
+                        </div>
+                    </div>
+                    <a href="/contact" class="nav-item nav-link">Contact</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- Navbar End -->
+
 
 
     <!-- Header Start -->
@@ -59,57 +109,105 @@
     </div>
     <!-- Header End -->
 
-    <!-- Packages Start -->
-    <div class="container-fluid py-5">
-        <div class="container pt-5 pb-3">
-            <div class="text-center mb-3 pb-3">
-                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">NOS EQUIPEMENTS</h6>
-                <h1>Trouvez les meilleurs équipements de camping</h1>
-            </div>
-            <div class="row">
-                {% for equipement in equipements %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="package-item bg-white mb-2">
-                        <img class="img-fluid" src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="{{ equipement.nomEquip }}">
+  <!DOCTYPE html>
+<html lang="en">
+<!-- ... [En-tête reste inchangé] ... -->
 
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <small class="m-0"><i class="fa fa-box text-primary mr-2"></i>{{ equipement.qte_dispo }} disponibles</small>
-                                <small class="m-0"><i class="fas fa-tags text-primary mr-2"></i>{{ equipement.prix }} DT</small>
-                                <input type="hidden" class="equipement-id" value="{{ equipement.id }}">
-                                <input type="hidden" class="prix-unitaire" value="{{ equipement.prix }}">
-                            </div>
-                            <a class="h5 text-decoration-none" href="">{{ equipement.nomEquip }}</a>
+<!-- Ajoutez ces styles dans la section <head> de votre fichier -->
+<style>
+    .package-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-item .img-container {
+        height: 200px; /* Hauteur fixe pour toutes les images */
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .package-item .img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Pour garder les proportions des images */
+    }
+    
+    .package-item .p-4 {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-item .description-container {
+        height: 80px; /* Hauteur fixe pour les descriptions */
+        overflow: auto;
+        margin-bottom: 10px;
+    }
+    
+    .border-top {
+        margin-top: auto !important;
+    }
+</style>
+
+<!-- ... [Reste du code inchangé jusqu'à la section Packages] ... -->
+
+<!-- Packages Start - Section modifiée -->
+<div class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <div class="text-center mb-3 pb-3">
+            <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">NOS EQUIPEMENTS</h6>
+            <h1>Trouvez les meilleurs équipements de camping</h1>
+        </div>
+        <div class="row">
+            {% for equipement in equipements %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="package-item bg-white mb-2">
+                    <div class="img-container">
+                        <img class="img-fluid" src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="{{ equipement.nomEquip }}">
+                    </div>
+
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <small class="m-0"><i class="fa fa-box text-primary mr-2"></i>{{ equipement.qte_dispo }} disponibles</small>
+                            <small class="m-0"><i class="fas fa-tags text-primary mr-2"></i>{{ equipement.prix }} DT</small>
+                            <input type="hidden" class="equipement-id" value="{{ equipement.id }}">
+                            <input type="hidden" class="prix-unitaire" value="{{ equipement.prix }}">
+                        </div>
+                        <a class="h5 text-decoration-none" href="">{{ equipement.nomEquip }}</a>
+                        <div class="description-container">
                             <p class="mt-2">{{ equipement.description }}</p>
-                            <div class="border-top mt-4 pt-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <!-- Boutons + et - avec compteur -->
-                                    <div class="input-group quantity-selector" style="width: 120px;">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-outline-primary btn-minus" type="button">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control text-center quantity-input" value="1" min="1" max="{{ equipement.qte_dispo }}">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-primary btn-plus" type="button">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
+                        </div>
+                        <div class="border-top mt-4 pt-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <!-- Boutons + et - avec compteur -->
+                                <div class="input-group quantity-selector" style="width: 120px;">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-primary btn-minus" type="button">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
                                     </div>
-                                    
-                                    <button class="btn btn-primary btn-sm btn-add-to-cart">Ajouter au panier</button>
+                                    <input type="text" class="form-control text-center quantity-input" value="1" min="1" max="{{ equipement.qte_dispo }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary btn-plus" type="button">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                
+                                <button class="btn btn-primary btn-sm btn-add-to-cart">Ajouter au panier</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
-    <!-- Packages End -->
+</div>
+<!-- Packages End -->
 
+<!-- ... [Reste du code inchangé] ... -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
@@ -171,51 +269,105 @@ document.addEventListener('DOMContentLoaded', function () {
             <strong>Total:</strong>
             <span id="cartTotal" class="font-weight-bold">0 DT</span>
         </div>
-        <button class="btn btn-success btn-block mt-2">Valider la commande</button>
+        <button id="validateOrder" class="btn btn-success btn-block mt-2">Valider la commande</button>
     `;
     document.body.appendChild(cartPopup);
 
     // Bouton fermer
-    document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('closeCart').addEventListener('click', function() {
         cartPopup.style.display = 'none';
     });
-
-    // Gestion dynamique des "+" et "-"
-    document.body.addEventListener('click', function (e) {
-        if (e.target.matches('.btn-plus')) {
-            const input = e.target.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value);
-            const max = parseInt(input.getAttribute('max')) || 99;
-            if (value < max) input.value = value + 1;
+    
+    // Bouton valider commande
+    document.getElementById('validateOrder').addEventListener('click', function() {
+        if (cart.length === 0) {
+            alert('Votre panier est vide. Veuillez ajouter des articles avant de valider.');
+            return;
         }
-
-        if (e.target.matches('.btn-minus')) {
-            const input = e.target.closest('.quantity-selector').querySelector('.quantity-input');
-            let value = parseInt(input.value);
-            if (value > 1) input.value = value - 1;
-        }
-
-        if (e.target.matches('.btn-add-to-cart')) {
-            const card = e.target.closest('.package-item');
-            const name = card.querySelector('a')?.textContent.trim() || 'Produit';
-            const price = parseFloat(card.querySelector('.fa-tags').nextSibling.textContent.trim().split(' ')[0]) || 0;
-            const quantity = parseInt(card.querySelector('.quantity-input').value);
-            const image = card.querySelector('img')?.src || '';
-            const id = card.dataset.id || name + price;
-
-            const existing = cart.find(p => p.id === id);
-            if (existing) {
-                existing.quantity += quantity;
-            } else {
-                cart.push({ id, name, price, quantity, image });
-            }
-            total += price * quantity;
-            updateCart();
-            cartPopup.style.display = 'block';
-        }
+        
+        // Rediriger vers la route de génération PDF
+        window.location.href = '/panier/pdf';
     });
 
-    // Mettre à jour le panier
+    // Gestion des boutons + et -
+    const handleQuantityButtons = function() {
+        // Boutons +
+        const plusButtons = document.querySelectorAll('.btn-plus');
+        plusButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.closest('.quantity-selector').querySelector('.quantity-input');
+                let value = parseInt(input.value);
+                const max = parseInt(input.getAttribute('max')) || 99;
+                if (value < max) input.value = value + 1;
+            });
+        });
+
+        // Boutons -
+        const minusButtons = document.querySelectorAll('.btn-minus');
+        minusButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.closest('.quantity-selector').querySelector('.quantity-input');
+                let value = parseInt(input.value);
+                if (value > 1) input.value = value - 1;
+            });
+        });
+
+        // Boutons d'ajout au panier
+        const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.package-item');
+                const name = card.querySelector('a')?.textContent.trim() || 'Produit';
+                const image = card.querySelector('img')?.src || '';
+                const quantityInput = card.querySelector('.quantity-input');
+                const quantity = parseInt(quantityInput.value);
+                const prixUnitaire = parseFloat(card.querySelector('.prix-unitaire').value);
+                const equipementId = parseInt(card.querySelector('.equipement-id').value);
+                const id = equipementId;
+
+                const existing = cart.find(p => p.id === id);
+                if (existing) {
+                    existing.quantity += quantity;
+                } else {
+                    cart.push({ id, name, price: prixUnitaire, quantity, image });
+                }
+                total += prixUnitaire * quantity;
+                updateCart();
+                cartPopup.style.display = 'block';
+
+                // Envoi AJAX à Symfony
+                fetch('/panier/ajouter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        equipement_id: equipementId,
+                        quantite: quantity,
+                        prix_unitaire: prixUnitaire
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Erreur : ' + data.error);
+                    } else {
+                        console.log('✅ Panier mis à jour :', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur AJAX :', error);
+                    alert('❌ Une erreur est survenue lors de l\'ajout au panier.');
+                });
+            });
+        });
+    };
+
+    // Appliquer les écouteurs d'événements lors du chargement
+    handleQuantityButtons();
+
+    // Mettre à jour le panier visuel
     function updateCart() {
         const cartItems = document.getElementById('cartItems');
         cartItems.innerHTML = '';
@@ -228,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="font-weight-bold">${item.name}</div>
                         <small>Prix: ${item.price} DT</small>
                     </div>
-                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="99" data-index="${index}" style="width: 60px; text-align: center;">
+                    <input type="number" class="cart-quantity-input" value="${item.quantity}" min="1" max="99" data-index="${index}" style="width: 60px; text-align: center;">
                     <div class="font-weight-bold ml-3">${(item.quantity * item.price).toFixed(2)} DT</div>
                     <button class="btn btn-sm btn-outline-danger delete-item" data-index="${index}">
                         <i class="fas fa-trash"></i>
@@ -238,27 +390,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.getElementById('cartTotal').textContent = total.toFixed(2) + ' DT';
+
+        // Ajouter les écouteurs pour les boutons de suppression
+        const deleteButtons = document.querySelectorAll('.delete-item');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.dataset.index;
+                total -= cart[index].price * cart[index].quantity;
+                cart.splice(index, 1);
+                updateCart();
+            });
+        });
+
+        // Ajouter les écouteurs pour les inputs de quantité dans le panier
+        const quantityInputs = document.querySelectorAll('.cart-quantity-input');
+        quantityInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const index = this.dataset.index;
+                const newQuantity = parseInt(this.value) || 1;
+                cart[index].quantity = newQuantity;
+                total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+                updateCart();
+            });
+        });
     }
-
-    // Suppression d'un article
-    document.body.addEventListener('click', function (e) {
-        if (e.target.matches('.delete-item')) {
-            const index = e.target.dataset.index;
-            total -= cart[index].price * cart[index].quantity;
-            cart.splice(index, 1);
-            updateCart();
-        }
-    });
-
-    // Mise à jour de la quantité dans le panier
-    document.body.addEventListener('input', function (e) {
-        if (e.target.matches('.quantity-input')) {
-            const index = e.target.dataset.index;
-            const newQuantity = parseInt(e.target.value) || 1;
-            cart[index].quantity = newQuantity;
-            total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-            updateCart();
-        }
-    });
 });
 </script>

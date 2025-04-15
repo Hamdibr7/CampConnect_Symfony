@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket de Caisse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .footer {
+            margin-top: 30px;
+            font-style: italic;
+        }
+        .date {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ticket">
+    <div class="logo">
+        <img src="file://{{ logo_path }}" alt="CampConnect Logo" width="100">
+    </div>
+
+    <h1>Ticket de Caisse</h1>
+    <p><strong>CampConnect</strong></p>
+
+<table cellpadding="5" cellspacing="0" width="80%">
+    <thead>
+        <tr>
+            <th>Nom de l'équipement</th>
+            <th>Quantité</th>
+            <th>Prix</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set total = 0 %}
+        {% for item in paniers %}
+            <tr>
+                <td>{{ item.equipement.nomEquip }}</td>
+                <td>{{ item.quantite }}</td>
+                <td>{{ item.equipement.prix }} TND</td>
+                {% set total = total + (item.equipement.prix * item.quantite) %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p class="total">Total: {{ total }} TND</p>
+
+<p class="footer">Merci pour votre achat !</p>
+<p class="date">Date: {{ "now"|date("Y-m-d") }}</p>
+
+</body>
+</html>

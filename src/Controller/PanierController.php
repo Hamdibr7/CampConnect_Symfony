@@ -10,6 +10,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\Response;
+use App\Repository\PanierRepository;
+
 class PanierController extends AbstractController
 {
     
@@ -29,45 +34,12 @@ class PanierController extends AbstractController
         if (!$equipement) {
             return $this->json(['error' => 'Équipement non trouvé'], 404);
         }
-
-        // Vérification de la quantité disponible
-        $quantiteDisponible = $equipement->getQuantite(); // Récupère la quantité disponible
-        $quantiteDemandee = (int)$data['quantite'];
-
-        if ($quantiteDemandee > $quantiteDisponible) {
-            if ($quantiteDisponible == 0) {
-                return $this->json(['error' => 'Rupture de stock, l\'équipement est épuisé.'], 400); // Alerte stock épuisé
-            } else {
-                return $this->json(['error' => 'La quantité demandée dépasse la quantité disponible.'], 400); // Alerte dépassement
-            }
-        }
-
-        // Mise à jour de la quantité de l'équipement dans le stock
-        $equipement->setQuantite($quantiteDisponible - $quantiteDemandee);
-        $em->flush();
-
-        // Vérification si l'équipement est déjà dans le panier de l'utilisateur
-        $panier = $em->getRepository(Panier::class)
-            ->findOneBy(['equipement' => $equipement, 'idUtilisateur' => 1]); // Par défaut, idUtilisateur = 1
     
-        if ($panier) {
-            // Si l'équipement existe déjà dans le panier, on met à jour la quantité et le prix total
-            $panier->setQuantite($panier->getQuantite() + $quantiteDemandee);
-            $panier->setPrixTotal($panier->getQuantite() * (float)$data['prix_unitaire']);
-            $em->flush();
-    
-            return $this->json([
-                'success' => true,
-                'message' => 'Quantité mise à jour dans le panier.',
-                'panier_id' => $panier->getId(),
-            ]);
-        }
-    
-        // Sinon, on crée un nouvel élément dans le panier
+        // Création du panier
         $panier = new Panier();
         $panier->setEquipement($equipement);
-        $panier->setQuantite($quantiteDemandee);
-        $panier->setPrixTotal((float)$data['prix_unitaire'] * $quantiteDemandee);
+        $panier->setQuantite((int)$data['quantite']);
+        $panier->setPrixTotal((float)$data['prix_unitaire'] * (int)$data['quantite']);
         $panier->setIdUtilisateur(1); // Par défaut
     
         $em->persist($panier);
@@ -80,33 +52,44 @@ class PanierController extends AbstractController
         ]);
     }
 
-    
-    #[Route('/panier/supprimer', name: 'app_panier_supprimer', methods: ['POST'])]
-    public function supprimerDuPanier(Request $request, EntityManagerInterface $em): JsonResponse
+    #[Route('/panier/pdf', name: 'generer_pdf')]
+    public function genererPdf(PanierRepository $panierRepository): Response
     {
-        $data = json_decode($request->getContent(), true);
+        // Données du panier utilisateur statique (id = 1)
+        $paniers = $panierRepository->findBy(['id_utilisateur' => 1]);
+    
+         // Chemin absolu réel vers le logo
+         $logoPath = realpath($this->getParameter('kernel.project_dir') . '/public/images/CampConnect_Logo.png');
 
-        if (!$data || !isset($data['panier_id'])) {
-            return $this->json(['error' => 'Données invalides'], 400);
-        }
 
-        $panier = $em->getRepository(Panier::class)->find($data['panier_id']);
-        
-        if (!$panier) {
-            return $this->json(['error' => 'Panier non trouvé'], 404);
-        }
+    // Vérification (à supprimer après test)
+    if (!$logoPath || !file_exists($logoPath)) {
+        throw new \Exception('Logo non trouvé : ' . $logoPath);
+    }
+    // Options DomPDF
+    $pdfOptions = new Options();
+    $pdfOptions->set('defaultFont', 'Arial');
+    $pdfOptions->setIsRemoteEnabled(true); // Important si vous utilisez des images
 
-        $em->remove($panier);
-        $em->flush();
-
-        return $this->json([
-            'success' => true,
-            'message' => 'Équipement supprimé du panier avec succès.'
+    $dompdf = new Dompdf($pdfOptions);
+    
+        // Rendu HTML depuis un template Twig
+        $html = $this->renderView('Front/equipements/pdf.html.twig', [
+            'paniers' => $paniers,
+            'logo_path' => $logoPath, // 👈 Ajout de la variable manquante
         ]);
+        
+    
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+    
+        // Téléchargement du PDF
+        return new Response(
+            $dompdf->stream("Ticket de caisse.pdf", ["Attachment" => true]),
+            200,
+            ['Content-Type' => 'application/pdf']
+        );
     }
     
-
-
-
-
-}
+}    
