@@ -10,30 +10,50 @@
             text-align: center;
         }
         .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
+            max-width: 100px;
+            margin: 0 auto 10px;
+        }
+        .logo img {
+            width: 100%;
+            height: auto;
+        }
+        h1 {
+            color: blue;
+            margin-bottom: 5px;
         }
         table {
             border-collapse: collapse;
-            width: 100%;
-            margin: 20px auto;
+            width: 80%;
+            margin: 30px auto;
         }
-        th, td {
+        th {
+            background-color: #0066cc;
+            color: white;
             padding: 8px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid black;
+        }
+        td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
         }
         .total {
+            color: red;
+            text-align: right;
+            margin-right: 10%;
             font-weight: bold;
-            margin-top: 20px;
             font-size: 1.2em;
         }
         .footer {
             margin-top: 30px;
             font-style: italic;
+            color: gray;
         }
         .date {
-            margin-bottom: 20px;
+            color: gray;
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -41,37 +61,40 @@
 
 <div class="ticket">
     <div class="logo">
-        <img src="file://{{ logo_path }}" alt="CampConnect Logo" width="100">
+        <!-- Utilisation de l'image du logo existante -->
+        <img src="/CampConnect1/public/images/CampConnect_Logo.png" alt="CampConnect Logo">
     </div>
-
+    
+    <h2 style="text-transform: uppercase; color: #003300; margin-top: 0;">CampConnect</h2>
     <h1>Ticket de Caisse</h1>
-    <p><strong>CampConnect</strong></p>
+    <p style="margin-top: 0;"><em>CampConnect</em></p>
 
-<table cellpadding="5" cellspacing="0" width="80%">
-    <thead>
-        <tr>
-            <th>Nom de l'équipement</th>
-            <th>Quantité</th>
-            <th>Prix</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% set total = 0 %}
-        {% for item in paniers %}
+    <table>
+        <thead>
             <tr>
-                <td>{{ item.equipement.nomEquip }}</td>
-                <td>{{ item.quantite }}</td>
-                <td>{{ item.equipement.prix }} TND</td>
-                {% set total = total + (item.equipement.prix * item.quantite) %}
+                <th>Nom de l'équipement</th>
+                <th>Quantité</th>
+                <th>Prix</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% set total = 0 %}
+            {% for item in paniers %}
+                <tr>
+                    <td>{{ item.equipement.nomEquip }}</td>
+                    <td>{{ item.quantite }}</td>
+                    <td>{{ item.equipement.prix }} TND</td>
+                    {% set total = total + (item.equipement.prix * item.quantite) %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<p class="total">Total: {{ total }} TND</p>
+    <p class="total">Total: {{ total }} TND</p>
 
-<p class="footer">Merci pour votre achat !</p>
-<p class="date">Date: {{ "now"|date("Y-m-d") }}</p>
+    <p class="footer">Merci pour votre achat !</p>
+    <p class="date">Date: {{ "now"|date("Y-m-d") }}</p>
+</div>
 
 </body>
 </html>
