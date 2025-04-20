@@ -1,488 +1,1159 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}CampConnect - Accueil{% endblock %}
+{% block title %}Home - CampConnect{% endblock %}
 
 {% block stylesheets %}
-<style>
-    .post-container {
-        max-width: 680px;
-        margin: 0 auto;
-    }
+    <style>
+        /* Publication styles */
+        .post-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        .media-container {
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .media-container img, .media-container video {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .reaction-button {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .reaction-button:hover, .reaction-button.active {
+            color: #007bff;
+        }
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .comment {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            position: relative;
+        }
+        .comment .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        .comment .ml-auto {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+        }
+        .comment .edit-comment, .comment .delete-comment {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .comment:hover .edit-comment, .comment:hover .delete-comment {
+            opacity: 1;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Reaction system styles */
+        .reaction-picker {
+            position: absolute;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            padding: 8px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            z-index: 1000;
+            white-space: nowrap;
+        }
 
-    .media-container {
-        width: 100%;
-        max-width: 500px;
-        height: 300px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    
-    .media-content {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .reaction-button {
-        position: relative;
-        padding: 8px 15px;
-        border-radius: 20px;
-        border: 1px solid #ddd;
-        background: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s;
-    }
-    
-    .reaction-options {
-        position: absolute;
-        bottom: 100%;
-        left: 0;
-        background: white;
-        border-radius: 20px;
-        padding: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        display: none;
-        z-index: 1000;
-        margin-bottom: 5px;
-        min-width: 240px;
-    }
-    
-    .reaction-option {
-        width: 32px;
-        height: 32px;
-        cursor: pointer;
-        transition: transform 0.2s;
-        padding: 2px;
-    }
-    
-    .reaction-option:hover {
-        transform: scale(1.2);
-    }
+        .reaction-picker::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
 
-    .app-logo {
-        width: 240px;
-        height: auto;
-        padding: 10px;
-    }
+        .reaction-picker img {
+            width: 40px;
+            height: 40px;
+            margin: 0 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #fff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+        .reaction-picker img:hover {
+            transform: scale(1.2);
+        }
 
-    .comment .user-avatar {
-        width: 32px;
-        height: 32px;
-    }
-</style>
+        .reaction-button {
+            position: relative;
+        }
+
+        .reaction-button img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        /* Top reactions styles */
+        .top-reactions {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .top-reactions img {
+            width: 20px;
+            height: 20px;
+            margin-right: -5px;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .top-reactions .count {
+            margin-left: 8px;
+            color: #606266;
+            font-size: 14px;
+        }
+
+        /* Publication filters styles */
+        .filters-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        .filters-container.collapsed {
+            padding: 10px;
+            background: transparent;
+            box-shadow: none;
+        }
+        .filters-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .filters-toggle:hover {
+            background: #e9ecef;
+        }
+        .filters-toggle i {
+            transition: transform 0.3s ease;
+        }
+        .filters-toggle.collapsed i {
+            transform: rotate(-90deg);
+        }
+        .filters-content {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .filters-content.collapsed {
+            height: 0;
+            opacity: 0;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .filter-group:hover {
+            background: #e9ecef;
+        }
+        .filter-group label {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #495057;
+            min-width: 80px;
+        }
+        .filter-btn {
+            min-width: 100px;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: 2px solid #dee2e6;
+            background: white;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            border-color: #28a745;
+            color: #28a745;
+            transform: translateY(-1px);
+        }
+        .filter-btn.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+            box-shadow: 0 2px 5px rgba(40,167,69,0.2);
+        }
+        .filter-btn.active:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40,167,69,0.3);
+        }
+        .filter-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-<div class="post-container">
-    {# Post Creation Form #}
-    <div class="post-input bg-white p-4 rounded-3 mb-4 shadow-sm">
-        <form id="post-form" enctype="multipart/form-data">
-            <div class="d-flex gap-3">
-                <img src="{{ default_user.pdp }}" alt="{{ default_user.prenom }}" class="user-avatar">
-                <div class="flex-grow-1">
-                    <div class="form-floating mb-3">
-                        <textarea id="content" class="form-control border-0 bg-light" style="height: 100px" placeholder="Quoi de neuf dans ta tente {{ default_user.prenom }} ?"></textarea>
-                        <label for="content">Quoi de neuf dans ta tente {{ default_user.prenom }} ?</label>
-                    </div>
-                    
-                    <div class="post-type-selector">
-                        <div class="btn-group w-100" role="group">
-                            <button type="button" class="btn btn-outline-primary active" data-type="text">
-                                <i class="fas fa-font me-2"></i>Texte
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" data-type="image">
-                                <i class="fas fa-image me-2"></i>Image
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" data-type="video">
-                                <i class="fas fa-video me-2"></i>Vidéo
-                            </button>
+    <!-- Carousel Start -->
+    <div class="container-fluid p-0 mb-5">
+        <div id="header-carousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="w-100" src="{{ asset('TRAVELER Free Website Template - Free-CSS.com/free-travel-website-template/img/carousel-1.jpg') }}" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h4 class="text-white text-uppercase mb-md-3">CampConnect</h4>
+                            <h1 class="display-3 text-white mb-md-4">Connect with Fellow Campers</h1>
+                            <a href="#publications" class="btn btn-primary py-md-3 px-md-5 mt-2">Start Sharing</a>
                         </div>
-                    </div>
-                    
-                    <div id="media-container" class="mt-3" style="display: none;">
-                        <div class="input-group mb-3">
-                            <input type="file" id="media" class="form-control" accept="image/*,video/*">
-                        </div>
-                        <div class="media-container mt-2">
-                            <div id="media-preview"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill">
-                            <i class="fas fa-paper-plane me-2"></i>Publier
-                        </button>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
+    <!-- Carousel End -->
 
-    {# Posts Container #}
-    <div id="posts-container">
-        {% for post in posts %}
-            <div class="post bg-white p-4 rounded-3 mb-4 shadow-sm">
-                <div class="d-flex gap-3 mb-3">
-                    <img src="{{ post.utilisateurid.pdp }}" alt="{{ post.utilisateurid.prenom }}" class="user-avatar">
-                    <div>
-                        <h6 class="mb-1">{{ post.utilisateurid.prenom }} {{ post.utilisateurid.nom }}</h6>
-                        <small class="text-muted">{{ post.date|date('d/m/Y H:i') }}</small>
-                    </div>
-                </div>
-                
-                {% if post.getTypePub() == 'text' %}
-                    <p>{{ post.contenu }}</p>
-                {% else %}
-                    <div class="media-container">
-                        {% if post.getTypePub() == 'image' %}
-                            <img src="{{ post.contenu }}" alt="" class="media-content">
-                        {% else %}
-                            <video src="{{ post.contenu }}" controls class="media-content"></video>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                
-                <div class="post-actions">
-                    <button onclick="toggleReaction('{{ post.id }}')" class="btn btn-link" data-post-id="{{ post.id }}">
-                        <i class="{% if app.user and post.likess is defined and post.likess|filter(like => like.utilisateurid.id == app.user.id)|length > 0 %}fas{% else %}far{% endif %} fa-heart"></i>
-                        <span class="likes-count">{{ post.likess is defined ? post.likess|length : 0 }}</span>
-                    </button>
-                    <button onclick="toggleComments('{{ post.id }}')" class="btn btn-link">
-                        <i class="far fa-comment"></i>
-                        <span>{{ post.commentaires is defined ? post.commentaires|length : 0 }}</span>
-                    </button>
-                </div>
-                
-                <div id="comments-{{ post.id }}" class="comments-section" style="display: none;">
-                    <div class="comments-container">
-                        {% for comment in post.commentaires %}
-                            <div class="comment">
-                                <div class="d-flex gap-2 align-items-start">
-                                    <img src="{{ comment.utilisateurid.pdp }}" alt="{{ comment.utilisateurid.prenom }}" class="user-avatar">
-                                    <div>
-                                        <h6 class="mb-1">{{ comment.utilisateurid.prenom }} {{ comment.utilisateurid.nom }}</h6>
-                                        <p class="mb-1">{{ comment.contenu }}</p>
-                                        <small class="text-muted">{{ comment.date|date('Y-m-d H:i:s') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <form onsubmit="submitComment(event, '{{ post.id }}')" class="mt-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Write a comment...">
-                            <button type="submit" class="btn btn-primary">Send</button>
+    <!-- Publications Section Start -->
+    <div class="container py-5" id="publications">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Post Creation Form -->
+                <div class="post-container">
+                    <form id="postForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <textarea class="form-control" id="postContent" rows="3" placeholder="Share your camping experience..."></textarea>
                         </div>
+                        <div class="form-group">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary" data-type="text">Text</button>
+                                <button type="button" class="btn btn-outline-primary" data-type="image">Image</button>
+                                <button type="button" class="btn btn-outline-primary" data-type="video">Video</button>
+                            </div>
+                        </div>
+                        <div class="form-group" id="mediaInput" style="display: none;">
+                            <input type="file" class="form-control-file" id="mediaFile" accept="image/*,video/*">
+                        </div>
+                        <div class="form-group" id="mediaPreview" style="display: none;">
+                            <img id="previewImage" class="img-fluid rounded" style="max-height: 200px;">
+                            <video id="previewVideo" class="img-fluid rounded" controls style="max-height: 200px; display: none;"></video>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post</button>
                     </form>
                 </div>
+
+                <!-- Publication Filters -->
+                <div class="filters-container">
+                    <div class="filters-toggle" onclick="toggleFilters()">
+                        <span class="filter-section-title">Filter Publications</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="filters-content">
+                        <div class="filter-group">
+                            <label>Type</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn filter-btn active" data-filter="type" data-value="all">All</button>
+                                <button type="button" class="btn filter-btn" data-filter="type" data-value="text">Text</button>
+                                <button type="button" class="btn filter-btn" data-filter="type" data-value="image">Image</button>
+                                <button type="button" class="btn filter-btn" data-filter="type" data-value="video">Video</button>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn filter-btn active" data-filter="date" data-value="all">All Time</button>
+                                <button type="button" class="btn filter-btn" data-filter="date" data-value="today">Today</button>
+                                <button type="button" class="btn filter-btn" data-filter="date" data-value="week">This Week</button>
+                                <button type="button" class="btn filter-btn" data-filter="date" data-value="month">This Month</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Section -->
+                <div id="postsContainer">
+                    <!-- Posts will be loaded here dynamically -->
+                </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
-</div>
+    <!-- Publications Section End -->
 {% endblock %}
 
 {% block javascripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const postForm = document.getElementById('post-form');
-    const mediaInput = document.getElementById('media');
-    const mediaPreview = document.getElementById('media-preview');
-    const mediaContainer = document.getElementById('media-container');
-    let currentPostType = 'text';
+    <script>
+        // Global variables
+        let currentPostType = 'text';
+        const postsContainer = document.getElementById('postsContainer');
+        const postForm = document.getElementById('postForm');
+        const postTypeButtons = document.querySelectorAll('[data-type]');
+        const mediaInput = document.getElementById('mediaInput');
+        const mediaFile = document.getElementById('mediaFile');
+        const mediaPreview = document.getElementById('mediaPreview');
+        const previewImage = document.getElementById('previewImage');
+        const previewVideo = document.getElementById('previewVideo');
 
-    // Handle post type selection
-    document.querySelectorAll('[data-type]').forEach(button => {
-        button.addEventListener('click', function() {
-            const type = this.dataset.type;
-            document.querySelectorAll('[data-type]').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            currentPostType = type;
+        // Reaction mapping
+        const Reactions = {
+            NONE: {
+                id: 0,
+                name: "Aucune",
+                color: "#606266",
+                imgSrc: "/images/fire-outline.png"
+            },
+            FIRE: {
+                id: 1,
+                name: "Top",
+                color: "#ED694A",
+                imgSrc: "/images/fire.png"
+            },
+            LOVE: {
+                id: 2,
+                name: "J'adore",
+                color: "#E12C4A",
+                imgSrc: "/images/love.png"
+            },
+            LAUGH: {
+                id: 3,
+                name: "Haha",
+                color: "#EAA823",
+                imgSrc: "/images/laughing.png"
+            },
+            WOW: {
+                id: 4,
+                name: "Wow",
+                color: "#EAA823",
+                imgSrc: "/images/shocked.png"
+            },
+            SAD: {
+                id: 5,
+                name: "Triste",
+                color: "#EAA823",
+                imgSrc: "/images/sad.png"
+            },
+            MAD: {
+                id: 6,
+                name: "En colère",
+                color: "#DD6B0E",
+                imgSrc: "/images/angry.png"
+            },
             
-            if (type === 'text') {
-                mediaContainer.style.display = 'none';
-                mediaInput.value = '';
-                mediaPreview.innerHTML = '';
-            } else {
-                mediaContainer.style.display = 'block';
-                mediaInput.accept = type === 'video' ? 'video/*' : 'image/*';
-            }
-        });
-    });
-
-    mediaInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (!file) {
-            mediaPreview.innerHTML = '';
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            mediaPreview.innerHTML = '';
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'max-w-full h-auto rounded-lg';
-                mediaPreview.appendChild(img);
-            } else if (file.type.startsWith('video/')) {
-                const video = document.createElement('video');
-                video.src = e.target.result;
-                video.controls = true;
-                video.className = 'max-w-full h-auto rounded-lg';
-                mediaPreview.appendChild(video);
+            fromType: function(type) {
+                switch(type) {
+                    case 'fire': return this.FIRE;
+                    case 'love': return this.LOVE;
+                    case 'laughing': return this.LAUGH;
+                    case 'shocked': return this.WOW;
+                    case 'sad': return this.SAD;
+                    case 'angry': return this.MAD;
+                    default: return this.NONE;
+                }
             }
         };
-        reader.readAsDataURL(file);
-    });
 
-    postForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const content = document.getElementById('content').value;
-        const mediaFile = document.getElementById('media').files[0];
-        
-        if (!content.trim()) {
-            alert('Please enter some content');
-            return;
+        // Post management functions
+        function loadPosts(filters = {}) {
+            fetch('/publication/list')
+                .then(response => response.json())
+                .then(posts => {
+                    // Apply date filter if selected
+                    if (filters.date && filters.date !== 'all') {
+                        const now = new Date();
+                        posts = posts.filter(post => {
+                            const postDate = new Date(post.date);
+                            switch(filters.date) {
+                                case 'today':
+                                    return postDate.toDateString() === now.toDateString();
+                                case 'week':
+                                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                    return postDate >= weekAgo;
+                                case 'month':
+                                    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                    return postDate >= monthAgo;
+                                default:
+                                    return true;
+                            }
+                        });
+                    }
+
+                    // Apply type filter if selected
+                    if (filters.type && filters.type !== 'all') {
+                        posts = posts.filter(post => post.type_pub === filters.type);
+                    }
+
+                    // Always sort by newest first
+                    posts.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        return dateB - dateA;
+                    });
+                    
+                    postsContainer.innerHTML = '';
+                    posts.forEach(post => addPostToDOM(post));
+                })
+                .catch(error => console.error('Error loading posts:', error));
         }
 
-        const formData = new FormData();
-        formData.append('content', content);
-        formData.append('type_pub', currentPostType);
-        if (mediaFile) {
-            formData.append('media', mediaFile);
-        }
-
-        try {
-            const response = await fetch('/publication/new', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                // Clear form and preview
-                postForm.reset();
-                mediaPreview.innerHTML = '';
-                mediaContainer.style.display = 'none';
-                document.querySelector('[data-type="text"]').click(); // Reset to text type
-                
-                // Reload posts immediately
-                await loadPosts();
-            } else {
-                alert(data.error || 'Failed to create post');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to create post');
-        }
-    });
-
-    // Initial load of posts
-    loadPosts();
-});
-
-async function loadPosts() {
-    try {
-        const response = await fetch('/publication/list');
-        if (!response.ok) {
-            throw new Error('Failed to load posts');
-        }
-        
-        const posts = await response.json();
-        const postsContainer = document.getElementById('posts-container');
-        postsContainer.innerHTML = '';
-        
-        posts.forEach(post => {
-            const postElement = createPostElement(post);
-            postsContainer.appendChild(postElement);
-        });
-    } catch (error) {
-        console.error('Error loading posts:', error);
-    }
-}
-
-function createPostElement(post) {
-    const postDiv = document.createElement('div');
-    postDiv.className = 'post bg-white p-4 rounded-3 mb-4 shadow-sm';
-    
-    let contentHtml = '';
-    if (post.type_pub === 'text') {
-        contentHtml = `<p>${post.contenu}</p>`;
-    } else {
-        contentHtml = `
-            <div class="media-container">
-                ${post.type_pub === 'video' 
-                    ? `<video src="${post.contenu}" controls class="media-content"></video>`
-                    : `<img src="${post.contenu}" alt="" class="media-content">`
-                }
-            </div>`;
-    }
-
-    postDiv.innerHTML = `
-        <div class="d-flex gap-3 mb-3">
-            <img src="${post.user.pdp}" alt="${post.user.prenom}" class="user-avatar">
-            <div>
-                <h6 class="mb-1">${post.user.prenom} ${post.user.nom}</h6>
-                <small class="text-muted">${new Date(post.date).toLocaleString()}</small>
-            </div>
-        </div>
-        
-        ${contentHtml}
-        
-        <div class="post-actions">
-            <button onclick="toggleReaction('${post.id}')" class="btn btn-link" data-post-id="${post.id}">
-                <i class="far fa-heart"></i>
-                <span class="likes-count">${post.likes ? post.likes.length : 0}</span>
-            </button>
-            <button onclick="toggleComments('${post.id}')" class="btn btn-link">
-                <i class="far fa-comment"></i>
-                <span>${post.commentaires ? post.commentaires.length : 0}</span>
-            </button>
-        </div>
-        
-        <div id="comments-${post.id}" class="comments-section" style="display: none;">
-            <div class="comments-container">
-                ${post.commentaires ? post.commentaires.map(comment => `
-                    <div class="comment">
-                        <div class="d-flex gap-2 align-items-start">
-                            <img src="${comment.user.pdp}" alt="${comment.user.prenom}" class="user-avatar">
-                            <div>
-                                <h6 class="mb-1">${comment.user.prenom} ${comment.user.nom}</h6>
-                                <p class="mb-1">${comment.contenu}</p>
-                                <small class="text-muted">${new Date(comment.date).toLocaleString()}</small>
-                            </div>
+        function addPostToDOM(post) {
+            const postElement = document.createElement('div');
+            postElement.className = 'post-container';
+            postElement.dataset.postId = post.id;
+            postElement.dataset.date = post.date;
+            postElement.dataset.type = post.type_pub;
+            
+            const isOwner = post.user.id === 8;
+            
+            postElement.innerHTML = `
+                <div class="d-flex align-items-center mb-3">
+                    <img src="${post.user.pdp || '/images/default-avatar.png'}" class="avatar mr-3">
+                    <div>
+                        <h5 class="mb-0">${post.user.prenom} ${post.user.nom}</h5>
+                        <small class="text-muted">${new Date(post.date).toLocaleString()}</small>
+                    </div>
+                    ${isOwner ? `
+                        <div class="ml-auto">
+                            <button class="btn btn-sm btn-outline-primary edit-post" onclick="editPost(${post.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-post" onclick="deletePost(${post.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="post-content">
+                    <p class="mb-3">${post.description || ''}</p>
+                    ${post.type_pub !== 'text' && post.contenu ? `
+                        <div class="media-container">
+                            ${post.type_pub === 'image' ? 
+                                `<img src="${post.contenu}" alt="Post image" class="img-fluid">` :
+                                `<video src="${post.contenu}" controls class="img-fluid"></video>`
+                            }
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="reaction-button" data-post-id="${post.id}">
+                        ${getReactionDisplay(post.likes)}
+                        <div class="reaction-picker">
+                            <img src="${Reactions.FIRE.imgSrc}" alt="${Reactions.FIRE.name}" data-reaction="fire">
+                            <img src="${Reactions.LOVE.imgSrc}" alt="${Reactions.LOVE.name}" data-reaction="love">
+                            <img src="${Reactions.LAUGH.imgSrc}" alt="${Reactions.LAUGH.name}" data-reaction="laughing">
+                            <img src="${Reactions.WOW.imgSrc}" alt="${Reactions.WOW.name}" data-reaction="shocked">
+                            <img src="${Reactions.SAD.imgSrc}" alt="${Reactions.SAD.name}" data-reaction="sad">
+                            <img src="${Reactions.MAD.imgSrc}" alt="${Reactions.MAD.name}" data-reaction="angry">
                         </div>
                     </div>
-                `).join('') : ''}
-            </div>
-            <form onsubmit="submitComment(event, '${post.id}')" class="mt-3">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Write a comment...">
-                    <button type="submit" class="btn btn-primary">Send</button>
+                    <button class="btn btn-link" onclick="toggleComments(${post.id})">
+                        Comments (${post.commentaires ? post.commentaires.length : 0})
+                    </button>
                 </div>
-            </form>
-        </div>
-    `;
-    
-    return postDiv;
-}
-
-// Toggle comments visibility
-function toggleComments(postId) {
-    const commentsSection = document.getElementById(`comments-${postId}`);
-    commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
-}
-
-// Submit comment
-function submitComment(event, postId) {
-    event.preventDefault();
-    const form = event.target;
-    const input = form.querySelector('input');
-    const content = input.value.trim();
-    
-    if (!content) {
-        console.error('Comment cannot be empty');
-        return;
-    }
-
-    console.log('Submitting comment:', { postId, content });
-
-    fetch(`/publication/${postId}/comment`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: content })
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(`Server error: ${text}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Comment success:', data);
-        if (data.success) {
-            const commentsContainer = document.querySelector(`#comments-${postId} .comments-container`);
-            const commentHtml = `
-                <div class="comment">
-                    <div class="d-flex gap-2 align-items-start">
-                        <img src="${data.comment.user.pdp}" alt="${data.comment.user.prenom}" class="user-avatar">
-                        <div>
-                            <h6 class="mb-1">${data.comment.user.prenom} ${data.comment.user.nom}</h6>
-                            <p class="mb-1">${content}</p>
-                            <small class="text-muted">${new Date().toLocaleString()}</small>
-                        </div>
+                <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                    <div class="comments-list">
+                        ${post.commentaires ? post.commentaires.map(comment => `
+                            <div class="comment" data-comment-id="${comment.id}">
+                                <div class="d-flex align-items-center">
+                                    <img src="${comment.user.pdp || '/images/default-avatar.png'}" class="avatar mr-3">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">${comment.user.prenom} ${comment.user.nom}</h6>
+                                        <small class="text-muted">${new Date(comment.date).toLocaleString()}</small>
+                                    </div>
+                                    ${comment.user.id === 8 ? `
+                                        <div class="ml-auto">
+                                            <button class="btn btn-sm btn-outline-primary edit-comment" onclick="editComment(${comment.id}, ${post.id})">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger delete-comment" onclick="deleteComment(${comment.id}, ${post.id})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <p class="mt-2 mb-0">${comment.contenu}</p>
+                            </div>
+                        `).join('') : ''}
+                    </div>
+                    <div class="mt-3">
+                        <input type="text" class="form-control" placeholder="Add a comment..." 
+                               onkeypress="if(event.key === 'Enter') submitComment(event, ${post.id})">
                     </div>
                 </div>
             `;
-            commentsContainer.insertAdjacentHTML('beforeend', commentHtml);
-            input.value = '';
-            
-            // Update comment count
-            const commentButton = form.closest('.post').querySelector('button:nth-child(2) span');
-            const currentCount = parseInt(commentButton.textContent);
-            commentButton.textContent = currentCount + 1;
-        } else {
-            console.error('Failed to submit comment:', data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error submitting comment:', error);
-    });
-}
 
-// Toggle reaction
-function toggleReaction(postId) {
-    fetch(`/publication/${postId}/reaction`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
+            const posts = Array.from(postsContainer.children);
+            const postDate = new Date(post.date);
+            let insertBeforeElement = null;
+
+            for (let i = 0; i < posts.length; i++) {
+                const currentPostDate = new Date(posts[i].dataset.date);
+                if (postDate > currentPostDate) {
+                    insertBeforeElement = posts[i];
+                    break;
+                }
+            }
+
+            if (insertBeforeElement) {
+                postsContainer.insertBefore(postElement, insertBeforeElement);
+            } else {
+                postsContainer.appendChild(postElement);
+            }
+
+            initializeReactionPicker(postElement.querySelector('.reaction-button'));
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const reactionButton = document.querySelector(`button[data-post-id="${postId}"]`);
-            const likesCount = reactionButton.querySelector('.likes-count');
-            const icon = reactionButton.querySelector('i');
+
+        // Edit and Delete functions
+        async function editPost(postId) {
+            const postElement = document.querySelector(`.post-container[data-post-id="${postId}"]`);
+            const postContent = postElement.querySelector('.post-content');
+            const currentContent = postContent.querySelector('p').textContent;
+            const mediaContainer = postContent.querySelector('.media-container');
+            const postType = postElement.dataset.type || 'text';
             
-            // Update likes count
-            likesCount.textContent = data.likesCount;
+            // Store the original content and media for later use
+            postElement.dataset.originalContent = currentContent;
+            if (mediaContainer) {
+                postElement.dataset.originalMedia = mediaContainer.outerHTML;
+            }
             
-            // Toggle icon
-            icon.classList.toggle('fas');
-            icon.classList.toggle('far');
-        } else {
-            console.error('Failed to toggle reaction:', data.message);
+            // Create edit form
+            const editForm = document.createElement('form');
+            editForm.innerHTML = `
+                <div class="form-group">
+                    <textarea class="form-control" rows="3">${currentContent}</textarea>
+                </div>
+                ${postType !== 'text' ? `
+                    <div class="form-group">
+                        <div class="current-media mb-2">
+                            ${mediaContainer ? mediaContainer.outerHTML : ''}
+                        </div>
+                        <div class="media-edit-options">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="mediaAction" id="keepMedia${postId}" value="keep" checked>
+                                <label class="form-check-label" for="keepMedia${postId}">
+                                    Keep current media
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="mediaAction" id="changeMedia${postId}" value="change">
+                                <label class="form-check-label" for="changeMedia${postId}">
+                                    Change media
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="mediaAction" id="removeMedia${postId}" value="remove">
+                                <label class="form-check-label" for="removeMedia${postId}">
+                                    Remove media
+                                </label>
+                            </div>
+                        </div>
+                        <div class="new-media-input mt-2" style="display: none;">
+                            <input type="file" class="form-control-file" accept="${postType === 'image' ? 'image/*' : 'video/*'}">
+                            <div class="media-preview mt-2"></div>
+                        </div>
+                    </div>
+                ` : ''}
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary mr-2" onclick="cancelEdit(${postId})">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            `;
+            
+            postContent.innerHTML = '';
+            postContent.appendChild(editForm);
+
+            // Handle media action changes
+            if (postType !== 'text') {
+                const mediaActionInputs = editForm.querySelectorAll('input[name="mediaAction"]');
+                const newMediaInput = editForm.querySelector('.new-media-input');
+                const mediaPreview = editForm.querySelector('.media-preview');
+                
+                mediaActionInputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        if (this.value === 'change') {
+                            newMediaInput.style.display = 'block';
+                        } else {
+                            newMediaInput.style.display = 'none';
+                            mediaPreview.innerHTML = '';
+                        }
+                    });
+                });
+
+                // Handle new media preview
+                const fileInput = editForm.querySelector('input[type="file"]');
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            if (postType === 'image') {
+                                mediaPreview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">`;
+                            } else {
+                                mediaPreview.innerHTML = `<video src="${URL.createObjectURL(file)}" controls class="img-fluid rounded" style="max-height: 200px;"></video>`;
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Handle form submission
+            editForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const newContent = this.querySelector('textarea').value;
+                const formData = new FormData();
+                formData.append('description', newContent);
+                
+                if (postType !== 'text') {
+                    const mediaAction = this.querySelector('input[name="mediaAction"]:checked').value;
+                    formData.append('mediaAction', mediaAction);
+                    
+                    if (mediaAction === 'change') {
+                        const fileInput = this.querySelector('input[type="file"]');
+                        if (fileInput.files[0]) {
+                            formData.append('media', fileInput.files[0]);
+                        }
+                    }
+                }
+                
+                try {
+                    const response = await fetch(`/publication/${postId}/edit`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Update post content
+                        let contentHtml = `<p class="mb-3">${newContent}</p>`;
+                        
+                        if (postType !== 'text') {
+                            const mediaAction = formData.get('mediaAction');
+                            if (mediaAction === 'keep') {
+                                contentHtml += postElement.dataset.originalMedia;
+                            } else if (mediaAction === 'change' && data.post.contenu) {
+                                contentHtml += `
+                                    <div class="media-container">
+                                        ${postType === 'image' ? 
+                                            `<img src="${data.post.contenu}" alt="Post image" class="img-fluid">` :
+                                            `<video src="${data.post.contenu}" controls class="img-fluid"></video>`
+                                        }
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        postContent.innerHTML = contentHtml;
+                    } else {
+                        alert(data.error || 'Error updating post');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error updating post');
+                }
+            });
         }
-    })
-    .catch(error => {
-        console.error('Error toggling reaction:', error);
-    });
-}
-</script>
+
+        function cancelEdit(postId) {
+            const postElement = document.querySelector(`.post-container[data-post-id="${postId}"]`);
+            const postContent = postElement.querySelector('.post-content');
+            const currentContent = postElement.dataset.originalContent;
+            const postType = postElement.dataset.type;
+            
+            let contentHtml = `<p class="mb-3">${currentContent}</p>`;
+            
+            // Restore media if it exists
+            if (postType !== 'text' && postElement.dataset.originalMedia) {
+                contentHtml += postElement.dataset.originalMedia;
+            }
+            
+            postContent.innerHTML = contentHtml;
+            
+            // Clean up stored data
+            delete postElement.dataset.originalContent;
+            delete postElement.dataset.originalMedia;
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/publication/${postId}/delete`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const postElement = document.querySelector(`.post-container[data-post-id="${postId}"]`);
+                    postElement.remove();
+                } else {
+                    alert(data.error || 'Error deleting post');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting post');
+            }
+        }
+
+        // Comment functions
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function submitComment(event, postId) {
+            event.preventDefault();
+            const input = event.target;
+            const content = input.value.trim();
+            
+            if (content) {
+                fetch(`/publication/${postId}/comment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const commentsList = input.closest('.comments-section').querySelector('.comments-list');
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'comment';
+                        commentElement.dataset.commentId = data.comment.id;
+                        commentElement.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <img src="${data.comment.user.pdp || '/images/default-avatar.png'}" class="avatar mr-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">${data.comment.user.prenom} ${data.comment.user.nom}</h6>
+                                    <small class="text-muted">${new Date().toLocaleString()}</small>
+                                </div>
+                                ${data.comment.user.id === 8 ? `
+                                    <div class="ml-auto">
+                                        <button class="btn btn-sm btn-outline-primary edit-comment" onclick="editComment(${data.comment.id}, ${postId})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger delete-comment" onclick="deleteComment(${data.comment.id}, ${postId})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <p class="mt-2 mb-0">${content}</p>
+                        `;
+                        commentsList.appendChild(commentElement);
+                        input.value = '';
+                        
+                        const commentButton = input.closest('.post-container').querySelector('button:nth-child(2)');
+                        const currentCount = parseInt(commentButton.textContent.match(/\d+/)[0]);
+                        commentButton.textContent = `Comments (${currentCount + 1})`;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Reaction functions
+        function getReactionDisplay(likes) {
+            const userReaction = likes?.find(like => like.user.id === 8);
+            
+            const topReactionsHtml = (!likes || !Array.isArray(likes) || likes.length === 0) ? '' : `
+                <div class="top-reactions">
+                    ${Object.entries(likes.reduce((counts, like) => {
+                        counts[like.type] = (counts[like.type] || 0) + 1;
+                        return counts;
+                    }, {}))
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 3)
+                    .map(([type, count]) => {
+                        const reaction = Reactions.fromType(type);
+                        return `
+                            <img src="${reaction.imgSrc}" 
+                                 alt="${reaction.name}" 
+                                 title="${count} ${reaction.name}"
+                                 style="background-color: ${reaction.color}">
+                        `;
+                    }).join('')}
+                    <span class="count">${likes.length}</span>
+                </div>
+            `;
+
+            const buttonHtml = `
+                <button class="btn btn-link p-0">
+                    <img src="${!userReaction ? 
+                        Reactions.NONE.imgSrc : 
+                        Reactions.fromType(userReaction.type).imgSrc}" 
+                        alt="React" 
+                        class="reaction-icon"> ${likes ? likes.length : 0}
+                </button>
+            `;
+
+            return topReactionsHtml + buttonHtml;
+        }
+
+        function initializeReactionPicker(container) {
+            const reactionButton = container.querySelector('button');
+            const reactionPicker = container.querySelector('.reaction-picker');
+            let longPressTimer;
+
+            reactionButton.addEventListener('mousedown', () => {
+                longPressTimer = setTimeout(() => {
+                    reactionPicker.style.display = 'block';
+                }, 300);
+            });
+
+            reactionButton.addEventListener('click', () => {
+                clearTimeout(longPressTimer);
+                if (reactionPicker.style.display !== 'block') {
+                    const currentReaction = container.querySelector('.reaction-icon').src;
+                    const hasReaction = currentReaction.indexOf('outline') === -1;
+                    
+                    if (hasReaction) {
+                        const currentType = currentReaction.split('/').pop().replace('.png', '');
+                        sendReaction(container.dataset.postId, currentType);
+                    } else {
+                        sendReaction(container.dataset.postId, 'fire');
+                    }
+                }
+            });
+
+            const reactionImages = reactionPicker.querySelectorAll('img');
+            reactionImages.forEach(img => {
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const reaction = img.dataset.reaction;
+                    sendReaction(container.dataset.postId, reaction);
+                    reactionPicker.style.display = 'none';
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    reactionPicker.style.display = 'none';
+                }
+            });
+        }
+
+        async function sendReaction(postId, reactionType) {
+            try {
+                const response = await fetch(`/publication/${postId}/reaction`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type: reactionType })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const reactionContainer = document.querySelector(`.reaction-button[data-post-id="${postId}"]`);
+                    reactionContainer.innerHTML = getReactionDisplay(data.likes);
+                    
+                    const pickerHtml = `
+                        <div class="reaction-picker">
+                            <img src="${Reactions.FIRE.imgSrc}" alt="${Reactions.FIRE.name}" data-reaction="fire">
+                            <img src="${Reactions.LOVE.imgSrc}" alt="${Reactions.LOVE.name}" data-reaction="love">
+                            <img src="${Reactions.LAUGH.imgSrc}" alt="${Reactions.LAUGH.name}" data-reaction="laughing">
+                            <img src="${Reactions.WOW.imgSrc}" alt="${Reactions.WOW.name}" data-reaction="shocked">
+                            <img src="${Reactions.SAD.imgSrc}" alt="${Reactions.SAD.name}" data-reaction="sad">
+                            <img src="${Reactions.MAD.imgSrc}" alt="${Reactions.MAD.name}" data-reaction="angry">
+                        </div>
+                    `;
+                    reactionContainer.innerHTML += pickerHtml;
+                    
+                    initializeReactionPicker(reactionContainer);
+                }
+            } catch (error) {
+                console.error('Error sending reaction:', error);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Post type selection
+            postTypeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    currentPostType = this.dataset.type;
+                    postTypeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    if (currentPostType === 'text') {
+                        mediaInput.style.display = 'none';
+                        mediaPreview.style.display = 'none';
+                    } else {
+                        mediaInput.style.display = 'block';
+                        mediaPreview.style.display = 'block';
+                    }
+                });
+            });
+
+            // Media preview
+            mediaFile.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (currentPostType === 'image') {
+                            previewImage.src = e.target.result;
+                            previewImage.style.display = 'block';
+                            previewVideo.style.display = 'none';
+                        } else if (currentPostType === 'video') {
+                            previewVideo.src = URL.createObjectURL(file);
+                            previewVideo.style.display = 'block';
+                            previewImage.style.display = 'none';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Load initial posts
+            loadPosts();
+
+            // Post form submission
+            postForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const content = document.getElementById('postContent').value;
+                
+                if (!content.trim()) {
+                    alert('Please enter some content');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('type_pub', currentPostType);
+                
+                if (currentPostType === 'text') {
+                    formData.append('description', content);
+                } else {
+                    formData.append('description', content);
+                    if (mediaFile.files[0]) {
+                        formData.append('media', mediaFile.files[0]);
+                    }
+                }
+
+                try {
+                    const response = await fetch('/publication/new', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        addPostToDOM(data);
+                        postForm.reset();
+                        mediaPreview.style.display = 'none';
+                        mediaInput.style.display = 'none';
+                        postTypeButtons.forEach(btn => btn.classList.remove('active'));
+                        currentPostType = 'text';
+                    } else {
+                        console.error('Server response:', data);
+                        alert(data.error || 'Error creating post. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error details:', error);
+                    alert('Error creating post. Please check the console for details.');
+                }
+            });
+
+            // Initialize filters
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            let currentFilters = {
+                type: 'all',
+                date: 'all'
+            };
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterType = this.dataset.filter;
+                    const filterValue = this.dataset.value;
+                    
+                    // Update active state
+                    document.querySelectorAll(`[data-filter="${filterType}"]`).forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update current filters
+                    currentFilters[filterType] = filterValue;
+                    
+                    // Reload posts with new filters
+                    loadPosts(currentFilters);
+                });
+            });
+
+            // Collapse filters by default
+            toggleFilters();
+        });
+
+        // Add these new functions after the existing comment functions
+        async function editComment(commentId, postId) {
+            const commentElement = document.querySelector(`.comment[data-comment-id="${commentId}"]`);
+            const currentContent = commentElement.querySelector('p').textContent;
+            
+            // Create edit form
+            const editForm = document.createElement('form');
+            editForm.innerHTML = `
+                <div class="form-group">
+                    <textarea class="form-control" rows="2">${currentContent}</textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary mr-2" onclick="cancelCommentEdit(${commentId})">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            `;
+            
+            // Store original content
+            commentElement.dataset.originalContent = currentContent;
+            
+            // Replace content with edit form
+            const contentElement = commentElement.querySelector('p');
+            contentElement.parentNode.replaceChild(editForm, contentElement);
+            
+            // Handle form submission
+            editForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const newContent = this.querySelector('textarea').value;
+                
+                try {
+                    const response = await fetch(`/publication/${postId}/comment/${commentId}/edit`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ content: newContent })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Update comment content
+                        const newContentElement = document.createElement('p');
+                        newContentElement.className = 'mt-2 mb-0';
+                        newContentElement.textContent = newContent;
+                        editForm.parentNode.replaceChild(newContentElement, editForm);
+                    } else {
+                        alert(data.error || 'Error updating comment');
+                        cancelCommentEdit(commentId);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error updating comment');
+                    cancelCommentEdit(commentId);
+                }
+            });
+        }
+
+        function cancelCommentEdit(commentId) {
+            const commentElement = document.querySelector(`.comment[data-comment-id="${commentId}"]`);
+            const originalContent = commentElement.dataset.originalContent;
+            
+            // Restore original content
+            const contentElement = document.createElement('p');
+            contentElement.className = 'mt-2 mb-0';
+            contentElement.textContent = originalContent;
+            
+            const editForm = commentElement.querySelector('form');
+            editForm.parentNode.replaceChild(contentElement, editForm);
+            
+            // Clean up stored data
+            delete commentElement.dataset.originalContent;
+        }
+
+        async function deleteComment(commentId, postId) {
+            if (!confirm('Are you sure you want to delete this comment?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/publication/${postId}/comment/${commentId}/delete`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const commentElement = document.querySelector(`.comment[data-comment-id="${commentId}"]`);
+                    if (commentElement) {
+                        commentElement.remove();
+                        
+                        // Update comment count
+                        const commentButton = document.querySelector(`.post-container[data-post-id="${postId}"] button:nth-child(2)`);
+                        if (commentButton) {
+                            const currentCount = parseInt(commentButton.textContent.match(/\d+/)[0]);
+                            commentButton.textContent = `Comments (${currentCount - 1})`;
+                        }
+                    }
+                } else {
+                    alert(data.error || 'Error deleting comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting comment');
+            }
+        }
+
+        // Add this function to handle filter toggling
+        function toggleFilters() {
+            const container = document.querySelector('.filters-container');
+            const toggle = document.querySelector('.filters-toggle');
+            const content = document.querySelector('.filters-content');
+            
+            container.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+    </script>
 {% endblock %}
 
 {% block sidebar %}

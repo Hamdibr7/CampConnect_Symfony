@@ -40,12 +40,12 @@ class PublicationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Publication[] Returns an array of Publication objects
+     * @return Publication[] Returns an array of Publication objects sorted by newest first
      */
     public function findByDateDesc(): array
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.date', 'DESC')
+            ->orderBy('p.date', 'DESC')  // Order by date DESC to get newest first
             ->getQuery()
             ->getResult();
     }

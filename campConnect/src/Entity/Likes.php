@@ -9,6 +9,7 @@ use App\Constants\Reaction;
 class Likes
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $id;
 
@@ -31,7 +32,7 @@ class Likes
         $this->date = new \DateTime(); // Initialize the date to the current date
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -39,7 +40,6 @@ class Likes
     public function setId(int $value): self
     {
         $this->id = $value;
-
         return $this;
     }
 
@@ -51,7 +51,6 @@ class Likes
     public function setPublicationid(?Publication $value): self
     {
         $this->publicationid = $value;
-
         return $this;
     }
 
@@ -63,7 +62,6 @@ class Likes
     public function setUtilisateurid(?Utilisateur $value): self
     {
         $this->utilisateurid = $value;
-
         return $this;
     }
 
@@ -75,7 +73,6 @@ class Likes
     public function setReactionType(int $value): self
     {
         $this->reaction_type = $value;
-
         return $this;
     }
 
