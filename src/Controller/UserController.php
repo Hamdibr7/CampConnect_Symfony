@@ -20,6 +20,8 @@ use App\Service\UserSessionService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Service\PasswordHashService;
 use GuzzleHttp\Client;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Psr\Log\LoggerInterface;
 #[Route('/utilisateur')]
  class UserController extends AbstractController
@@ -346,25 +348,7 @@ public function deleteFromIndex(Utilisateur $utilisateur, EntityManagerInterface
     return $this->redirectToRoute('app_utilisateur_index');
 }
 
-   /* #[Route('/', name: 'app_home')]
-    public function noti(EntityManagerInterface $entityManager): Response
-    {
-        $user = $this->getUser();
-    
-        if ($user) {
-            // Récupérer les notifications de l'utilisateur
-            $notifications = $entityManager->getRepository(Notification::class)
-                ->findBy(['utilisateur' => $user], ['date_creation' => 'DESC']);
-        } else {
-            // Si l'utilisateur n'est pas connecté, on définit une variable vide
-            $notifications = [];
-        }
-    
-        return $this->render('FrontOffice/index.html.twig', [
-            'user' => $user,
-            'notifications' => $notifications, // Passer la variable notifications ici
-        ]);
-    }*/
+
     
 
 }

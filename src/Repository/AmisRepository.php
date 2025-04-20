@@ -75,4 +75,5 @@ class AmisRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    
 }

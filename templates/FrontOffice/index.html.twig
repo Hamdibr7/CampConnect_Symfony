@@ -293,6 +293,9 @@
                 <i class="fa fa-sign-out-alt"></i> Déconnexion
             </a>
         </div>
+    
+
+
     </div>
 {% endif %}
 
@@ -444,5 +447,17 @@
             }, 300);
         });
     </script>
+    <script>
+    const eventSource = new EventSource('http://localhost:3000/.well-known/mercure?topic=https://mon-site.com/user/123');
+
+    eventSource.onmessage = event => {
+        const data = JSON.parse(event.data);
+        console.log("Notification reçue :", data.message);
+        // Ici tu peux mettre à jour le DOM, jouer un son, afficher une alerte, etc.
+    };
+</script>
+
+
+    
 </body>
 </html>

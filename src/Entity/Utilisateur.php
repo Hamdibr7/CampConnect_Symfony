@@ -7,10 +7,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Entity\Notification;
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    
+
+
+
+
+
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -166,4 +173,5 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Si tu stockes des données temporaires sensibles, vide-les ici
     }
+  
 }

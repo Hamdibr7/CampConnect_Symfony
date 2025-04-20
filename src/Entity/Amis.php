@@ -69,6 +69,7 @@ class Amis
 
         return $this;
     }
+    
 
 
 // Définir le demandeur

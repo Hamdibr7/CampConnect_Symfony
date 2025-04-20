@@ -497,6 +497,162 @@
         width: fit-content;
     }
 }
+{# Optional CSS to style the alphabet filter (you can add this to your CSS file) #}
+
+    .alphabet-filter {
+        margin: 20px 0;
+        text-align: center;
+    }
+    
+    .letter-link {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 2px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #333;
+    }
+    
+    .letter-link.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    
+    .letter-link:hover:not(.active) {
+        background-color: #f0f0f0;
+    }
+
+    //////////////////
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.section-title i {
+    font-size: 1.125rem;
+    color: #4a86e8;
+}
+
+/* Styles pour les contrôles de tri */
+.sorting-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Style du bouton dropdown */
+.sort-dropdown .btn-outline-secondary {
+    border-color: #d1d5db;
+    color: #4b5563;
+    background-color: #fff;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.sort-dropdown .btn-outline-secondary:hover {
+    background-color: #f3f4f6;
+    border-color: #b0b9c6;
+}
+
+/* Style des éléments du menu dropdown */
+.dropdown-menu {
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem 0;
+}
+
+.dropdown-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.05em;
+}
+
+.dropdown-item {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    color: #4b5563;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdown-item.active {
+    background-color: rgba(74, 134, 232, 0.1);
+    color: #4a86e8;
+    font-weight: 500;
+}
+
+.dropdown-item.active i {
+    color: #4a86e8;
+}
+
+/* Style du badge de tri actuel */
+.current-sort .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: #4a86e8;
+    padding: 0.35rem 0.75rem;
+}
+
+/* Style de la grille d'utilisateurs */
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+/* Style des cartes utilisateur */
+.user-card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Message quand aucun résultat */
+.no-results {
+    text-align: center;
+    padding: 3rem 0;
+    color: #6b7280;
+}
+
+.no-results i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
     </style>
 </head>
 
@@ -670,6 +826,7 @@
                 <i class="fas fa-campground"></i>
                 <h2>Mes amis campeurs</h2>
             </div>
+
             {% if amis|length > 0 %}
                 <div class="user-grid">
                     {% for relation in amis %}
@@ -787,71 +944,132 @@
             {% endif %}
         </div>
 
-        <!-- Section Découvrir d'autres campeurs -->
-        <div class="friends-section">
-            <div class="section-header">
-                <i class="fas fa-users"></i>
-                <h2>Découvrir d'autres campeurs</h2>
+      <!-- Section Découvrir d'autres campeurs -->
+<div class="friends-section">
+   <div class="section-header">
+    <i class="fas fa-users"></i>
+    <h2>Découvrir d'autres campeurs</h2>
+</div>
+
+        <!-- Options de tri professionnelles -->
+        <div class="sorting-controls">
+            <div class="dropdown sort-dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-sort me-2"></i>Trier par
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li>
+                        <h6 class="dropdown-header">Nom</h6>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if sortBy == 'name' and sortDirection == 'asc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'name', 'sort': 'asc', 'list': listType, 'letter': letterFilter}) }}">
+                            <i class="fas fa-sort-alpha-down me-2"></i>A à Z
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if sortBy == 'name' and sortDirection == 'desc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'name', 'sort': 'desc', 'list': listType, 'letter': letterFilter}) }}">
+                            <i class="fas fa-sort-alpha-up me-2"></i>Z à A
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <h6 class="dropdown-header">Âge</h6>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if sortBy == 'age' and sortDirection == 'asc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'age', 'sort': 'asc', 'list': listType, 'letter': letterFilter}) }}">
+                            <i class="fas fa-sort-numeric-down me-2"></i>Croissant
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item {% if sortBy == 'age' and sortDirection == 'desc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'age', 'sort': 'desc', 'list': listType, 'letter': letterFilter}) }}">
+                            <i class="fas fa-sort-numeric-up me-2"></i>Décroissant
+                        </a>
+                    </li>
+                </ul>
             </div>
-            {% if utilisateurs|length > 0 %}
-                <div class="user-grid">
-                    {% for utilisateur in utilisateurs %}
-                        {% set relation = relationRepository.findDemande(currentUser.id, utilisateur.id) %}
-                        <div class="user-card">
-                            <div class="user-header">
-                                <div class="user-avatar-container">
-                                    {% if utilisateur.pdp %}
-                                        <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" class="user-avatar">
-                                    {% else %}
-                                        <div class="user-avatar-placeholder">
-                                            {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="user-info">
-                                    <div class="user-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
-                                    <div class="user-age">{{ utilisateur.age }} ans</div>
-                                    {% if relation is not null %}
-                                        {% if relation.status == 'attente' %}
-                                            {% if relation.utilisateurid1 == currentUser.id %}
-                                                <span class="badge badge-waiting">Invitation envoyée</span>
-                                            {% else %}
-                                                <span class="badge badge-waiting">Vous a invité</span>
-                                            {% endif %}
-                                        {% elseif relation.status == 'amis' %}
-                                            <span class="badge badge-friends">Ami</span>
-                                        {% elseif relation.status == 'refusé' %}
-                                            <span class="badge badge-rejected">Invitation refusée</span>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="user-actions">
-                                {% if relation is null %}
-                                    <a href="{{ path('app_amis_inviter', {'id': utilisateur.id}) }}" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>
-                                {% elseif relation.status == 'attente' %}
-                                    {% if relation.utilisateurid1 == currentUser.id %}
-                                        <span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>
-                                    {% else %}
-                                        <a href="{{ path('app_amis_accepter', {'id': relation.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
-                                        <a href="{{ path('app_amis_refuser', {'id': relation.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
-                                    {% endif %}
-                                {% elseif relation.status == 'amis' %}
-                                    <span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>
-                                {% elseif relation.status == 'refusé' %}
-                                    <span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="no-results">
-                    <i class="fas fa-search"></i>
-                    <p>Aucun autre campeur disponible pour le moment</p>
+            
+            <!-- Badge indiquant le tri actuel -->
+            {% if sortBy is defined and sortDirection is defined %}
+                <div class="current-sort">
+                    <span class="badge rounded-pill bg-primary">
+                        {% if sortBy == 'name' %}
+                            {% if sortDirection == 'asc' %}
+                                <i class="fas fa-sort-alpha-down me-1"></i>Nom (A-Z)
+                            {% else %}
+                                <i class="fas fa-sort-alpha-up me-1"></i>Nom (Z-A)
+                            {% endif %}
+                        {% elseif sortBy == 'age' %}
+                            {% if sortDirection == 'asc' %}
+                                <i class="fas fa-sort-numeric-down me-1"></i>Âge (croissant)
+                            {% else %}
+                                <i class="fas fa-sort-numeric-up me-1"></i>Âge (décroissant)
+                            {% endif %}
+                        {% endif %}
+                    </span>
                 </div>
             {% endif %}
         </div>
+    </div>
+    
+    {% if utilisateurs|length > 0 %}
+        <div class="user-grid">
+            {% for utilisateur in utilisateurs %}
+                {% set relation = relationRepository.findDemande(currentUser.id, utilisateur.id) %}
+                <div class="user-card">
+                    <div class="user-header">
+                        <div class="user-avatar-container">
+                            {% if utilisateur.pdp %}
+                                <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" class="user-avatar">
+                            {% else %}
+                                <div class="user-avatar-placeholder">
+                                    {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
+                            <div class="user-age">{{ utilisateur.age }} ans</div>
+                            {% if relation is not null %}
+                                {% if relation.status == 'attente' %}
+                                    {% if relation.utilisateurid1 == currentUser.id %}
+                                        <span class="badge badge-waiting">Invitation envoyée</span>
+                                    {% else %}
+                                        <span class="badge badge-waiting">Vous a invité</span>
+                                    {% endif %}
+                                {% elseif relation.status == 'amis' %}
+                                    <span class="badge badge-friends">Ami</span>
+                                {% elseif relation.status == 'refusé' %}
+                                    <span class="badge badge-rejected">Invitation refusée</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        {% if relation is null %}
+                            <a href="{{ path('app_amis_inviter', {'id': utilisateur.id}) }}" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>
+                        {% elseif relation.status == 'attente' %}
+                            {% if relation.utilisateurid1 == currentUser.id %}
+                                <span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>
+                            {% else %}
+                                <a href="{{ path('app_amis_accepter', {'id': relation.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
+                                <a href="{{ path('app_amis_refuser', {'id': relation.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+                            {% endif %}
+                        {% elseif relation.status == 'amis' %}
+                            <span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>
+                        {% elseif relation.status == 'refusé' %}
+                            <span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <p>Aucun autre campeur disponible pour le moment</p>
+        </div>
+    {% endif %}
+</div>
     </div>
 
     
@@ -914,4 +1132,13 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script>
+    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script> <script>
+        // Script pour initialiser tous les dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation des dropdowns Bootstrap
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            });
+        });
+    </script>

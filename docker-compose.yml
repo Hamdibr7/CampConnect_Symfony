@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  mercure:
+    image: dunglas/mercure
+    ports:
+      - "3000:80"
+    environment:
+      JWT_KEY: '!ChangeMe!'
+      PUBLISH_ALLOWED_ORIGINS: '*'
+      CORS_ALLOWED_ORIGINS: '*'
+    command: /usr/bin/caddy run -config /etc/caddy/Caddyfile
