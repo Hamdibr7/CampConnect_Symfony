@@ -1,0 +1,14 @@
+{# templates/stripe/cancel.html.twig #}
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Paiement Annulé{% endblock %}
+
+{% block body %}
+<div class="container py-5 text-center">
+    <h1 class="text-danger display-4 mb-4">Paiement annulé</h1>
+    <p class="lead">Votre paiement n'a pas été finalisé. Vous pouvez réessayer si vous le souhaitez.</p>
+    <a href="{{ path('user_orders') }}" class="btn btn-warning mt-3">
+        <i class="fas fa-undo"></i> Retourner à mes commandes
+    </a>
+</div>
+{% endblock %}

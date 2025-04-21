@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PanierRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PanierRepository::class)]
 class Panier
@@ -17,14 +18,18 @@ class Panier
     #[ORM\JoinColumn(nullable: false)]
     private ?Equipement $equipement = null;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: false)] // Made sure it is not nullable here
+    #[Assert\NotBlank(message: "La quantité est obligatoire")]
+    #[Assert\Positive(message: "La quantité doit être positive")]
     private int $qte_com;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: 'float', nullable: false)] // Made sure it is not nullable here
+    #[Assert\NotBlank(message: "Le prix total est obligatoire")]
+    #[Assert\Positive(message: "Le prix total doit être positif")]
     private float $prix_total;
 
-    #[ORM\Column(type: 'integer')]
-    private int $id_utilisateur;
+    #[ORM\Column(type: 'integer', nullable: true)] // Made nullable
+    private ?int $id_utilisateur = null; // Made nullable
 
     // Getters and setters
 
@@ -51,7 +56,7 @@ class Panier
 
     public function setQuantite(int $quantite): self
     {
-        $this->qte_com = $quantite; // Correction ici pour garder la cohérence
+        $this->qte_com = $quantite;
         return $this;
     }
 
@@ -66,12 +71,12 @@ class Panier
         return $this;
     }
 
-    public function getIdUtilisateur(): int // Correction ici du nom de la méthode
+    public function getIdUtilisateur(): ?int
     {
         return $this->id_utilisateur;
     }
 
-    public function setIdUtilisateur(int $id_utilisateur): self
+    public function setIdUtilisateur(?int $id_utilisateur): self
     {
         $this->id_utilisateur = $id_utilisateur;
         return $this;

@@ -15,7 +15,7 @@ class Equipement
     #[ORM\Column(name: "id", type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(name: "nomEquip", type: "string", length: 255)]
+    #[ORM\Column(name: "nomEquip", type: "string", length: 255, nullable: true)] // Nullable added
     #[Assert\NotBlank(message: "Le nom de l'équipement est obligatoire")]
     #[Assert\Regex(
         pattern: "/^[a-zA-ZÀ-ÿ\s\-']+$/",
@@ -23,17 +23,20 @@ class Equipement
     )]
     private ?string $nomEquip = null;
 
-    #[ORM\Column(name: "qte_dispo", type: "integer")]
-    #[SerializedName('qte_dispo')]
+    #[ORM\Column(name: "qte_dispo", type: "integer", nullable: true)] // Nullable added
     #[Assert\NotBlank(message: "La quantité est obligatoire")]
     #[Assert\Positive(message: "La quantité doit être positive")]
     #[Assert\Type(
         type: "integer",
         message: "La quantité doit être un nombre entier"
     )]
+    #[Assert\GreaterThanOrEqual(
+        value: 0,
+        message: "La quantité disponible doit être égale ou supérieure à zéro"
+    )]
     private ?int $qte_dispo = null;
 
-    #[ORM\Column(name: "prix", type: "float")]
+    #[ORM\Column(name: "prix", type: "float", nullable: true)] // Nullable added
     #[Assert\NotBlank(message: "Le prix est obligatoire")]
     #[Assert\Positive(message: "Le prix doit être positif")]
     #[Assert\Type(
@@ -42,12 +45,13 @@ class Equipement
     )]
     private ?float $prix = null;
 
-    #[ORM\Column(name: "image", type: "string", length: 255, nullable: true)]
+    #[ORM\Column(name: "image", type: "string", length: 255, nullable: true)] // Nullable added
     private ?string $image = null;
 
-    #[ORM\Column(name: "description", type: "text", nullable: true)]
+    #[ORM\Column(name: "description", type: "text", nullable: true)] // Nullable added
     private ?string $description = null;
 
+    // Getters and setters
     public function getId(): ?int
     {
         return $this->id;
@@ -64,7 +68,7 @@ class Equipement
         return $this->nomEquip;
     }
 
-    public function setNomEquip(string $nomEquip): static
+    public function setNomEquip(?string $nomEquip): static
     {
         $this->nomEquip = $nomEquip;
         return $this;
@@ -75,7 +79,7 @@ class Equipement
         return $this->qte_dispo;
     }
 
-    public function setQteDispo(int $qte_dispo): static
+    public function setQteDispo(?int $qte_dispo): static
     {
         $this->qte_dispo = $qte_dispo;
         return $this;
@@ -86,7 +90,7 @@ class Equipement
         return $this->prix;
     }
 
-    public function setPrix(float $prix): static
+    public function setPrix(?float $prix): static
     {
         $this->prix = $prix;
         return $this;
