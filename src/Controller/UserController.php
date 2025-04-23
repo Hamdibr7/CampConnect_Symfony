@@ -3,7 +3,7 @@
 namespace App\Controller;
 use App\Entity\Utilisateur;
 use App\Form\UserType;
-
+use App\Repository\NotificationRepository;
 use App\Entity\Notification;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,7 +41,7 @@ use Psr\Log\LoggerInterface;
             
         ]);
     }
-
+ 
 // Méthode login modifiée
 #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
 public function login(Request $request, UtilisateurRepository $utilisateurRepository, PasswordHashService $passwordHashService): Response

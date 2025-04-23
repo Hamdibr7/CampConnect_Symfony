@@ -173,5 +173,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Si tu stockes des données temporaires sensibles, vide-les ici
     }
+    
   
 }

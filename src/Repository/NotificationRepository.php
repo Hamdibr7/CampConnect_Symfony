@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Notification;
+use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,26 +13,27 @@ class NotificationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Notification::class);
     }
-
-    public function findByUserId(int $userId): array
-    {
-        return $this->createQueryBuilder('n')
-            ->leftJoin('n.initiateur', 'initiateur')
-            ->addSelect('initiateur')
-            ->where('n.utilisateur = :id')
-            ->setParameter('id', $userId)
-            ->orderBy('n.date_creation', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function countUnreadByUserId(int $userId): int
-    {
-        return $this->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.utilisateur = :id')
-            ->setParameter('id', $userId)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
+    
+    public function countUnreadByUser(Utilisateur $user): int
+{
+    return $this->createQueryBuilder('n')
+        ->select('COUNT(n.id)')
+        ->where('n.utilisateur = :user')
+        ->andWhere('n.isRead = :isRead')
+        ->setParameter('user', $user)
+        ->setParameter('isRead', false)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+   
+    // src/Repository/NotificationRepository.php
+public function findByUser(Utilisateur $user)
+{
+    return $this->createQueryBuilder('n')
+        ->where('n.utilisateur = :user')
+        ->setParameter('user', $user)
+        ->orderBy('n.dateCreation', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
 }

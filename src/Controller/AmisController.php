@@ -6,6 +6,7 @@ use App\Entity\Amis;
 use App\Entity\Utilisateur;
 use App\Repository\AmisRepository;
 use App\Repository\UtilisateurRepository;
+use App\Repository\NotificationRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Entity\Notification;
 
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 class AmisController extends AbstractController
@@ -24,8 +26,9 @@ class AmisController extends AbstractController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        
+        //$this->notificationService = $notificationService
     }
+    
     private function sortUsersByAge(array $items, string $direction = 'asc'): array
 {
     usort($items, function($a, $b) use ($direction) {
@@ -339,6 +342,14 @@ public function index(Request $request, AmisRepository $amisRepository, Utilisat
     
             // Persister la demande dans la base de données
             $entityManager->persist($demande);
+
+         // Créer une notification pour le destinataire
+         $message = $currentUser->getPrenom() . ' ' . $currentUser->getNom() . ' vous a envoyé une demande d\'ami';
+        
+         // Créer la notification directement sans utiliser le service
+         $notification = new Notification($message, $destinataire);
+         $entityManager->persist($notification);
+         
             $entityManager->flush();
     
             // Afficher un message flash pour indiquer que l'invitation a été envoyée
@@ -373,7 +384,24 @@ public function index(Request $request, AmisRepository $amisRepository, Utilisat
         }
 
         $demande->setStatus('amis');
+
+         
         
+        $demandeur = $demande->getDemandeur();
+        
+      
+        
+         // Créer une notification pour le destinataire
+         $message = $currentUser->getPrenom() . ' ' . $currentUser->getNom() . ' a accepté votre demande d\'ami';
+
+        
+         // Créer la notification directement sans utiliser le service
+         $notification = new Notification($message, $demandeur);
+         $entityManager->persist($notification);
+         
+        
+        $notification = new Notification($message, $demandeur);
+       
         $entityManager->flush();
 
         $this->addFlash('success', 'Invitation acceptée');
@@ -440,6 +468,43 @@ public function index(Request $request, AmisRepository $amisRepository, Utilisat
 
         return $this->redirectToRoute('app_amis');
     }
+   
+    #[Route('/notifications', name: 'app_notifications')]
+    public function notifications(Request $request, NotificationRepository $notificationRepo, UtilisateurRepository $utilisateurRepository): Response
+    {
+        $session = $request->getSession();
+        $userData = $session->get('user');
+        
+        if (!$userData) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        // Récupérer l'utilisateur actuel à partir de la session
+        $currentUser = $utilisateurRepository->find($userData['id']);
+        if (!$currentUser) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+      
+        // Obtenir les notifications de l'utilisateur
+        $notifications = $notificationRepo->findBy([
+            'utilisateur' =>  $currentUser->getId(), 
+        ], ['date_creation' => 'DESC']);
+        
+        return $this->render('notifications.html.twig', [
+            'notifications' => $notifications,
+            'currentUser' => $currentUser
+        ]);
+    }
+    #[Route('/notification/mark-as-read/{id}', name: 'app_notification_mark_as_read')]
+public function markAsRead(Notification $notification, EntityManagerInterface $entityManager): Response
+{
+    if (!$notification->isRead()) {
+        $notification->setIsRead(true);
+        $entityManager->flush();
+    }
+    
+    return $this->redirectToRoute('app_notifications');
+}
 
 
 }

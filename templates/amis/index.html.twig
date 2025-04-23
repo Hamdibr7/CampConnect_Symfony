@@ -728,7 +728,18 @@
               </div>
             </div>
             <a href="#" class="nav-item nav-link">Contact</a>
-
+<a href="{{ path('app_notifications') }}" class="nav-link position-relative">
+    <i class="fas fa-bell"></i>
+    {% if app.session.get('user') %}
+        {% set unreadCount = unreadNotificationsCount|default(0) %}
+        {% if unreadCount > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ unreadCount }}
+                <span class="visually-hidden">Notifications non lues</span>
+            </span>
+        {% endif %}
+    {% endif %}
+</a>
             <!-- Menu utilisateur avec dropdown -->
             {% if user is defined and user %}
               <div class="nav-item dropdown user-nav-item">

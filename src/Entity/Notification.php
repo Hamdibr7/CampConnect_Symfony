@@ -16,7 +16,7 @@ class Notification
     #[ORM\Column(length: 255)]
     private string $message;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'date_creation', type: 'datetime')]
     private \DateTimeInterface $date_creation;
 
     #[ORM\Column(type: 'boolean')]
