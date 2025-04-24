@@ -490,11 +490,32 @@ public function index(Request $request, AmisRepository $amisRepository, Utilisat
             'utilisateur' =>  $currentUser->getId(), 
         ], ['date_creation' => 'DESC']);
         
-        return $this->render('notifications.html.twig', [
-            'notifications' => $notifications,
-            'currentUser' => $currentUser
-        ]);
+     // Préparer les données des émetteurs
+    $emetteurs = [];
+    foreach ($notifications as $notification) {
+        // Extraire le nom de l'émetteur du message
+        if (preg_match('/^([A-Za-z]+) ([A-Za-z]+) (vous a|a accepté)/', $notification->getMessage(), $matches)) {
+            $prenom = $matches[1];
+            $nom = $matches[2];
+            
+            // Rechercher l'utilisateur correspondant
+            $emetteur = $utilisateurRepository->findOneBy([
+                'prenom' => $prenom,
+                'nom' => $nom
+            ]);
+            
+            if ($emetteur) {
+                $emetteurs[$notification->getId()] = $emetteur;
+            }
+        }
     }
+    
+    return $this->render('notifications.html.twig', [
+        'notifications' => $notifications,
+        'emetteurs' => $emetteurs,
+        'currentUser' => $currentUser
+    ]);
+}
     #[Route('/notification/mark-as-read/{id}', name: 'app_notification_mark_as_read')]
 public function markAsRead(Notification $notification, EntityManagerInterface $entityManager): Response
 {

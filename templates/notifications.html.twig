@@ -1,3 +1,4 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Mes Notifications - Camping Nature{% endblock %}
@@ -137,6 +138,39 @@
             margin-bottom: 1rem;
         }
         
+        /* Styles pour les photos de profil */
+        .notification-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4c956c;
+            margin-right: 12px;
+        }
+        
+        .profile-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #2c6e49;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-item-content {
+            display: flex;
+            align-items: center;
+        }
+        
         @media (min-width: 768px) {
             .container {
                 max-width: 90%;
@@ -185,15 +219,34 @@
                         {% if not notification.isRead %}
                             <div class="list-group-item list-group-item-primary">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="notification-message">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            {{ notification.message }}
+                                    <div class="notification-item-content">
+                                        <!-- Photo de profil de l'émetteur -->
+                                        {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
+                                            <img src="{{ asset('uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
+                                                 alt="Photo de profil" 
+                                                 class="notification-profile">
+                                        {% else %}
+                                            {% if emetteurs[notification.id] is defined %}
+                                                <div class="profile-placeholder">
+                                                    {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
+                                                </div>
+                                            {% else %}
+                                                <div class="profile-placeholder">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        <div class="notification-content">
+                                            <div class="notification-message">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                {{ notification.message }}
+                                            </div>
+                                            <small class="notification-date">
+                                                <i class="far fa-clock me-1"></i>
+                                                {{ notification.dateCreation|date('d/m/Y H:i') }}
+                                            </small>
                                         </div>
-                                        <small class="notification-date">
-                                            <i class="far fa-clock me-1"></i>
-                                            {{ notification.dateCreation|date('d/m/Y H:i') }}
-                                        </small>
                                     </div>
                                     <a href="{{ path('app_notification_mark_as_read', {'id': notification.id}) }}" 
                                        class="btn btn-sm btn-outline-primary">
@@ -218,15 +271,34 @@
                         {% if notification.isRead %}
                             <div class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="notification-message">
-                                            <i class="fas fa-check-circle me-2 text-success"></i>
-                                            {{ notification.message }}
+                                    <div class="notification-item-content">
+                                        <!-- Photo de profil de l'émetteur -->
+                                        {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
+                                            <img src="{{ asset('uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
+                                                 alt="Photo de profil" 
+                                                 class="notification-profile">
+                                        {% else %}
+                                            {% if emetteurs[notification.id] is defined %}
+                                                <div class="profile-placeholder">
+                                                    {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
+                                                </div>
+                                            {% else %}
+                                                <div class="profile-placeholder">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        <div class="notification-content">
+                                            <div class="notification-message">
+                                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                                {{ notification.message }}
+                                            </div>
+                                            <small class="notification-date">
+                                                <i class="far fa-clock me-1"></i>
+                                                {{ notification.dateCreation|date('d/m/Y H:i') }}
+                                            </small>
                                         </div>
-                                        <small class="notification-date">
-                                            <i class="far fa-clock me-1"></i>
-                                            {{ notification.dateCreation|date('d/m/Y H:i') }}
-                                        </small>
                                     </div>
                                 </div>
                             </div>
