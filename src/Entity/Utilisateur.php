@@ -69,6 +69,33 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $pdp = null;
 
+    #[ORM\Column(name: 'google_id',type: 'string', length: 255, nullable: true)]
+private ?string $googleId = null;
+
+#[ORM\Column(name: 'auth_provider',type: 'string', length: 20, nullable: true)]
+private ?string $authProvider = null;
+public function getGoogleId(): ?string
+{
+    return $this->googleId;
+}
+
+public function setGoogleId(?string $googleId): self
+{
+    $this->googleId = $googleId;
+    return $this;
+}
+
+public function getAuthProvider(): ?string
+{
+    return $this->authProvider;
+}
+
+public function setAuthProvider(?string $authProvider): self
+{
+    $this->authProvider = $authProvider;
+    return $this;
+}
+
     // --- Getters et setters classiques ---
     public function getId(): ?int
     {

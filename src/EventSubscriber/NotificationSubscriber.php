@@ -35,16 +35,23 @@ class NotificationSubscriber implements EventSubscriberInterface
         if (!$event->isMainRequest()) {
             return;
         }
-
+    
         $session = $this->requestStack->getSession();
         $userData = $session->get('user');
-
-        if ($userData) {
+    
+        // Check if $userData is an array and has an 'id' key
+        if (is_array($userData) && isset($userData['id'])) {
             $user = $this->utilisateurRepository->find($userData['id']);
             if ($user) {
                 $unreadCount = $this->notificationRepository->countUnreadByUser($user);
                 $this->twig->addGlobal('unreadNotificationsCount', $unreadCount);
+            } else {
+                // Optional: Set default value if user is not found
+                $this->twig->addGlobal('unreadNotificationsCount', 0);
             }
+        } else {
+            // Optional: Set default value if no valid user data
+            $this->twig->addGlobal('unreadNotificationsCount', 0);
         }
     }
 

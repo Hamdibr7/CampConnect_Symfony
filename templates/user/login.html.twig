@@ -288,6 +288,19 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+
+.social-google {
+  color: #EA4335;
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.social-google:hover {
+  background-color: #EA4335;
+  color: white;
+  border-color: #EA4335;
+}
+
   </style>
 </head>
 <body>
@@ -336,7 +349,10 @@
     <div class="separator animate-up">ou</div>
     
     <div class="other-login animate-up">
-      <a href="#" class="social-btn social-google">G</a>
+   
+  <a href="{{ path('connect_google') }}" class="social-btn social-google">
+    <i class="social-btn social-google">G</i>
+  </a>
       <a href="#" class="social-btn social-facebook">f</a>
       <a href="#" class="social-btn social-twitter">t</a>
     </div>
