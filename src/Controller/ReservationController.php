@@ -24,15 +24,31 @@ class ReservationController extends AbstractController
         return $this->render('front/index.html.twig', [  'campings' => $campings,]);
     }
 
+    
     #[Route('/list', name: 'reservation_index', methods: ['GET'])]
-    public function list(ReservationRepository $reservationRepository): Response
+    public function list(Request $request, ReservationRepository $repo): Response
     {
-        $reservations = $reservationRepository->findAll();
-
-        return $this->render('/front/ListRes.html.twig', [
+        $filters = [
+            'camping'   => $request->query->get('camping'),
+            'dateDebut' => $request->query->get('dateDebut'),
+            'montant'   => $request->query->get('montant'),
+            'ville'     => $request->query->get('ville'),
+        ];
+    
+        $hasFilters = array_filter($filters); // remove empty/null values
+    
+        $reservations = $hasFilters
+            ? $repo->searchFiltered($filters)
+            : $repo->findAll();
+    
+        return $this->render('front/ListRes.html.twig', [
             'reservations' => $reservations,
+            'filters'      => $filters,
         ]);
     }
+    
+
+
     #[Route('/new/{camping_id}', name: 'reservation_new', methods: ['GET', 'POST'])]
     public function new(int $camping_id, CampingRepository $campingRepository, EntityManagerInterface $em): Response
     {
@@ -79,6 +95,8 @@ class ReservationController extends AbstractController
         $this->addFlash('success', 'Reservation canceled successfully.');
         return $this->redirectToRoute('reservation_index');
     }
+
+    
     #[Route('/admin/reservation', name: 'admin_reservations_list')]
     public function RESBack(ReservationRepository $reservationRepository): Response
    {
