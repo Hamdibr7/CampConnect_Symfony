@@ -1,158 +1,250 @@
-
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Notifications - Camping Nature{% endblock %}
+{% block title %}Mes Notifications - CampConnect{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
+    <!-- Favicon -->
+    <link href="{{ asset('template/img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('template/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('template/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --accent-color: #f39c12;
+            --danger-color: #e74c3c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --gray-color: #95a5a6;
+            --light-gray: #f4f6f8;
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                              url('/assets/images/camping-bg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
         }
-        
+
+        .content-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 0;
+        }
+
         .page-header {
-            background-color: #4c956c;
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px 0 40px;
+            position: relative;
         }
-        
-        .notification-title {
+
+        .page-header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        .page-header::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 0 auto;
+        }
+
+        .flash-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 50px;
+        }
+
+        .notification-header {
             display: flex;
             align-items: center;
-            gap: 16px;
-            font-size: 1.2em;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
         }
-        
-        .notification-icon {
-            color: #fff;
-            font-size: 2rem;
-            background-color: #2c6e49;
-            padding: 12px;
-            border-radius: 50%;
+
+        .notification-header i {
+            font-size: 1.6em;
+            margin-right: 15px;
+            color: var(--primary-color);
         }
-        
+
+        .notification-header h2 {
+            font-size: 1.8em;
+            color: var(--dark-color);
+            margin: 0;
+            font-weight: 600;
+        }
+
         .list-group-item {
-            border-left: 5px solid #2c6e49;
+            border-left: 5px solid var(--primary-color);
             margin-bottom: 0.8rem;
             padding: 1rem;
             transition: all 0.3s ease;
             border-radius: 0.5rem;
+            background-color: var(--light-gray);
         }
-        
+
         .list-group-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .list-group-item-primary {
-            background-color: rgba(76, 149, 108, 0.1);
-            border-left: 5px solid #ffc107;
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 5px solid var(--accent-color);
         }
-        
+
         .btn-outline-primary {
-            color: #2c6e49;
-            border-color: #2c6e49;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
             border-width: 2px;
             font-weight: 600;
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }
-        
+
         .btn-outline-primary:hover {
-            background-color: #2c6e49;
-            border-color: #2c6e49;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(44, 110, 73, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        
-        .notification-header {
-            margin: 2rem 0 1.2rem 0;
-            color: #2c6e49;
-            font-weight: 700;
-            font-size: 1.4rem;
-            border-bottom: 2px solid #4c956c;
-            padding-bottom: 0.5rem;
-            display: inline-block;
-        }
-        
-        .camping-icon {
-            margin-right: 0.5rem;
-        }
-        
+
         .notification-message {
             font-size: 1.1rem;
             margin-bottom: 0.3rem;
+            color: var(--dark-color);
         }
-        
+
         .notification-date {
             font-style: italic;
-            color: #6c757d;
+            color: var(--gray-color);
+            font-size: 0.9rem;
         }
-        
-        .back-button {
-            margin-bottom: 1.5rem;
-            color: #2c6e49;
-            border-color: #2c6e49;
-            transition: all 0.3s ease;
-        }
-        
-        .back-button:hover {
-            background-color: #2c6e49;
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px auto 20px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: var(--dark-color);
             color: white;
-            transform: translateX(-5px);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: fit-content;
         }
-        
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .back-btn:hover {
+            background-color: #1a252f;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
         .notification-count {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: var(--accent-color);
+            color: white;
             border-radius: 50%;
             padding: 0.2rem 0.6rem;
             font-size: 0.9rem;
             font-weight: 700;
             margin-left: 0.5rem;
         }
-        
+
         .notification-actions {
             margin-top: 2rem;
             display: flex;
             justify-content: center;
             gap: 1rem;
         }
-        
+
         .empty-notifications {
             text-align: center;
             padding: 3rem;
-            background-color: rgba(76, 149, 108, 0.05);
+            background-color: var(--light-gray);
             border-radius: 0.5rem;
-            border: 1px dashed #4c956c;
+            border: 1px dashed var(--primary-color);
         }
-        
+
         .empty-icon {
             font-size: 3rem;
-            color: #4c956c;
+            color: var(--primary-color);
             margin-bottom: 1rem;
         }
-        
-        /* Styles pour les photos de profil */
+
         .notification-profile {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #4c956c;
+            border: 2px solid var(--primary-color);
             margin-right: 12px;
         }
-        
+
         .profile-placeholder {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #2c6e49;
+            background-color: var(--secondary-color);
             color: white;
             display: flex;
             align-items: center;
@@ -161,181 +253,470 @@
             margin-right: 12px;
             font-size: 16px;
         }
-        
-        .notification-content {
-            flex: 1;
-        }
-        
+
         .notification-item-content {
             display: flex;
             align-items: center;
         }
-        
-        @media (min-width: 768px) {
-            .container {
-                max-width: 90%;
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .content-container {
+                width: 95%;
             }
         }
-        
-        @media (min-width: 992px) {
-            .container {
-                max-width: 80%;
+
+        @media (max-width: 576px) {
+            .page-header h1 {
+                font-size: 2.2em;
             }
         }
+        .notification-badge {
+    position: absolute;
+    top: 20px;
+    left: 23px;
+    background-color: #a52a2a ;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 1000;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+ .user-nav-link .profile-mini {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 5px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .user-dropdown-menu {
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: none;
+            min-width: 200px;
+        }
+    
+        .user-dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+    
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: var(--primary);
+        }
+    
+        .user-dropdown-item i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+    
+        .user-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #6eb85a ;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            border: 4px  #fbfbfb;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+  
+
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <!-- Bouton retour -->
-        <a href="javascript:history.back()" class="btn btn-outline-secondary back-button mb-4">
-            <i class="fas fa-arrow-left me-2"></i>
-            Retour à la page précédente
-        </a>
-        
-        <div class="page-header">
-            <div class="container">
-                <div class="notification-title">
-                    <i class="fas fa-bell notification-icon"></i>
-                    <h1>Mes Notifications</h1>
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-light pt-3 d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center">
+                        <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+                        <p class="text-body px-3">|</p>
+                        <p><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center text-lg-right">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="text-primary px-3" href="#">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="text-primary pl-3" href="#">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        {% if notifications|length > 0 %}
-            {# Compter les notifications non lues #}
-            {% set unreadCount = 0 %}
-            {% for notification in notifications %}
-                {% if not notification.isRead %}
-                    {% set unreadCount = unreadCount + 1 %}
-                {% endif %}
-            {% endfor %}
-            
-            {# Afficher les notifications non lues #}
-            {% if unreadCount > 0 %}
-                <h4 class="notification-header">Non lues <span class="notification-count">{{ unreadCount }}</span></h4>
-                <div class="list-group mb-4">
-                    {% for notification in notifications %}
-                        {% if not notification.isRead %}
-                            <div class="list-group-item list-group-item-primary">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="notification-item-content">
-                                        <!-- Photo de profil de l'émetteur -->
-                                        {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
-                                            <img src="{{ asset('uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
-                                                 alt="Photo de profil" 
-                                                 class="notification-profile">
-                                        {% else %}
-                                            {% if emetteurs[notification.id] is defined %}
-                                                <div class="profile-placeholder">
-                                                    {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
-                                                </div>
-                                            {% else %}
-                                                <div class="profile-placeholder">
-                                                    <i class="fas fa-user"></i>
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
+    </div>
+    <!-- Topbar End -->
 
-                                        <div class="notification-content">
-                                            <div class="notification-message">
-                                                <i class="fas fa-info-circle me-2"></i>
-                                                {{ notification.message }}
-                                            </div>
-                                            <small class="notification-date">
-                                                <i class="far fa-clock me-1"></i>
-                                                {{ notification.dateCreation|date('d/m/Y H:i') }}
-                                            </small>
+    <!-- Messages flash -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="#" class="navbar-brand">
+                    <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a href="#" class="nav-item nav-link">Home</a>
+                        <a href="#" class="nav-item nav-link">About</a>
+                        <a href="#" class="nav-item nav-link">Services</a>
+                        <a href="#" class="nav-item nav-link">Tour Packages</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu border-0 rounded-0 m-0">
+                                <a href="#" class="dropdown-item">Blog Grid</a>
+                                <a href="#" class="dropdown-item">Blog Detail</a>
+                                <a href="#" class="dropdown-item">Destination</a>
+                                <a href="#" class="dropdown-item">Travel Guides</a>
+                                <a href="#" class="dropdown-item">Testimonial</a>
+                            </div>
+                        </div>
+                        <a href="#" class="nav-item nav-link">Contact</a>
+                        <a href="{{ path('app_notifications') }}" class="nav-link position-relative active">
+                            <i class="fas fa-bell"></i>
+                            {% if app.session.get('user') %}
+                                {% set unreadCount = unreadNotificationsCount|default(0) %}
+                                 {% if unreadCount > 0 %}
+    <span class="notification-badge">{{ unreadCount }}</span>
+{% endif %}
+    {% endif %}
+                         
+                        </a>
+                        <!-- Menu utilisateur avec dropdown -->
+                        {% if user is defined and user %}
+                            <div class="nav-item dropdown user-nav-item">
+                                <a href="#" class="nav-link dropdown-toggle user-nav-link" data-toggle="dropdown">
+                                    {% if user.pdp is defined and user.pdp %}
+                                        <img src="{{ asset('Uploads/profiles/' ~ user.pdp) }}" alt="Profile" class="profile-mini">
+                                    {% elseif user.isAdmin is defined and user.isAdmin %}
+                                        <i class="fas fa-user-shield mr-1"></i> Administrateur
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ user.prenom is defined ? user.prenom|first|upper : '' }}{{ user.nom is defined ? user.nom|first|upper : '' }}
                                         </div>
-                                    </div>
-                                    <a href="{{ path('app_notification_mark_as_read', {'id': notification.id}) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-check me-1"></i>
-                                        Marquer comme lu
+                                    {% endif %}
+                                    {% if user.isAdmin is not defined or not user.isAdmin %}
+                                        {% if user.prenom is defined or user.nom is defined %}
+                                            {{ user.prenom|default('') }} {{ user.nom|default('') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                                <div class="dropdown-menu border-0 rounded-0 m-0 user-dropdown-menu">
+                                    {% if user.isAdmin is defined and user.isAdmin %}
+                                        <a class="dropdown-item user-dropdown-item disabled">
+                                            <i class="fas fa-crown"></i> Admin connecté
+                                        </a>
+                                        <a href="{{ path('app_utilisateur_index') }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fas fa-users-cog"></i> Dashboard
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('app_utilisateur_edit', {'id': user.id}) }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fa fa-edit"></i> Modifier Profil
+                                        </a>
+                                        <a href="{{ path('app_amis') }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fa fa-users"></i> Mes amis
+                                        </a>
+                                    {% endif %}
+                                    <div class="dropdown-divider"></div>
+                                    <a href="{{ path('app_logout') }}" class="dropdown-item user-dropdown-item">
+                                        <i class="fa fa-sign-out-alt"></i> Déconnexion
                                     </a>
                                 </div>
                             </div>
                         {% endif %}
-                    {% endfor %}
+                    </div>
                 </div>
-            {% endif %}
-            
-            {# Compter les notifications lues #}
-            {% set readCount = notifications|length - unreadCount %}
-            
-            {# Afficher les notifications lues si elles existent #}
-            {% if readCount > 0 %}
-                <h4 class="notification-header">Lues <span class="notification-count">{{ readCount }}</span></h4>
-                <div class="list-group">
-                    {% for notification in notifications %}
-                        {% if notification.isRead %}
-                            <div class="list-group-item">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="notification-item-content">
-                                        <!-- Photo de profil de l'émetteur -->
-                                        {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
-                                            <img src="{{ asset('uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
-                                                 alt="Photo de profil" 
-                                                 class="notification-profile">
-                                        {% else %}
-                                            {% if emetteurs[notification.id] is defined %}
-                                                <div class="profile-placeholder">
-                                                    {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
-                                                </div>
-                                            {% else %}
-                                                <div class="profile-placeholder">
-                                                    <i class="fas fa-user"></i>
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
 
-                                        <div class="notification-content">
-                                            <div class="notification-message">
-                                                <i class="fas fa-check-circle me-2 text-success"></i>
-                                                {{ notification.message }}
+    <!-- Contenu principal -->
+    <div class="content-container">
+        <div class="page-header">
+            <h1>Mes Notifications</h1>
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Retour à la page précédente
+            </a>
+        </div>
+
+        {% if notifications|length > 0 %}
+            <!-- Section des notifications -->
+            <div class="notification-section">
+                {# Compter les notifications non lues #}
+                {% set unreadCount = 0 %}
+                {% for notification in notifications %}
+                    {% if not notification.isRead %}
+                        {% set unreadCount = unreadCount + 1 %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Afficher les notifications non lues #}
+                {% if unreadCount > 0 %}
+                    <div class="notification-header">
+                        <i class="fas fa-bell"></i>
+                        <h2>Non lues <span class="notification-count">{{ unreadCount }}</span></h2>
+                    </div>
+                    <div class="list-group mb-4">
+                        {% for notification in notifications %}
+                            {% if not notification.isRead %}
+                                <div class="list-group-item list-group-item-primary">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="notification-item-content">
+                                            <!-- Photo de profil de l'émetteur -->
+                                            {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
+                                                <img src="{{ asset('Uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
+                                                     alt="Photo de profil" 
+                                                     class="notification-profile">
+                                            {% else %}
+                                                {% if emetteurs[notification.id] is defined %}
+                                                    <div class="profile-placeholder">
+                                                        {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-placeholder">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            <div class="notification-content">
+                                                <div class="notification-message">
+                                                    <i class="fas fa-info-circle me-2"></i>
+                                                    {{ notification.message }}
+                                                </div>
+                                                <small class="notification-date">
+                                                    <i class="far fa-clock me-1"></i>
+                                                    {{ notification.dateCreation|date('d/m/Y H:i') }}
+                                                </small>
                                             </div>
-                                            <small class="notification-date">
-                                                <i class="far fa-clock me-1"></i>
-                                                {{ notification.dateCreation|date('d/m/Y H:i') }}
-                                            </small>
+                                        </div>
+                                        <a href="{{ path('app_notification_mark_as_read', {'id': notification.id}) }}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="fas fa-check me-1"></i> Marquer comme lu
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {# Compter les notifications lues #}
+                {% set readCount = notifications|length - unreadCount %}
+
+                {# Afficher les notifications lues si elles existent #}
+                {% if readCount > 0 %}
+                    <div class="notification-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h2>Lues <span class="notification-count">{{ readCount }}</span></h2>
+                    </div>
+                    <div class="list-group">
+                        {% for notification in notifications %}
+                            {% if notification.isRead %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="notification-item-content">
+                                            <!-- Photo de profil de l'émetteur -->
+                                            {% if emetteurs[notification.id] is defined and emetteurs[notification.id].pdp %}
+                                                <img src="{{ asset('Uploads/profiles/' ~ emetteurs[notification.id].pdp) }}" 
+                                                     alt="Photo de profil" 
+                                                     class="notification-profile">
+                                            {% else %}
+                                                {% if emetteurs[notification.id] is defined %}
+                                                    <div class="profile-placeholder">
+                                                        {{ emetteurs[notification.id].prenom|first|upper }}{{ emetteurs[notification.id].nom|first|upper }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-placeholder">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            <div class="notification-content">
+                                                <div class="notification-message">
+                                                    <i class="fas fa-check-circle me-2 text-success"></i>
+                                                    {{ notification.message }}
+                                                </div>
+                                                <small class="notification-date">
+                                                    <i class="far fa-clock me-1"></i>
+                                                    {{ notification.dateCreation|date('d/m/Y H:i') }}
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {# Boutons d'action #}
+                <div class="notification-actions">
+                    {% if unreadCount > 0 %}
+                        <button id="mark-all-read" class="btn btn-primary">
+                            <i class="fas fa-check-double me-1"></i> Tout marquer comme lu
+                        </button>
+                    {% endif %}
+                    {% if notifications|length > 0 %}
+                        <a href="#" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Effacer l'historique
+                        </a>
+                    {% endif %}
                 </div>
-            {% endif %}
-            
-            {# Boutons d'action #}
-            <div class="notification-actions">
-                {% if unreadCount > 0 %}
-                    <button id="mark-all-read" class="btn btn-outline-primary">
-                        <i class="fas fa-check-double me-1"></i>
-                        Tout marquer comme lu
-                    </button>
-                {% endif %}
-                
-                {% if notifications|length > 0 %}
-                    <a href="#" class="btn btn-outline-secondary">
-                        <i class="fas fa-trash-alt me-1"></i>
-                        Effacer l'historique
-                    </a>
-                {% endif %}
             </div>
-            
         {% else %}
-            <div class="empty-notifications">
-                <i class="fas fa-bell-slash empty-icon"></i>
-                <h3>Aucune notification</h3>
-                <p class="text-muted">Vous n'avez actuellement aucune notification à consulter.</p>
+            <div class="notification-section">
+                <div class="empty-notifications">
+                    <i class="fas fa-bell-slash empty-icon"></i>
+                    <h3>Aucune notification</h3>
+                    <p class="text-muted">Vous n'avez actuellement aucune notification à consulter.</p>
+                </div>
             </div>
         {% endif %}
     </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
+        <div class="row pt-5">
+            <div class="col-lg-3 col-md-6 mb-5">
+                <a href="" class="navbar-brand">
+                    <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
+                </a>
+                <p>Rejoignez notre communauté pour découvrir les meilleurs sites de camping et partager vos aventures avec d'autres passionnés de plein air.</p>
+                <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Suivez-nous</h6>
+                <div class="d-flex justify-content-start">
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Nos Services</h5>
+                <div class="d-flex flex-column justify-content-start">
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Réservations</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Événements</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Communauté</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Liens Utiles</h5>
+                <div class="d-flex flex-column justify-content-start">
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>À propos</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>FAQ</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Témoignages</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Partenaires</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact</h5>
+                <p><i class="fa fa-map-marker-alt mr-2"></i>123 Rue du Camping, 75000 Paris</p>
+                <p><i class="fa fa-phone-alt mr-2"></i>+33 1 23 45 67 89</p>
+                <p><i class="fa fa-envelope mr-2"></i>info@campconnect.com</p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
+        <div class="row">
+            <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
+                <p class="m-0 text-white-50">Copyright © <a href="#">CampConnect</a>. Tous droits réservés.</p>
+            </div>
+            <div class="col-lg-6 text-center text-md-right">
+                <p class="m-0 text-white-50">Conçu par <a href="#">CampConnect</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Animation d'entrée pour les notifications
@@ -349,7 +730,7 @@
                     notification.style.transform = 'translateY(0)';
                 }, 100 * index);
             });
-            
+
             // Gestion du bouton "Tout marquer comme lu"
             const markAllReadBtn = document.getElementById('mark-all-read');
             if (markAllReadBtn) {
@@ -357,7 +738,7 @@
                     // Animation pour montrer l'action
                     markAllReadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Traitement...';
                     markAllReadBtn.disabled = true;
-                    
+
                     // Récupérer tous les boutons "Marquer comme lu" et cliquer sur le premier
                     const markAsReadButtons = document.querySelectorAll('.list-group-item-primary .btn-outline-primary');
                     if (markAsReadButtons.length > 0) {

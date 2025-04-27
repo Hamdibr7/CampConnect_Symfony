@@ -23,6 +23,43 @@ class UtilisateurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findUtilisateursForAmis(int $currentUserId, ?string $query, array $filters, ?string $letter, ?string $sortBy, ?string $sortDirection): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.id != :currentUserId')
+            ->setParameter('currentUserId', $currentUserId);
+
+        // Recherche par nom/prénom
+        if ($query) {
+            $qb->andWhere('u.prenom LIKE :query OR u.nom LIKE :query')
+               ->setParameter('query', '%' . $query . '%');
+        }
+
+        // Filtre par première lettre
+        if ($letter) {
+            $qb->andWhere('u.prenom LIKE :letter')
+               ->setParameter('letter', $letter . '%');
+        }
+
+        // Appliquer le tri
+        if ($sortBy && $sortDirection) {
+            switch ($sortBy) {
+                case 'name':
+                    $qb->orderBy('u.prenom', $sortDirection)
+                       ->addOrderBy('u.nom', $sortDirection);
+                    break;
+                case 'age':
+                    $qb->orderBy('u.age', $sortDirection);
+                    break;
+                default:
+                    $qb->orderBy('u.prenom', 'ASC');
+            }
+        } else {
+            $qb->orderBy('u.prenom', 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
     
     //    /**
     //     * @return Utilisateur[] Returns an array of Utilisateur objects

@@ -125,7 +125,6 @@
             margin-right: 15px;
             color: var(--primary-color);
         }
-        
 
         h2 {
             font-size: 1.8em;
@@ -162,17 +161,16 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             background-color: white;
         }
-        
 
-      .user-avatar-container {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: var(--light-gray);
-}
+        .user-avatar-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: var(--light-gray);
+        }
 
         .user-avatar {
             width: 100%;
@@ -335,13 +333,14 @@
 
         /* Animation de chargement */
         .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255,255,255,.3);
             border-radius: 50%;
-            border-top-color: white;
+            border-top-color: var(--primary-color);
             animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
         }
 
         @keyframes spin {
@@ -369,19 +368,398 @@
             }
         }
 
-        ///
         .search-container {
-    background-color: white;
-    border-radius: 12px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .search-input-group {
+            display: flex;
+            width: 100%;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+            background-color: #27ae60;
+        }
+
+        .search-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--light-gray);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-option:hover {
+            background-color: #e2e6ea;
+        }
+
+        .filter-option input {
+            cursor: pointer;
+        }
+
+        .user-nav-link .profile-mini {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 5px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .user-dropdown-menu {
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: none;
+            min-width: 200px;
+        }
+    
+        .user-dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+    
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: var(--primary);
+        }
+    
+        .user-dropdown-item i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+    
+        .user-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #6eb85a ;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            border: 4px  #fbfbfb;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+  
+        
+        @media (max-width: 768px) {
+            .search-filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+    
+            .filter-option {
+                width: fit-content;
+            }
+        }
+
+        .alphabet-filter {
+            margin: 20px 0;
+            text-align: center;
+        }
+    
+        .letter-link {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 2px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #333;
+        }
+    
+        .letter-link.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    
+        .letter-link:hover:not(.active) {
+            background-color: #f0f0f0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-title i {
+            font-size: 1.125rem;
+            color: #4a86e8;
+        }
+
+        .sorting-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sort-dropdown .btn-outline-secondary {
+            border-color: #d1d5db;
+            color: #4b5563;
+            background-color: #fff;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .sort-dropdown .btn-outline-secondary:hover {
+            background-color: #f3f4f6;
+            border-color: #b0b9c6;
+        }
+
+        .dropdown-menu {
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.05em;
+        }
+
+        .dropdown-item {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            color: #4b5563;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-item.active {
+            background-color: rgba(74, 134, 232, 0.1);
+            color: #4a86e8;
+            font-weight: 500;
+        }
+
+        .dropdown-item.active i {
+            color: #4a86e8;
+        }
+
+        .current-sort .badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: #4a86e8;
+            padding: 0.35rem 0.75rem;
+        }
+
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .user-card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 0;
+            color: #6b7280;
+        }
+
+        .no-results i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .notification-badge {
+    position: absolute;
+    top: 20px;
+    left: 23px;
+    background-color: #a52a2a ;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 1000;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+//////
+/* Styles pour les indicateurs d'état de la recherche AJAX */
+.loading {
+    text-align: center;
     padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 20px;
+    color: #d9534f;
+    background-color: #f2dede;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+/* Styles pour la liste des résultats */
+.utilisateurs-list {
+    margin-top: 20px;
+}
+
+.utilisateur-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.utilisateur-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.utilisateur-details h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.utilisateur-details p {
+    margin: 3px 0 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Styles pour les filtres */
+.search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-option input {
+    cursor: pointer;
+}
+
+/* Styles pour le formulaire de recherche */
+.search-container {
+    margin-bottom: 20px;
 }
 
 .search-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    max-width: 100%;
 }
 
 .search-input-group {
@@ -391,268 +769,18 @@
 
 .search-input {
     flex-grow: 1;
-    padding: 12px 15px;
-    border: 2px solid var(--light-gray);
-    border-radius: 8px 0 0 8px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
     font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
 }
 
 .search-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 0 8px 8px 0;
-    padding: 0 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.search-button:hover {
-    background-color: #27ae60;
-}
-
-.search-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.filter-option {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background-color: var(--light-gray);
-    padding: 8px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.filter-option:hover {
-    background-color: #e2e6ea;
-}
-
-.filter-option input {
+    padding: 10px 15px;
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
 }
-    .user-nav-link .profile-mini {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 5px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-        .user-dropdown-menu {
-      margin-top: 10px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      border: none;
-      min-width: 200px;
-    }
-    
-    .user-dropdown-item {
-      padding: 10px 20px;
-      transition: all 0.3s;
-    }
-    
-    .user-dropdown-item:hover {
-      background-color: #f8f9fa;
-      color: var(--primary);
-    }
-    
-    .user-dropdown-item i {
-      margin-right: 10px;
-      color: var(--primary);
-    }
-    
-    .user-avatar-placeholder {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: var(--secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      color: white;
-      border: 2px solid var(--primary);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-        
-@media (max-width: 768px) {
-    .search-filters {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .filter-option {
-        width: fit-content;
-    }
-}
-{# Optional CSS to style the alphabet filter (you can add this to your CSS file) #}
 
-    .alphabet-filter {
-        margin: 20px 0;
-        text-align: center;
-    }
-    
-    .letter-link {
-        display: inline-block;
-        padding: 5px 10px;
-        margin: 2px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-        text-decoration: none;
-        color: #333;
-    }
-    
-    .letter-link.active {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-    
-    .letter-link:hover:not(.active) {
-        background-color: #f0f0f0;
-    }
-
-    //////////////////
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.section-title {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.section-title h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.section-title i {
-    font-size: 1.125rem;
-    color: #4a86e8;
-}
-
-/* Styles pour les contrôles de tri */
-.sorting-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-/* Style du bouton dropdown */
-.sort-dropdown .btn-outline-secondary {
-    border-color: #d1d5db;
-    color: #4b5563;
-    background-color: #fff;
-    font-size: 0.875rem;
-    padding: 0.375rem 0.75rem;
-    transition: all 0.2s ease;
-}
-
-.sort-dropdown .btn-outline-secondary:hover {
-    background-color: #f3f4f6;
-    border-color: #b0b9c6;
-}
-
-/* Style des éléments du menu dropdown */
-.dropdown-menu {
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
-    padding: 0.5rem 0;
-}
-
-.dropdown-header {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #6b7280;
-    letter-spacing: 0.05em;
-}
-
-.dropdown-item {
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
-    color: #4b5563;
-}
-
-.dropdown-item:hover {
-    background-color: #f3f4f6;
-}
-
-.dropdown-item.active {
-    background-color: rgba(74, 134, 232, 0.1);
-    color: #4a86e8;
-    font-weight: 500;
-}
-
-.dropdown-item.active i {
-    color: #4a86e8;
-}
-
-/* Style du badge de tri actuel */
-.current-sort .badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    background-color: #4a86e8;
-    padding: 0.35rem 0.75rem;
-}
-
-/* Style de la grille d'utilisateurs */
-.user-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
-    margin-top: 1.5rem;
-}
-
-/* Style des cartes utilisateur */
-.user-card {
-    background-color: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.user-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Message quand aucun résultat */
-.no-results {
-    text-align: center;
-    padding: 3rem 0;
-    color: #6b7280;
-}
-
-.no-results i {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-}
     </style>
 </head>
 
@@ -701,134 +829,136 @@
         {% endfor %}
     {% endfor %}
     
- <!-- Navbar Start -->
-  <div class="container-fluid position-relative nav-bar p-0">
-    <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
-      <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
-        <a href="#" class="navbar-brand">
-          <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
-        </a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
-          <div class="navbar-nav ml-auto py-0">
-            <a href="#" class="nav-item nav-link">Home</a>
-            <a href="#" class="nav-item nav-link">About</a>
-            <a href="#" class="nav-item nav-link">Services</a>
-            <a href="#" class="nav-item nav-link">Tour Packages</a>
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-              <div class="dropdown-menu border-0 rounded-0 m-0">
-                <a href="#" class="dropdown-item">Blog Grid</a>
-                <a href="#" class="dropdown-item">Blog Detail</a>
-                <a href="#" class="dropdown-item">Destination</a>
-                <a href="#" class="dropdown-item">Travel Guides</a>
-                <a href="#" class="dropdown-item">Testimonial</a>
-              </div>
-            </div>
-            <a href="#" class="nav-item nav-link">Contact</a>
-<a href="{{ path('app_notifications') }}" class="nav-link position-relative">
-    <i class="fas fa-bell"></i>
-    {% if app.session.get('user') %}
-        {% set unreadCount = unreadNotificationsCount|default(0) %}
-        {% if unreadCount > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ unreadCount }}
-                <span class="visually-hidden">Notifications non lues</span>
-            </span>
-        {% endif %}
-    {% endif %}
-</a>
-            <!-- Menu utilisateur avec dropdown -->
-            {% if user is defined and user %}
-              <div class="nav-item dropdown user-nav-item">
-                <a href="#" class="nav-link dropdown-toggle user-nav-link" data-toggle="dropdown">
-                  {% if user.pdp is defined and user.pdp %}
-                    <img src="{{ asset('uploads/profiles/' ~ user.pdp) }}" alt="Profile" class="profile-mini">
-                  {% elseif user.isAdmin is defined and user.isAdmin %}
-                    <i class="fas fa-user-shield mr-1"></i> Administrateur
-                  {% else %}
-                    <div class="user-avatar-placeholder">
-                      {{ user.prenom is defined ? user.prenom|first|upper : '' }}{{ user.nom is defined ? user.nom|first|upper : '' }}
-                    </div>
-                  {% endif %}
-
-                  {% if user.isAdmin is not defined or not user.isAdmin %}
-                    {% if user.prenom is defined or user.nom is defined %}
-                      {{ user.prenom|default('') }} {{ user.nom|default('') }}
-                    {% endif %}
-                  {% endif %}
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="#" class="navbar-brand">
+                    <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
                 </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a href="#" class="nav-item nav-link">Home</a>
+                        <a href="#" class="nav-item nav-link">About</a>
+                        <a href="#" class="nav-item nav-link">Services</a>
+                        <a href="#" class="nav-item nav-link">Tour Packages</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu border-0 rounded-0 m-0">
+                                <a href="#" class="dropdown-item">Blog Grid</a>
+                                <a href="#" class="dropdown-item">Blog Detail</a>
+                                <a href="#" class="dropdown-item">Destination</a>
+                                <a href="#" class="dropdown-item">Travel Guides</a>
+                                <a href="#" class="dropdown-item">Testimonial</a>
+                            </div>
+                        </div>
+                        <a href="#" class="nav-item nav-link">Contact</a>
+                        <a href="{{ path('app_notifications') }}" class="nav-link position-relative">
+                            <i class="fas fa-bell"></i>
+                            {% if app.session.get('user') %}
+                                {% set unreadCount = unreadNotificationsCount|default(0) %}
+                                 {% if unreadCount > 0 %}
+    <span class="notification-badge">{{ unreadCount }}</span>
+{% endif %}
+    {% endif %}
+                           
+                        </a>
+                        <!-- Menu utilisateur avec dropdown -->
+                        {% if user is defined and user %}
+                            <div class="nav-item dropdown user-nav-item">
+                                <a href="#" class="nav-link dropdown-toggle user-nav-link" data-toggle="dropdown">
+                                    {% if user.pdp is defined and user.pdp %}
+                                        <img src="{{ asset('Uploads/profiles/' ~ user.pdp) }}" alt="Profile" class="profile-mini">
+                                    {% elseif user.isAdmin is defined and user.isAdmin %}
+                                        <i class="fas fa-user-shield mr-1"></i> Administrateur
+                                    {% else %}
+                                        <div class="user-avatar-placeholder">
+                                            {{ user.prenom is defined ? user.prenom|first|upper : '' }}{{ user.nom is defined ? user.nom|first|upper : '' }}
+                                        </div>
+                                    {% endif %}
 
-                <div class="dropdown-menu border-0 rounded-0 m-0 user-dropdown-menu">
-                  {% if user.isAdmin is defined and user.isAdmin %}
-                    <a class="dropdown-item user-dropdown-item disabled">
-                      <i class="fas fa-crown"></i> Admin connecté
-                    </a>
-                    <a href="{{ path('app_utilisateur_index') }}" class="dropdown-item user-dropdown-item">
-                      <i class="fas fa-users-cog"></i> Dashboard
-                    </a>
-                  {% else %}
-                    <a href="{{ path('app_utilisateur_edit', {'id': user.id}) }}" class="dropdown-item user-dropdown-item">
-                      <i class="fa fa-edit"></i> Modifier Profil
-                    </a>
-                    <a href="{{ path('app_amis') }}" class="dropdown-item user-dropdown-item">
-                      <i class="fa fa-users"></i> Mes amis
-                    </a>
-                  {% endif %}
-                  <div class="dropdown-divider"></div>
-                  <a href="{{ path('app_logout') }}" class="dropdown-item user-dropdown-item">
-                    <i class="fa fa-sign-out-alt"></i> Déconnexion
-                  </a>
+                                    {% if user.isAdmin is not defined or not user.isAdmin %}
+                                        {% if user.prenom is defined or user.nom is defined %}
+                                            {{ user.prenom|default('') }} {{ user.nom|default('') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+
+                                <div class="dropdown-menu border-0 rounded-0 m-0 user-dropdown-menu">
+                                    {% if user.isAdmin is defined and user.isAdmin %}
+                                        <a class="dropdown-item user-dropdown-item disabled">
+                                            <i class="fas fa-crown"></i> Admin connecté
+                                        </a>
+                                        <a href="{{ path('app_utilisateur_index') }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fas fa-users-cog"></i> Dashboard
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('app_utilisateur_edit', {'id': user.id}) }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fa fa-edit"></i> Modifier Profil
+                                        </a>
+                                        <a href="{{ path('app_amis') }}" class="dropdown-item user-dropdown-item">
+                                            <i class="fa fa-users"></i> Mes amis
+                                        </a>
+                                    {% endif %}
+                                    <div class="dropdown-divider"></div>
+                                    <a href="{{ path('app_logout') }}" class="dropdown-item user-dropdown-item">
+                                        <i class="fa fa-sign-out-alt"></i> Déconnexion
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-              </div>
-            {% endif %}
-          </div>
+            </nav>
         </div>
-      </nav>
     </div>
-  </div>
-  <!-- Navbar End -->
-
+    <!-- Navbar End -->
 
     <!-- Contenu principal de la page Amis -->
     <div class="content-container">
         <div class="page-header">
             <h1>Mes Amis de Camping</h1>
-            <!-- Ajoutez ce bouton juste avant la section Footer -->
-<a href="{{ path('app_front_home') }}" class="back-btn">
-    <i class="fas fa-arrow-left"></i> Retour à la page précédente
-</a>
+            <a href="{{ path('app_front_home') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Retour à la page précédente
+            </a>
         </div>
-        <!-- Formulaire de recherche -->
+
+      <!-- Formulaire de recherche avec AJAX -->
 <div class="search-container">
-    <form action="{{ path('app_amis') }}" method="GET" class="search-form">
+    <form id="search-form" class="search-form">
         <div class="search-input-group">
-            <input type="text" name="query" placeholder="Rechercher des campeurs..." class="search-input" value="{{ app.request.query.get('query') }}">
-            <button type="submit" class="search-button">
+            <input type="text" name="query" id="search-input" placeholder="Rechercher des campeurs..." class="search-input" value="{{ app.request.query.get('query') }}">
+            <button type="button" id="search-button" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
         </div>
         <div class="search-filters">
             <label class="filter-option">
-                <input type="checkbox" name="filter[]" value="amis" {% if 'amis' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
+                <input type="checkbox" name="filter[]" value="amis" class="filter-checkbox" {% if 'amis' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
                 Mes amis
             </label>
             <label class="filter-option">
-                <input type="checkbox" name="filter[]" value="demandes" {% if 'demandes' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
+                <input type="checkbox" name="filter[]" value="demandes" class="filter-checkbox" {% if 'demandes' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
                 Demandes reçues
             </label>
             <label class="filter-option">
-                <input type="checkbox" name="filter[]" value="invitations" {% if 'invitations' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
+                <input type="checkbox" name="filter[]" value="invitations" class="filter-checkbox" {% if 'invitations' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
                 Invitations envoyées
             </label>
             <label class="filter-option">
-                <input type="checkbox" name="filter[]" value="nouveaux" {% if 'nouveaux' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
+                <input type="checkbox" name="filter[]" value="nouveaux" class="filter-checkbox" {% if 'nouveaux' in app.request.query.all.filter|default([]) %}checked{% endif %}> 
                 Nouveaux campeurs
             </label>
         </div>
     </form>
+</div>
+
+<!-- Conteneur pour les résultats de recherche -->
+<div id="search-results">
+    <!-- Les résultats seront chargés ici -->
 </div>
 
         <!-- Section Mes amis campeurs -->
@@ -846,7 +976,7 @@
                             <div class="user-header">
                                 <div class="user-avatar-container">
                                     {% if ami.pdp %}
-                                        <img src="{{ asset('uploads/profiles/' ~ ami.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                        <img src="{{ asset('Uploads/profiles/' ~ ami.pdp) }}" alt="Photo de profil" class="user-avatar">
                                     {% else %}
                                         <div class="user-avatar-placeholder">
                                             {{ ami.prenom|first|upper }}{{ ami.nom|first|upper }}
@@ -889,7 +1019,7 @@
                             <div class="user-header">
                                 <div class="user-avatar-container">
                                     {% if expediteur.pdp %}
-                                        <img src="{{ asset('uploads/profiles/' ~ expediteur.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                        <img src="{{ asset('Uploads/profiles/' ~ expediteur.pdp) }}" alt="Photo de profil" class="user-avatar">
                                     {% else %}
                                         <div class="user-avatar-placeholder">
                                             {{ expediteur.prenom|first|upper }}{{ expediteur.nom|first|upper }}
@@ -931,7 +1061,7 @@
                             <div class="user-header">
                                 <div class="user-avatar-container">
                                     {% if destinataire.pdp %}
-                                        <img src="{{ asset('uploads/profiles/' ~ destinataire.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                        <img src="{{ asset('Uploads/profiles/' ~ destinataire.pdp) }}" alt="Photo de profil" class="user-avatar">
                                     {% else %}
                                         <div class="user-avatar-placeholder">
                                             {{ destinataire.prenom|first|upper }}{{ destinataire.nom|first|upper }}
@@ -955,201 +1085,492 @@
             {% endif %}
         </div>
 
-      <!-- Section Découvrir d'autres campeurs -->
-<div class="friends-section">
-   <div class="section-header">
-    <i class="fas fa-users"></i>
-    <h2>Découvrir d'autres campeurs</h2>
-</div>
-
-        <!-- Options de tri professionnelles -->
-        <div class="sorting-controls">
-            <div class="dropdown sort-dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-sort me-2"></i>Trier par
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                    <li>
-                        <h6 class="dropdown-header">Nom</h6>
-                    </li>
-                    <li>
-                        <a class="dropdown-item {% if sortBy == 'name' and sortDirection == 'asc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'name', 'sort': 'asc', 'list': listType, 'letter': letterFilter}) }}">
-                            <i class="fas fa-sort-alpha-down me-2"></i>A à Z
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item {% if sortBy == 'name' and sortDirection == 'desc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'name', 'sort': 'desc', 'list': listType, 'letter': letterFilter}) }}">
-                            <i class="fas fa-sort-alpha-up me-2"></i>Z à A
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <h6 class="dropdown-header">Âge</h6>
-                    </li>
-                    <li>
-                        <a class="dropdown-item {% if sortBy == 'age' and sortDirection == 'asc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'age', 'sort': 'asc', 'list': listType, 'letter': letterFilter}) }}">
-                            <i class="fas fa-sort-numeric-down me-2"></i>Croissant
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item {% if sortBy == 'age' and sortDirection == 'desc' %}active{% endif %}" href="{{ path('app_amis', {'sortBy': 'age', 'sort': 'desc', 'list': listType, 'letter': letterFilter}) }}">
-                            <i class="fas fa-sort-numeric-up me-2"></i>Décroissant
-                        </a>
-                    </li>
-                </ul>
+        <!-- Section Découvrir d'autres campeurs -->
+        <div class="friends-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-users"></i>
+                    <h2>Découvrir d'autres campeurs</h2>
+                </div>
+                <div class="sorting-controls">
+                    <div class="dropdown sort-dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-sort me-2"></i>Trier par
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li>
+                                <h6 class="dropdown-header">Nom</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item sort-option {% if sortBy == 'name' and sortDirection == 'asc' %}active{% endif %}" href="#" data-sort-by="name" data-sort-direction="asc">
+                                    <i class="fas fa-sort-alpha-down me-2"></i>A à Z
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item sort-option {% if sortBy == 'name' and sortDirection == 'desc' %}active{% endif %}" href="#" data-sort-by="name" data-sort-direction="desc">
+                                    <i class="fas fa-sort-alpha-up me-2"></i>Z à A
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <h6 class="dropdown-header">Âge</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item sort-option {% if sortBy == 'age' and sortDirection == 'asc' %}active{% endif %}" href="#" data-sort-by="age" data-sort-direction="asc">
+                                    <i class="fas fa-sort-numeric-down me-2"></i>Croissant
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item sort-option {% if sortBy == 'age' and sortDirection == 'desc' %}active{% endif %}" href="#" data-sort-by="age" data-sort-direction="desc">
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Décroissant
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="current-sort">
+                        <span class="badge rounded-pill bg-primary">
+                            {% if sortBy == 'name' %}
+                                {% if sortDirection == 'asc' %}
+                                    <i class="fas fa-sort-alpha-down me-1"></i>Nom (A-Z)
+                                {% else %}
+                                    <i class="fas fa-sort-alpha-up me-1"></i>Nom (Z-A)
+                                {% endif %}
+                            {% elseif sortBy == 'age' %}
+                                {% if sortDirection == 'asc' %}
+                                    <i class="fas fa-sort-numeric-down me-1"></i>Âge (croissant)
+                                {% else %}
+                                    <i class="fas fa-sort-numeric-up me-1"></i>Âge (décroissant)
+                                {% endif %}
+                            {% else %}
+                                <i class="fas fa-sort-alpha-down me-1"></i>Nom (A-Z)
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
             </div>
             
-            <!-- Badge indiquant le tri actuel -->
-            {% if sortBy is defined and sortDirection is defined %}
-                <div class="current-sort">
-                    <span class="badge rounded-pill bg-primary">
-                        {% if sortBy == 'name' %}
-                            {% if sortDirection == 'asc' %}
-                                <i class="fas fa-sort-alpha-down me-1"></i>Nom (A-Z)
-                            {% else %}
-                                <i class="fas fa-sort-alpha-up me-1"></i>Nom (Z-A)
-                            {% endif %}
-                        {% elseif sortBy == 'age' %}
-                            {% if sortDirection == 'asc' %}
-                                <i class="fas fa-sort-numeric-down me-1"></i>Âge (croissant)
-                            {% else %}
-                                <i class="fas fa-sort-numeric-up me-1"></i>Âge (décroissant)
-                            {% endif %}
-                        {% endif %}
-                    </span>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    
-    {% if utilisateurs|length > 0 %}
-        <div class="user-grid">
-            {% for utilisateur in utilisateurs %}
-                {% set relation = relationRepository.findDemande(currentUser.id, utilisateur.id) %}
-                <div class="user-card">
-                    <div class="user-header">
-                        <div class="user-avatar-container">
-                            {% if utilisateur.pdp %}
-                                <img src="{{ asset('uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" class="user-avatar">
-                            {% else %}
-                                <div class="user-avatar-placeholder">
-                                    {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
+            <div id="user-grid-container">
+                {% if utilisateurs|length > 0 %}
+                    <div class="user-grid">
+                        {% for utilisateur in utilisateurs %}
+                            {% set relation = relationRepository.findDemande(currentUser.id, utilisateur.id) %}
+                            <div class="user-card">
+                                <div class="user-header">
+                                    <div class="user-avatar-container">
+                                        {% if utilisateur.pdp %}
+                                            <img src="{{ asset('Uploads/profiles/' ~ utilisateur.pdp) }}" alt="Photo de profil" class="user-avatar">
+                                        {% else %}
+                                            <div class="user-avatar-placeholder">
+                                                {{ utilisateur.prenom|first|upper }}{{ utilisateur.nom|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="user-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
+                                        <div class="user-age">{{ utilisateur.age }} ans</div>
+                                        {% if relation is not null %}
+                                            {% if relation.status == 'attente' %}
+                                                {% if relation.utilisateurid1 == currentUser.id %}
+                                                    <span class="badge badge-waiting">Invitation envoyée</span>
+                                                {% else %}
+                                                    <span class="badge badge-waiting">Vous a invité</span>
+                                                {% endif %}
+                                            {% elseif relation.status == 'amis' %}
+                                                <span class="badge badge-friends">Ami</span>
+                                            {% elseif relation.status == 'refusé' %}
+                                                <span class="badge badge-rejected">Invitation refusée</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            {% endif %}
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
-                            <div class="user-age">{{ utilisateur.age }} ans</div>
-                            {% if relation is not null %}
-                                {% if relation.status == 'attente' %}
-                                    {% if relation.utilisateurid1 == currentUser.id %}
-                                        <span class="badge badge-waiting">Invitation envoyée</span>
-                                    {% else %}
-                                        <span class="badge badge-waiting">Vous a invité</span>
+                                <div class="user-actions">
+                                    {% if relation is null %}
+                                        <a href="{{ path('app_amis_inviter', {'id': utilisateur.id}) }}" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>
+                                    {% elseif relation.status == 'attente' %}
+                                        {% if relation.utilisateurid1 == currentUser.id %}
+                                            <span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>
+                                        {% else %}
+                                            <a href="{{ path('app_amis_accepter', {'id': relation.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
+                                            <a href="{{ path('app_amis_refuser', {'id': relation.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+                                        {% endif %}
+                                    {% elseif relation.status == 'amis' %}
+                                        <span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>
+                                    {% elseif relation.status == 'refusé' %}
+                                        <span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>
                                     {% endif %}
-                                {% elseif relation.status == 'amis' %}
-                                    <span class="badge badge-friends">Ami</span>
-                                {% elseif relation.status == 'refusé' %}
-                                    <span class="badge badge-rejected">Invitation refusée</span>
-                                {% endif %}
-                            {% endif %}
-                        </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="user-actions">
-                        {% if relation is null %}
-                            <a href="{{ path('app_amis_inviter', {'id': utilisateur.id}) }}" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>
-                        {% elseif relation.status == 'attente' %}
-                            {% if relation.utilisateurid1 == currentUser.id %}
-                                <span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>
-                            {% else %}
-                                <a href="{{ path('app_amis_accepter', {'id': relation.id}) }}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
-                                <a href="{{ path('app_amis_refuser', {'id': relation.id}) }}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
-                            {% endif %}
-                        {% elseif relation.status == 'amis' %}
-                            <span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>
-                        {% elseif relation.status == 'refusé' %}
-                            <span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>
-                        {% endif %}
+                {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>Aucun autre campeur disponible pour le moment</p>
                     </div>
-                </div>
-            {% endfor %}
+                {% endif %}
+            </div>
+            <div id="loading-spinner" class="loading"></div>
         </div>
-    {% else %}
-        <div class="no-results">
-            <i class="fas fa-search"></i>
-            <p>Aucun autre campeur disponible pour le moment</p>
-        </div>
-    {% endif %}
-</div>
     </div>
 
-    
-  <!-- Footer Start -->
-  <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
-    <div class="row pt-5">
-      <div class="col-lg-3 col-md-6 mb-5">
-        <a href="" class="navbar-brand">
-          <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
-        </a>
-        <p>Rejoignez notre communauté pour découvrir les meilleurs sites de camping et partager vos aventures avec d'autres passionnés de plein air.</p>
-        <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Suivez-nous</h6>
-        <div class="d-flex justify-content-start">
-          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-          <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
+        <div class="row pt-5">
+            <div class="col-lg-3 col-md-6 mb-5">
+                <a href="" class="navbar-brand">
+                    <h1 class="text-primary"><span class="text-white">CAMP</span>CONNECT</h1>
+                </a>
+                <p>Rejoignez notre communauté pour découvrir les meilleurs sites de camping et partager vos aventures avec d'autres passionnés de plein air.</p>
+                <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Suivez-nous</h6>
+                <div class="d-flex justify-content-start">
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Nos Services</h5>
+                <div class="d-flex flex-column justify-content-start">
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Réservations</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Événements</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Communauté</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Liens Utiles</h5>
+                <div class="d-flex flex-column justify-content-start">
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>À propos</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>FAQ</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Témoignages</a>
+                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Partenaires</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5">
+                <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact</h5>
+                <p><i class="fa fa-map-marker-alt mr-2"></i>123 Rue du Camping, 75000 Paris</p>
+                <p><i class="fa fa-phone-alt mr-2"></i>+33 1 23 45 67 89</p>
+                <p><i class="fa fa-envelope mr-2"></i>info@campconnect.com</p>
+            </div>
         </div>
-      </div>
-      <div class="col-lg-3 col-md-6 mb-5">
-        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Nos Services</h5>
-        <div class="d-flex flex-column justify-content-start">
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Réservations</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Événements</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Guides</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Communauté</a>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 mb-5">
-        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Liens Utiles</h5>
-        <div class="d-flex flex-column justify-content-start">
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>À propos</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>FAQ</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Témoignages</a>
-          <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Partenaires</a>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 mb-5">
-        <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact</h5>
-        <p><i class="fa fa-map-marker-alt mr-2"></i>123 Rue du Camping, 75000 Paris</p>
-        <p><i class="fa fa-phone-alt mr-2"></i>+33 1 23 45 67 89</p>
-        <p><i class="fa fa-envelope mr-2"></i>info@campconnect.com</p>
-      </div>
     </div>
-  </div>
-  <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
-    <div class="row">
-      <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
-        <p class="m-0 text-white-50">Copyright &copy; <a href="#">CampConnect</a>. Tous droits réservés.</p>
-      </div>
-      <div class="col-lg-6 text-center text-md-right">
-        <p class="m-0 text-white-50">Conçu par <a href="#">CampConnect</a></p>
-      </div>
+    <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important;">
+        <div class="row">
+            <div class="col-lg-6 text-center text-md-left mb-3 mb-md-0">
+                <p class="m-0 text-white-50">Copyright © <a href="#">CampConnect</a>. Tous droits réservés.</p>
+            </div>
+            <div class="col-lg-6 text-center text-md-right">
+                <p class="m-0 text-white-50">Conçu par <a href="#">CampConnect</a></p>
+            </div>
+        </div>
     </div>
-  </div>
-  <!-- Footer End -->
+    <!-- Footer End -->
+
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script> <script>
-        // Script pour initialiser tous les dropdowns
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation des dropdowns Bootstrap
-            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-                return new bootstrap.Dropdown(dropdownToggleEl)
+    <script src="{{ asset('template/lib/easing/easing.min.js') }}"></script>
+
+    <!-- Script pour gérer le tri AJAX -->
+    <script>
+        $(document).ready(function() {
+            // Gérer les clics sur les options de tri
+            $('.sort-option').on('click', function(e) {
+                e.preventDefault();
+
+                var sortBy = $(this).data('sort-by');
+                var sortDirection = $(this).data('sort-direction');
+
+                // Afficher l'indicateur de chargement
+                $('#loading-spinner').show();
+                $('#user-grid-container').css('opacity', '0.5');
+
+                // Récupérer les paramètres de filtrage actuels
+                var query = $('input[name="query"]').val();
+                var filters = [];
+                $('input[name="filter[]"]:checked').each(function() {
+                    filters.push($(this).val());
+                });
+                var letterFilter = '{{ letterFilter|default('') }}';
+                var listType = '{{ listType|default('all') }}';
+
+                // Construire les paramètres de la requête
+                var params = {
+                    sortBy: sortBy,
+                    sort: sortDirection,
+                    list: listType,
+                    letter: letterFilter
+                };
+                if (query) {
+                    params.query = query;
+                }
+                if (filters.length > 0) {
+                    params['filter[]'] = filters;
+                }
+
+                // Envoyer la requête AJAX
+                $.ajax({
+                    url: '{{ path('app_amis') }}',
+                    type: 'GET',
+                    data: params,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        // Mettre à jour la grille d'utilisateurs
+                        var html = '';
+                        if (response.utilisateurs.length > 0) {
+                            html += '<div class="user-grid">';
+                            $.each(response.utilisateurs, function(index, utilisateur) {
+                                html += '<div class="user-card">';
+                                html += '<div class="user-header">';
+                                html += '<div class="user-avatar-container">';
+                                if (utilisateur.pdp) {
+                                    html += '<img src="{{ asset('Uploads/profiles/') }}' + utilisateur.pdp + '" alt="Photo de profil" class="user-avatar">';
+                                } else {
+                                    html += '<div class="user-avatar-placeholder">' + utilisateur.prenom.charAt(0).toUpperCase() + utilisateur.nom.charAt(0).toUpperCase() + '</div>';
+                                }
+                                html += '</div>';
+                                html += '<div class="user-info">';
+                                html += '<div class="user-name">' + utilisateur.prenom + ' ' + utilisateur.nom + '</div>';
+                                html += '<div class="user-age">' + utilisateur.age + ' ans</div>';
+                                if (utilisateur.relation) {
+                                    if (utilisateur.relation.status === 'attente') {
+                                        if (utilisateur.relation.utilisateurid1 === {{ currentUser.id }}) {
+                                            html += '<span class="badge badge-waiting">Invitation envoyée</span>';
+                                        } else {
+                                            html += '<span class="badge badge-waiting">Vous a invité</span>';
+                                        }
+                                    } else if (utilisateur.relation.status === 'amis') {
+                                        html += '<span class="badge badge-friends">Ami</span>';
+                                    } else if (utilisateur.relation.status === 'refusé') {
+                                        html += '<span class="badge badge-rejected">Invitation refusée</span>';
+                                    }
+                                }
+                                html += '</div>';
+                                html += '</div>';
+                                html += '<div class="user-actions">';
+                                if (!utilisateur.relation) {
+                                    html += '<a href="{{ path('app_amis_inviter', {'id': '__ID__'}) }}'.replace('__ID__', utilisateur.id) + '" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Inviter</a>';
+                                } else if (utilisateur.relation.status === 'attente') {
+                                    if (utilisateur.relation.utilisateurid1 === {{ currentUser.id }}) {
+                                        html += '<span class="btn btn-accent" style="cursor: default;"><i class="fas fa-clock"></i> Invitation envoyée</span>';
+                                    } else {
+                                        html += '<a href="{{ path('app_amis_accepter', {'id': '__ID__'}) }}'.replace('__ID__', utilisateur.relation.id) + '" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>';
+                                        html += '<a href="{{ path('app_amis_refuser', {'id': '__ID__'}) }}'.replace('__ID__', utilisateur.relation.id) + '" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>';
+                                    }
+                                } else if (utilisateur.relation.status === 'amis') {
+                                    html += '<span class="btn btn-primary" style="cursor: default;"><i class="fas fa-check-circle"></i> Déjà ami</span>';
+                                } else if (utilisateur.relation.status === 'refusé') {
+                                    html += '<span class="btn btn-danger" style="cursor: default;"><i class="fas fa-ban"></i> Invitation refusée</span>';
+                                }
+                                html += '</div>';
+                                html += '</div>';
+                            });
+                            html += '</div>';
+                        } else {
+                            html += '<div class="no-results">';
+                            html += '<i class="fas fa-search"></i>';
+                            html += '<p>Aucun autre campeur disponible pour le moment</p>';
+                            html += '</div>';
+                        }
+
+                        $('#user-grid-container').html(html);
+
+                        // Mettre à jour le badge de tri
+                        var badgeHtml = '';
+                        if (response.sortBy === 'name') {
+                            if (response.sortDirection === 'asc') {
+                                badgeHtml = '<i class="fas fa-sort-alpha-down me-1"></i>Nom (A-Z)';
+                            } else {
+                                badgeHtml = '<i class="fas fa-sort-alpha-up me-1"></i>Nom (Z-A)';
+                            }
+                        } else if (response.sortBy === 'age') {
+                            if (response.sortDirection === 'asc') {
+                                badgeHtml = '<i class="fas fa-sort-numeric-down me-1"></i>Âge (croissant)';
+                            } else {
+                                badgeHtml = '<i class="fas fa-sort-numeric-up me-1"></i>Âge (décroissant)';
+                            }
+                        }
+                        $('.current-sort .badge').html(badgeHtml);
+
+                        // Mettre à jour les classes active dans le menu déroulant
+                        $('.sort-option').removeClass('active');
+                        $('.sort-option[data-sort-by="' + response.sortBy + '"][data-sort-direction="' + response.sortDirection + '"]').addClass('active');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erreur AJAX:', error);
+                    },
+                    complete: function() {
+                        // Cacher l'indicateur de chargement
+                        $('#loading-spinner').hide();
+                        $('#user-grid-container').css('opacity', '1');
+                    }
+                });
             });
         });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+    const searchResults = document.getElementById('search-results');
+    
+    // Fonction pour effectuer la recherche AJAX
+    function performSearch() {
+        // Récupérer la valeur de recherche
+        const query = searchInput.value;
+        
+        // Récupérer les filtres sélectionnés
+        const selectedFilters = [];
+        filterCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedFilters.push(checkbox.value);
+            }
+        });
+        
+        // Construire l'URL de recherche
+        let searchUrl = '{{ path('app_amis') }}?query=' + encodeURIComponent(query);
+        
+        // Ajouter les filtres à l'URL
+        selectedFilters.forEach(filter => {
+            searchUrl += '&filter[]=' + encodeURIComponent(filter);
+        });
+        
+        // Indiquer que c'est une requête AJAX
+        searchUrl += '&_ajax=1';
+        
+        // Afficher un indicateur de chargement
+        searchResults.innerHTML = '<div class="loading">Chargement en cours...</div>';
+        
+        // Effectuer la requête AJAX
+        fetch(searchUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Traiter les résultats
+            displayResults(data);
+            
+            // Mettre à jour l'URL du navigateur sans recharger la page
+            window.history.pushState({}, '', searchUrl.replace('&_ajax=1', ''));
+        })
+        .catch(error => {
+            console.error('Erreur lors de la recherche:', error);
+            searchResults.innerHTML = '<div class="error">Une erreur est survenue lors de la recherche.</div>';
+        });
+    }
+    
+    // Fonction pour afficher les résultats
+   // Fonction pour afficher les résultats
+function displayResults(data) {
+    if (!data.utilisateurs || data.utilisateurs.length === 0) {
+        searchResults.innerHTML = '<div class="no-results">Aucun résultat trouvé.</div>';
+        return;
+    }
+    
+    // Construire le HTML pour les résultats
+    let html = '<div class="user-grid">'; // Utiliser la même classe que dans votre design existant
+    
+    data.utilisateurs.forEach(utilisateur => {
+        // Gestion de l'avatar comme dans votre code Twig
+        let avatarHtml = '';
+        if (utilisateur.pdp) {
+            avatarHtml = `<img src="/Uploads/profiles/${utilisateur.pdp}" alt="Photo de profil" class="user-avatar">`;
+        } else {
+            // Créer les initiales à partir du prénom et nom
+            const initiales = utilisateur.prenom.charAt(0).toUpperCase() + utilisateur.nom.charAt(0).toUpperCase();
+            avatarHtml = `<div class="user-avatar-placeholder">${initiales}</div>`;
+        }
+        
+        // Badge de statut
+        let badgeHtml = '';
+        if (!utilisateur.relation) {
+            badgeHtml = '<span class="badge badge-new">Nouveau</span>';
+        } else if (utilisateur.relation.status === 'attente') {
+            if (utilisateur.relation.utilisateurid1 === data.currentUserId) {
+                badgeHtml = '<span class="badge badge-sent">Invitation envoyée</span>';
+            } else {
+                badgeHtml = '<span class="badge badge-waiting">Demande reçue</span>';
+            }
+        } else if (utilisateur.relation.status === 'amis') {
+            badgeHtml = '<span class="badge badge-friends">Ami</span>';
+        }
+        
+        // Actions selon le statut de la relation
+        let actionsHtml = '';
+        if (!utilisateur.relation) {
+            actionsHtml = `<a href="/amis/inviter/${utilisateur.id}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Inviter</a>`;
+        } else if (utilisateur.relation.status === 'attente') {
+            if (utilisateur.relation.utilisateurid1 === data.currentUserId) {
+                actionsHtml = `<button class="btn btn-secondary" disabled><i class="fas fa-clock"></i> En attente</button>`;
+            } else {
+                actionsHtml = `
+                    <a href="/amis/accepter/${utilisateur.relation.id}" class="btn btn-primary"><i class="fas fa-check"></i> Accepter</a>
+                    <a href="/amis/refuser/${utilisateur.relation.id}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+                `;
+            }
+        } else if (utilisateur.relation.status === 'amis') {
+            actionsHtml = `
+                <a href="#" class="btn btn-primary"><i class="fas fa-comments"></i> Discuter</a>
+                <a href="/amis/retirer/${utilisateur.relation.id}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet ami ?');"><i class="fas fa-user-minus"></i> Retirer</a>
+            `;
+        }
+        
+        html += `
+            <div class="user-card">
+                <div class="user-header">
+                    <div class="user-avatar-container">
+                        ${avatarHtml}
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">${utilisateur.prenom} ${utilisateur.nom}</div>
+                        <div class="user-age">${utilisateur.age} ans</div>
+                        ${badgeHtml}
+                    </div>
+                </div>
+                <div class="user-actions">
+                    ${actionsHtml}
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    searchResults.innerHTML = html;
+}
+    
+    // Événements
+    searchButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+    
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
+        }
+    });
+    
+    filterCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', performSearch);
+    });
+    
+    // Effectuer une recherche initiale si des paramètres sont déjà présents
+    if (searchInput.value || document.querySelector('.filter-checkbox:checked')) {
+        performSearch();
+    }
+});
+</script>
+   
+</body>
+</html>
