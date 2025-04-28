@@ -1,0 +1,237 @@
+{# templates/back_office/statistiques.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Réclamations{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+        }
+        .stat-body {
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+        }
+        .back-button {
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="display-4">📊 Statistiques des Réclamations</h1>
+        <a href="{{ path('app_back_reclamations') }}" class="back-button">
+            <i class="fas fa-arrow-left me-2"></i> Retour aux réclamations
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Carte Statistiques par Statut -->
+        <div class="col-lg-6">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3 class="h5 mb-0"><i class="fas fa-tags me-2"></i>Répartitions par Statut</h3>
+                </div>
+                <div class="stat-body">
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Statistiques par Camping -->
+        <div class="col-lg-6">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3 class="h5 mb-0"><i class="fas fa-campground me-2"></i>Réclamations par Camping</h3>
+                </div>
+                <div class="stat-body">
+                    <div class="chart-container">
+                        <canvas id="campingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Évolution Temporelle -->
+        <div class="col-lg-12">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3 class="h5 mb-0"><i class="fas fa-chart-line me-2"></i>Évolution des Réclamations</h3>
+                </div>
+                <div class="stat-body">
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte Top Utilisateurs -->
+        <div class="col-lg-12">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3 class="h5 mb-0"><i class="fas fa-users me-2"></i>Top Utilisateurs</h3>
+                </div>
+                <div class="stat-body">
+                    <div class="chart-container">
+                        <canvas id="userChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si Chart.js est chargé
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js n\'est pas chargé. Vérifiez la connexion au CDN ou installez-le localement.');
+                return;
+            }
+
+            // Enregistrer le plugin Datalabels
+            Chart.register(ChartDataLabels);
+
+            // Utiliser des données statiques pour éviter les erreurs liées aux variables Twig
+            let reclamationsData = {
+                status: { "En attente": 10, "Traitée": 20, "Rejetée": 5 },
+                camping: { "Camping A": 15, "Camping B": 25 },
+                date: { "2023-01-01": 5, "2023-01-02": 10, "2023-01-03": 8 },
+                user: { "user1@example.com": 8, "user2@example.com": 12, "user3@example.com": 5 }
+            };
+            console.log('Données brutes:', reclamationsData);
+
+            // Fonction pour trier les utilisateurs (top 10)
+            function getTopUsers(usersData, limit = 10) {
+                return Object.entries(usersData)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, limit);
+            }
+
+            // Graphique des statuts
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(reclamationsData.status),
+                    datasets: [{
+                        data: Object.values(reclamationsData.status),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right' },
+                        datalabels: { color: '#000', font: { weight: 'bold' } }
+                    }
+                }
+            });
+
+            // Graphique des campings
+            new Chart(document.getElementById('campingChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(reclamationsData.camping),
+                    datasets: [{
+                        label: 'Réclamations',
+                        data: Object.values(reclamationsData.camping),
+                        backgroundColor: '#36A2EB',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } },
+                    plugins: {
+                        datalabels: { color: '#000', font: { weight: 'bold' } }
+                    }
+                }
+            });
+
+            // Graphique temporel
+            const sortedDates = Object.keys(reclamationsData.date).sort();
+            new Chart(document.getElementById('timeChart'), {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [{
+                        label: 'Réclamations',
+                        data: sortedDates.map(date => reclamationsData.date[date]),
+                        borderColor: '#FF6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } },
+                    plugins: {
+                        datalabels: { color: '#000', font: { weight: 'bold' } }
+                    }
+                }
+            });
+
+            // Graphique des utilisateurs (top 10)
+            const topUsers = getTopUsers(reclamationsData.user);
+            new Chart(document.getElementById('userChart'), {
+                type: 'bar',
+                data: {
+                    labels: topUsers.map(user => user[0].split('@')[0]),
+                    datasets: [{
+                        label: 'Réclamations',
+                        data: topUsers.map(user => user[1]),
+                        backgroundColor: '#FFCE56',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        datalabels: { color: '#000', font: { weight: 'bold' } }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

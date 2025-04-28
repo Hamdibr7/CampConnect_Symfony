@@ -16,16 +16,18 @@ class ReclamationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('camping', EntityType::class, [
-                'class' => Camping::class,
-                'choice_label' => 'nom',
-                'placeholder' => 'Sélectionnez un camping',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez sélectionner un camping'
-                    ])
-                ]
-            ])
+        ->add('camping', EntityType::class, [
+            'class' => Camping::class,
+            'choice_label' => 'nom',
+            'placeholder' => 'Sélectionnez un camping',
+            'constraints' => [
+                new NotBlank([
+                    'message' => 'Veuillez sélectionner un camping'
+                ])
+            ]
+        ])
+        
+           
             ->add('description', TextareaType::class, [
                 'constraints' => [
                     new NotBlank([

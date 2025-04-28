@@ -24,11 +24,12 @@ class Reclamation
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Choice(choices: ['En attente', 'En cours', 'Traité'])]
+    #[Assert\Choice(choices: ['En attente', 'En cours', 'Traité'], message: 'Statut invalide.')]
     private ?string $status = 'En attente';
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(name: 'utilisateurid', referencedColumnName: 'id', nullable: false)]
+    #[Assert\NotNull(message: 'L\'utilisateur est obligatoire')]
     private ?Utilisateur $utilisateur = null;
 
     #[ORM\ManyToOne(targetEntity: Camping::class)]
@@ -36,12 +37,17 @@ class Reclamation
     #[Assert\NotNull(message: 'Le camping est obligatoire')]
     private ?Camping $camping = null;
 
-    #[ORM\OneToMany(mappedBy: 'reclamation', targetEntity: Ticket::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'reclamation', targetEntity: Ticket::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $tickets;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: 'La date est obligatoire')]
+    private ?\DateTimeInterface $date = null;
 
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->date = new \DateTime(); // Date actuelle automatiquement
     }
 
     public function getId(): ?int
@@ -114,6 +120,7 @@ class Reclamation
     public function removeTicket(Ticket $ticket): static
     {
         if ($this->tickets->removeElement($ticket)) {
+            // Déconnecter la relation inverse
             if ($ticket->getReclamation() === $this) {
                 $ticket->setReclamation(null);
             }
@@ -122,16 +129,27 @@ class Reclamation
         return $this;
     }
 
-    //les mots interdits
-    #[Assert\Callback]
-    public function validateBadWords(ExecutionContextInterface $context, $payload)
+    public function getDate(): ?\DateTimeInterface
     {
-        $badWords = ['merde', 'con', 'idiot', 'pute', 'bordel','fuck', 'fuck you', 'bitch', 'hoe']; 
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
+        return $this;
+    }
+
+    #[Assert\Callback]
+    public function validateBadWords(ExecutionContextInterface $context, $payload): void
+    {
+        $badWords = ['merde', 'con', 'idiot', 'pute', 'bordel', 'fuck', 'fuck you', 'bitch', 'hoe','merda'];
+
         $descriptionLower = strtolower($this->description ?? '');
 
         foreach ($badWords as $badWord) {
             if (str_contains($descriptionLower, $badWord)) {
-                $context->buildViolation('La description contient un mot interdit : "' . $badWord . '"')
+                $context->buildViolation(sprintf('La description contient un mot interdit : "%s"', $badWord))
                     ->atPath('description')
                     ->addViolation();
             }

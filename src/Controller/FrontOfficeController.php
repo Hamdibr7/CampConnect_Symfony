@@ -14,6 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Knp\Snappy\Pdf;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\TranslateService;
+
 
 #[Route('/front')]
 #[IsGranted('ROLE_USER')]
@@ -24,13 +30,13 @@ class FrontOfficeController extends AbstractController
         $historique = new HistoriqueReclamation();
         $historique->setReclamation($reclamation);
         $historique->setDetails($details);
-        
+
         $entityManager->persist($historique);
         $entityManager->flush();
     }
 
-    #[Route('/reclamations', name: 'app_front_reclamations')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/reclamations/{page}', name: 'app_front_reclamations', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
+    public function index(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator, int $page = 1): Response
     {
         $user = $this->getUser();
         $search = $request->query->get('search');
@@ -41,87 +47,102 @@ class FrontOfficeController extends AbstractController
             ->where('r.utilisateur = :user')
             ->setParameter('user', $user);
     
-        // Si recherche et critère renseignés
         if ($search) {
-            switch ($searchBy) {
-                case 'status':
-                    $qb->andWhere('r.status LIKE :search')
-                        ->setParameter('search', '%' . $search . '%');
-                    break;
-                case 'camping':
-                    $qb->leftJoin('r.camping', 'c')
-                        ->andWhere('c.nom LIKE :search')
-                        ->setParameter('search', '%' . $search . '%');
-                    break;
-                default: // par description si rien sélectionné
-                    $qb->andWhere('r.description LIKE :search')
-                        ->setParameter('search', '%' . $search . '%');
-                    break;
+            if ($searchBy) {
+                switch ($searchBy) {
+                    case 'status':
+                        $qb->andWhere('r.status LIKE :search')
+                           ->setParameter('search', '%' . $search . '%');
+                        break;
+                    case 'camping':
+                        $qb->leftJoin('r.camping', 'c')
+                           ->andWhere('c.nom LIKE :search')
+                           ->setParameter('search', '%' . $search . '%');
+                        break;
+                    default:
+                        $qb->andWhere('r.description LIKE :search')
+                           ->setParameter('search', '%' . $search . '%');
+                }
+            } else {
+                $qb->leftJoin('r.camping', 'c')
+                   ->andWhere('r.description LIKE :search OR r.status LIKE :search OR c.nom LIKE :search')
+                   ->setParameter('search', '%' . $search . '%');
             }
         }
     
-        // Ordre de tri : par ID pour l'exemple mais tu peux ajuster
         $qb->orderBy('r.id', $order);
     
-        $reclamations = $qb->getQuery()->getResult();
+        $reclamations = $paginator->paginate(
+            $qb->getQuery(),
+            $page, // utilise $page ici
+            6
+        );
     
         return $this->render('front_office/reclamations.html.twig', [
-            'reclamations' => $reclamations
+            'reclamations' => $reclamations,
         ]);
     }
     
 
     #[Route('/reclamation/new', name: 'app_front_reclamation_new', methods: ['GET', 'POST'])]
-public function newReclamation(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
-{
-    $reclamation = new Reclamation();
-    $form = $this->createForm(ReclamationType::class, $reclamation);
-
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()) {
+    public function newReclamation(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer, TranslateService $translateService): Response
+    {
+        $reclamation = new Reclamation();
         $reclamation->setUtilisateur($this->getUser());
-        $reclamation->setStatus('En attente');
-
-        $entityManager->persist($reclamation);
-        $entityManager->flush();
-
-        // Create ticket
-        $ticket = new Ticket();
-        $ticket->setDescription("Description de la réclamation : " . $reclamation->getDescription());
-        $ticket->setReclamation($reclamation);
-        $ticket->setUtilisateur($this->getUser());
-        $ticket->setStatus('En attente');
-
-        $entityManager->persist($ticket);
-        $entityManager->flush();
-
-        // Add to history
-        $this->addToHistory($entityManager, $reclamation, 
-            sprintf('Ajout de la réclamation ID %d, Description: %s',
-                $reclamation->getId(),
-                substr($reclamation->getDescription(), 0, 50) . '...'
-            )
-        );
-
-        // 📧 Envoi du mail
-        $email = (new Email())
-        ->from('hamdihamdisymfony@gmail.com')
-        ->to('hamdibr123@gmail.com') // <- ici ton destinataire
-        ->subject('Nouvelle réclamation soumise')
-        ->html('<p>Une nouvelle réclamation a été soumise par ' . $this->getUser()->getUserIdentifier() . '.</p>
-                <p>Description : ' . $reclamation->getDescription() . '</p>');
     
-    $mailer->send($email);
-
-        $this->addFlash('success', 'Votre réclamation a été soumise avec succès.');
-        return $this->redirectToRoute('app_front_reclamations');
+        $form = $this->createForm(ReclamationType::class, $reclamation);
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $reclamation->setStatus('En attente');
+    
+            $entityManager->persist($reclamation);
+            $entityManager->flush();
+    
+            $ticket = new Ticket();
+            $ticket->setDescription("Description de la réclamation : " . $reclamation->getDescription());
+            $ticket->setReclamation($reclamation);
+            $ticket->setUtilisateur($this->getUser());
+            $ticket->setStatus('En attente');
+    
+            $entityManager->persist($ticket);
+            $entityManager->flush();
+    
+            $this->addToHistory($entityManager, $reclamation,
+                sprintf('Ajout de la réclamation ID %d, Description: %s',
+                    $reclamation->getId(),
+                    substr($reclamation->getDescription(), 0, 50) . '...'
+                )
+            );
+    
+            // Traduction
+            $translatedDescription = $translateService->translate($reclamation->getDescription(), 'EN');
+    
+            // Mail
+            $email = (new Email())
+                ->from('hamdihamdisymfony@gmail.com')
+                ->to('hamdibr123@gmail.com')
+                ->subject('Nouvelle réclamation soumise')
+                ->html('<p>Nouvelle réclamation de ' . htmlspecialchars($this->getUser()->getUserIdentifier()) . '.</p>
+                        <p><strong>Original :</strong> ' . htmlspecialchars($reclamation->getDescription()) . '</p>
+                        <p><strong>Anglais :</strong> ' . htmlspecialchars($translatedDescription) . '</p>');
+    
+            $mailer->send($email);
+    
+            $this->addFlash('success', 'Votre réclamation a été soumise avec succès.');
+    
+            return $this->redirectToRoute('app_front_reclamations', ['page' => 1]);
+        }
+    
+        // ✅ Toujours rendre un formulaire si pas de POST valide
+        return $this->render('front_office/reclamation_form.html.twig', [
+            'form' => $form->createView(),
+            'edit_mode' => false
+        ]);
     }
+    
 
-    return $this->render('front_office/reclamation_form.html.twig', [
-        'form' => $form->createView(),
-        'edit_mode' => false
-    ]);
-}
+    
 
     #[Route('/reclamation/{id}/edit', name: 'app_front_reclamation_edit', methods: ['GET', 'POST'])]
     public function editReclamation(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
@@ -131,18 +152,16 @@ public function newReclamation(Request $request, EntityManagerInterface $entityM
         }
 
         $form = $this->createForm(ReclamationType::class, $reclamation);
-        
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            // Update the ticket description
             $ticket = $reclamation->getTickets()->first();
             if ($ticket) {
                 $ticket->setDescription("Description de la réclamation : " . $reclamation->getDescription());
                 $entityManager->flush();
             }
 
-            // Add to history
-            $this->addToHistory($entityManager, $reclamation, 
+            $this->addToHistory($entityManager, $reclamation,
                 sprintf('Modification de la réclamation ID %d, Nouvelle description: %s',
                     $reclamation->getId(),
                     substr($reclamation->getDescription(), 0, 50) . '...'
@@ -179,8 +198,7 @@ public function newReclamation(Request $request, EntityManagerInterface $entityM
             throw $this->createAccessDeniedException();
         }
 
-        // Add to history before deletion
-        $this->addToHistory($entityManager, $reclamation, 
+        $this->addToHistory($entityManager, $reclamation,
             sprintf('Suppression de la réclamation ID %d, Description: %s',
                 $reclamation->getId(),
                 substr($reclamation->getDescription(), 0, 50) . '...'
@@ -192,5 +210,28 @@ public function newReclamation(Request $request, EntityManagerInterface $entityM
 
         $this->addFlash('success', 'La réclamation a été supprimée avec succès.');
         return $this->redirectToRoute('app_front_reclamations');
+    }
+
+    #[Route('/reclamation/{id}/pdf', name: 'app_front_reclamation_pdf')]
+    public function generatePdf(Reclamation $reclamation, Pdf $knpSnappyPdf): Response
+    {
+        if ($reclamation->getUtilisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $html = $this->renderView('front_office/pdf/reclamation.html.twig', [
+            'reclamation' => $reclamation,
+        ]);
+
+        $filename = sprintf('reclamation_%d.pdf', $reclamation->getId());
+
+        return new Response(
+            $knpSnappyPdf->getOutputFromHtml($html),
+            200,
+            [
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => ResponseHeaderBag::DISPOSITION_ATTACHMENT . '; filename="' . $filename . '"'
+            ]
+        );
     }
 }

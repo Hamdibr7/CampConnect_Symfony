@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réclamation #{{ reclamation.id }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7f8;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header img {
+            width: 150px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .header h1 {
+            color: #4CAF50;
+            margin-bottom: 0;
+        }
+        .content h2 {
+            color: #555;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .content p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .content p:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://media.istockphoto.com/id/1127362592/fr/vectoriel/nous-voulons-vos-commentaires-illustration-de-bulles-de-discours-vectorielle-sur-fond.jpg?s=612x612&w=0&k=20&c=iPvBmjE8mEJgBe8Zq5CbBxEsaSK_A1Y5ZI0fRfWPJ-8=" alt="Image Réclamation">
+            <h1>Réclamation #{{ reclamation.id }}</h1>
+        </div>
+
+        <div class="content">
+            <h2>Description</h2>
+            <p>{{ reclamation.description }}</p>
+
+            <h2>Status</h2>
+            <p>{{ reclamation.status }}</p>
+
+            <h2>Camping</h2>
+            <p>{{ reclamation.camping.nom }}</p>
+
+            <h2>Date de création</h2>
+            <p>{{ reclamation.date ? reclamation.date|date('d/m/Y') : 'Non spécifiée' }}</p>
+        </div>
+
+        <div class="footer">
+            Réclamation générée automatiquement par notre système.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (confirm('Voulez-vous imprimer cette réclamation ?')) {
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>

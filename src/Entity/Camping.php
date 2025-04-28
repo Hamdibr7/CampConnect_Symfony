@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Camping
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue] // 🛠️ Correction ajoutée ici
     #[ORM\Column]
     private ?int $id = null;
 

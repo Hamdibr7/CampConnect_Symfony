@@ -7,9 +7,14 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Mes Réclamations</h1>
-        <a href="{{ path('app_front_reclamation_new') }}" class="btn btn-primary">
-            Nouvelle Réclamation
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_front_reclamation_new') }}" class="btn btn-primary">
+                Nouvelle Réclamation
+            </a>
+            <a href="{{ path('app_chatbot') }}" class="btn btn-success">
+                <i class="fas fa-robot me-1"></i> Assistant Virtuel
+            </a>
+        </div>
     </div>
 
     {# Messages flash #}
@@ -18,7 +23,6 @@
             {{ message }}
         </div>
     {% endfor %}
-
     {% for message in app.flashes('error') %}
         <div class="alert alert-danger">
             {{ message }}
@@ -36,13 +40,13 @@
                     <option value="">Rechercher par...</option>
                     <option value="status" {{ app.request.get('search_by') == 'status' ? 'selected' }}>Par Statut</option>
                     <option value="description" {{ app.request.get('search_by') == 'description' ? 'selected' }}>Par Description</option>
-                    <option value="camping" {{ app.request.get('search_by') == 'camping' ? 'selected' }}>Par Camp</option>
+                    <option value="camping" {{ app.request.get('search_by') == 'camping' ? 'selected' }}>Par Camping</option>
                 </select>
             </div>
             <div class="col-md-3">
                 <select name="order" class="form-select">
-                    <option value="ASC" {{ app.request.get('order') == 'ASC' ? 'selected' }}>Trie Asc</option>
-                    <option value="DESC" {{ app.request.get('order') == 'DESC' ? 'selected' }}>Trie Desc</option>
+                    <option value="ASC" {{ app.request.get('order') == 'ASC' ? 'selected' }}>Trie Ascendant</option>
+                    <option value="DESC" {{ app.request.get('order') == 'DESC' ? 'selected' }}>Trie Descendant</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -63,7 +67,7 @@
                             <span class="badge bg-{{ reclamation.status == 'Traité' ? 'success' : (reclamation.status == 'En cours' ? 'warning' : 'info') }}">
                                 {{ reclamation.status }}
                             </span>
-                            <small class="text-muted">Camping: {{ reclamation.camping.nom }}</small>
+                            <small class="text-muted">Camping : {{ reclamation.camping.nom }}</small>
                         </div>
                         <div class="d-flex gap-2">
                             <a href="{{ path('app_front_reclamation_view', {id: reclamation.id}) }}" class="btn btn-outline-primary btn-sm">
@@ -71,6 +75,9 @@
                             </a>
                             <a href="{{ path('app_front_reclamation_edit', {id: reclamation.id}) }}" class="btn btn-outline-secondary btn-sm">
                                 Modifier
+                            </a>
+                            <a href="{{ path('app_front_reclamation_pdf', {id: reclamation.id}) }}" class="btn btn-outline-success btn-sm">
+                                Télécharger PDF
                             </a>
                             <form method="post" action="{{ path('app_front_reclamation_delete', {id: reclamation.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?');">
                                 <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
@@ -87,5 +94,11 @@
             </div>
         {% endfor %}
     </div>
+
+    {# Pagination affichée seulement s'il y a plusieurs pages #}
+    <div class="d-flex justify-content-center mt-4">
+        {{ knp_pagination_render(reclamations) }}
+    </div>
+
 </div>
 {% endblock %}
