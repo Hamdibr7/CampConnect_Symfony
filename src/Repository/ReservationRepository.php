@@ -42,19 +42,24 @@ class ReservationRepository extends ServiceEntityRepository
 //    }
 // src/Repository/ReservationRepository.php
 
-public function searchFiltered(array $filters): array
+public function searchFilteredQuery(array $filters)
 {
     $qb = $this->createQueryBuilder('r')
-        ->join('r.camping', 'c');
+               ->leftJoin('r.camping', 'c');
 
     if (!empty($filters['camping'])) {
         $qb->andWhere('c.nom LIKE :camping')
            ->setParameter('camping', '%' . $filters['camping'] . '%');
     }
 
+    if (!empty($filters['ville'])) {
+        $qb->andWhere('c.ville LIKE :ville')
+           ->setParameter('ville', '%' . $filters['ville'] . '%');
+    }
+
     if (!empty($filters['dateDebut'])) {
-        $qb->andWhere('c.Date_Deb = :dateDebut')
-           ->setParameter('dateDebut', new \DateTime($filters['dateDebut']));
+        $qb->andWhere('c.Date_Deb >= :dateDebut')
+           ->setParameter('dateDebut', $filters['dateDebut']);
     }
 
     if (!empty($filters['montant'])) {
@@ -62,13 +67,18 @@ public function searchFiltered(array $filters): array
            ->setParameter('montant', $filters['montant']);
     }
 
-    if (!empty($filters['ville'])) {
-        $qb->andWhere('c.ville LIKE :ville OR c.pays LIKE :ville')
-           ->setParameter('ville', '%' . $filters['ville'] . '%');
+    if (!empty($filters['utilisateurid'])) {
+        $qb->andWhere('r.utilisateurid = :utilisateurid')
+           ->setParameter('utilisateurid', $filters['utilisateurid']);
     }
 
-    return $qb->getQuery()->getResult();
+    if (!empty($filters['sort'])) {
+        $qb->orderBy('c.Date_Deb', $filters['sort'] === 'asc' ? 'ASC' : 'DESC');
+    }
+
+    return $qb->getQuery();
 }
+
 
 
 

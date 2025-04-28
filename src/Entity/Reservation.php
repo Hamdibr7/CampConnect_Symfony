@@ -4,9 +4,16 @@ namespace App\Entity;
 
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use App\Entity\Camping;
 
+
+
+
+
+
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Reservation
 {
     #[ORM\Id]
@@ -25,7 +32,24 @@ class Reservation
     private ?float $montant = 0;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $statut = null;
+    private ?string $statut = 'active';
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $deletedAt = null;
+
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+}
+
+    
 
     public function getId(): ?int
     {

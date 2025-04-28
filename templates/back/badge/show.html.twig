@@ -162,7 +162,30 @@
     <div class="card">
         <h2><i class="fas fa-award"></i> Liste des Badges</h2>
 
-        <div class="table-container">
+<form method="get" action="{{ path('app_badge_index') }}" class="mb-4">
+    <div class="row">
+        <div class="col-md-4 mb-2">
+            <input type="text" name="nomBadge" class="form-control" placeholder="Nom du badge" value="{{ filters.nomBadge ?? '' }}">
+        </div>
+        <div class="col-md-4 mb-2">
+            <input type="number" name="reservationsRequises" class="form-control" placeholder="Réservations requises" value="{{ filters.reservationsRequises ?? '' }}">
+        </div>
+
+        <div class="col-md-4 mb-2 d-flex gap-2">
+            <button class="btn btn-primary w-100" type="submit">Rechercher</button>
+
+            <button class="btn btn-secondary" name="sort" value="{{ filters.sort == 'asc' ? 'desc' : 'asc' }}" title="Trier par nb réservations">
+                {% if filters.sort == 'asc' %}
+                    <i class="fas fa-sort-amount-down-alt"></i>
+                {% else %}
+                    <i class="fas fa-sort-amount-up-alt"></i>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+
             <table>
                 <thead>
                     <tr>
@@ -216,7 +239,12 @@
                         </tr>
                     {% endif %}
                 </tbody>
+              
             </table>
+              <div class="pagination justify-content-center mt-4">
+    {{ knp_pagination_render(badges) }}
+</div>
+
         </div>
     </div>
 </div>

@@ -4,71 +4,95 @@
 
 {% block css %}
     {{ parent() }}
-        <style>
+    <style>
         .custom-card-width {
             max-width: 1000px;
             margin: auto;
+        }
+        .search-form .form-control {
+            margin-bottom: 10px;
         }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <div class="card">
-            <h2 class="mb-4"><i class="fas fa-calendar-alt me-2"></i>Liste des Réservations</h2>
+<div class="container-fluid">
+    <div class="card custom-card-width">
 
-            <div class="table-responsive">
-                <table class="table table-striped align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Camping</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Dates</th>
-                            <th scope="col">User ID</th>
-                            <th scope="col">Montant</th>
-                            <th scope="col">Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if reservations is not empty %}
-                            {% for reservation in reservations %}
-                                <tr>
-                                    <td>{{ reservation.id }}</td>
-                                    <td>
-                                        <strong>{{ reservation.camping.nom }}</strong><br>
-                                    </td>
-                                    <td>
-                                        {{ reservation.camping.adresse }}<br>
-                                        {{ reservation.camping.ville }}, {{ reservation.camping.pays }}
-                                    </td>
-                                    <td>
-                                        {{ reservation.camping.Date_Deb|date('d/m/Y') }}<br>
-                                        <span class="text-muted">à</span><br>
-                                        {{ reservation.camping.Date_Fin|date('d/m/Y') }}
-                                    </td>
-                                    <td>{{ reservation.utilisateurid }}</td>
-                                    <td>{{ reservation.montant|number_format(3, '.', ' ') }} DT</td>
-                                    <td>
-                                        {% if reservation.camping.image %}
-                                            <img src="{{ asset('uploads/badges/' ~ reservation.camping.image) }}"
-                                                 alt="{{ reservation.camping.nom }}"
-                                                 style="height: 60px; border-radius: 8px;"
-                                                 class="shadow-sm border">
-                                        {% else %}
-                                            <span class="text-muted">Aucune image</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">Aucune réservation trouvée</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
+        <h2 class="mb-4"><i class="fas fa-calendar-alt me-2"></i>Liste des Réservations</h2>
+
+        {# 🔍 Formulaire de recherche et tri #}
+        <form method="get" action="{{ path('admin_reservations_list') }}" class="mb-4">
+            <div class="row">
+                  <div class="col-md-2 mb-2">
+                    <input type="text" name="utilisateurid" class="form-control" placeholder="ID Utilisateur" value="{{ filters.utilisateurid ?? '' }}">
+                 </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="camping" class="form-control" placeholder="Nom du camping" value="{{ filters.camping ?? '' }}">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <input type="date" name="dateDebut" class="form-control" value="{{ filters.dateDebut ?? '' }}">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <input type="number" step="0.01" name="montant" class="form-control" placeholder="Montant (DT)" value="{{ filters.montant ?? '' }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="ville" class="form-control" placeholder="Ville" value="{{ filters.ville ?? '' }}">
+                </div>
+                <div class="col-md-2 mb-2 d-flex gap-2">
+                    <button class="btn btn-primary w-100" type="submit">Rechercher</button>
+                    <button class="btn btn-secondary" name="sort" value="{{ filters.sort == 'asc' ? 'desc' : 'asc' }}" title="Trier par date">
+                        <i class="fas fa-sort"></i>
+                    </button>
+                </div>
             </div>
+        </form>
+
+        {# 📋 Tableau #}
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Camping</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Dates</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if reservations is not empty %}
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.id }}</td>
+                                <td><strong>{{ reservation.camping.nom }}</strong></td>
+                                <td>{{ reservation.camping.ville }}, {{ reservation.camping.pays }}</td>
+                                <td>{{ reservation.camping.Date_Deb|date('d/m/Y') }}<br><span class="text-muted">à</span><br>{{ reservation.camping.Date_Fin|date('d/m/Y') }}</td>
+                                <td>{{ reservation.utilisateurid }}</td>
+                                <td>{{ reservation.montant|number_format(3, '.', ' ') }} DT</td>
+                                <td>
+                                    {% if reservation.camping.image %}
+                                        <img src="{{ asset('uploads/badges/' ~ reservation.camping.image) }}" alt="{{ reservation.camping.nom }}" style="height: 60px; border-radius: 8px;" class="shadow-sm border">
+                                    {% else %}
+                                        <span class="text-muted">Aucune image</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Aucune réservation trouvée</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
+        <div class="pagination justify-content-center mt-4">
+            {{ knp_pagination_render(reservations) }}
+        </div>
+
     </div>
+</div>
 {% endblock %}

@@ -13,22 +13,30 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin/badge')]
 class BadgeController extends AbstractController
 {
     #[Route('/', name: 'app_badge_index', methods: ['GET'])]
-    public function index(BadgeRepository $badgeRepository): Response
+    public function index(Request $request, BadgeRepository $repo, PaginatorInterface $paginator): Response
     {
-        $badges = $badgeRepository->findAll();
-        if (empty($badges)) {
-            $this->addFlash('warning', 'Aucun badge trouvé dans la base de données !');
-        }
-
+        $filters = [
+            'nomBadge' => $request->query->get('nomBadge'),
+            'reservationsRequises' => $request->query->get('reservationsRequises'),
+            'sort' => $request->query->get('sort'),
+        ];
+    
+        $page = $request->query->getInt('page', 1);
+    
+        $badges = $repo->searchFiltered($filters, $paginator, $page);
+    
         return $this->render('back/badge/show.html.twig', [
             'badges' => $badges,
+            'filters' => $filters,
         ]);
     }
+    
 
     #[Route('/new', name: 'app_badge_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response

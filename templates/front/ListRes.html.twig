@@ -127,15 +127,28 @@
                     <input type="number" step="0.01" name="montant" class="form-control px-4" placeholder="Montant (DT)" value="{{ filters.montant }}">
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="ville" class="form-control px-4" placeholder="Ville ou Pays" value="{{ filters.ville }}">
+                    <input type="text" name="ville" class="form-control px-4" placeholder="Ville" value="{{ filters.ville }}">
                 </div>
             </div>
         </div>
+
         <div class="col-md-2 mt-3 mt-md-0">
-            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Rechercher</button>
+            <div class="d-flex">
+                <button class="btn btn-primary mr-2" type="submit" style="height: 47px;">Rechercher</button>
+                <button class="btn btn-secondary" type="submit" name="sort" value="{{ filters.sort == 'asc' ? 'desc' : 'asc' }}" title="Trier par date" style="height: 47px;">
+                    {% if filters.sort == 'asc' %}
+                        <i class="fas fa-sort-amount-down-alt"></i>
+                    {% else %}
+                        <i class="fas fa-sort-amount-up-alt"></i>
+                    {% endif %}
+                </button>
+            </div>
         </div>
     </div>
 </form>
+
+
+
 
         </div>
     </div>
@@ -203,6 +216,8 @@
                         </div>
                     </div>
                 {% endfor %}
+                
+
             {% else %}
                 <div class="col-12">
                     <div class="no-reservations bg-white p-5 rounded text-center">

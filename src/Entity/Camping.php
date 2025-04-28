@@ -17,8 +17,7 @@ class Camping
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $adresse = null;
+
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
@@ -68,17 +67,7 @@ class Camping
         return $this;
     }
 
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-
-    public function setAdresse(string $adresse): static
-    {
-        $this->adresse = $adresse;
-
-        return $this;
-    }
+   
 
     public function getDescription(): ?string
     {
