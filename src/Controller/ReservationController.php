@@ -12,6 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/reservation')]
 class ReservationController extends AbstractController
@@ -33,6 +35,8 @@ class ReservationController extends AbstractController
             'dateDebut' => $request->query->get('dateDebut'),
             'montant'   => $request->query->get('montant'),
             'ville'     => $request->query->get('ville'),
+            'sort'      => $request->query->get('sort'),
+            
         ];
     
         $hasFilters = array_filter($filters); // remove empty/null values
@@ -48,10 +52,13 @@ class ReservationController extends AbstractController
     }
     
 
-
     #[Route('/new/{camping_id}', name: 'reservation_new', methods: ['GET', 'POST'])]
-    public function new(int $camping_id, CampingRepository $campingRepository, EntityManagerInterface $em): Response
-    {
+    public function new(
+        int $camping_id,
+        CampingRepository $campingRepository,
+        EntityManagerInterface $em,
+        MailerInterface $mailer // ✅ Ajout Mailer
+    ): Response {
         $camping = $campingRepository->find($camping_id);
     
         if (!$camping) {
@@ -60,15 +67,48 @@ class ReservationController extends AbstractController
     
         $reservation = new Reservation();
         $reservation->setCamping($camping);
-        $reservation->setUtilisateurid(2);
+        $reservation->setUtilisateurid(2); // à remplacer par utilisateur connecté
         $reservation->setMontant($camping->getMontant());
-
+    
         $em->persist($reservation);
         $em->flush();
     
-        $this->addFlash('success', 'Reservation created successfully!');
-        return $this->redirectToRoute('reservation_index'); 
+        // ✅ Envoi d'email
+        $email = (new Email())
+            ->from('itscapconnect@gmail.com')
+            ->to('yasmine.shili.04@gmail.com') // Remplacer par email réel
+            ->subject('Confirmation de votre réservation')
+            ->html("
+                <p>Bonjour,</p>
+                <p>Votre réservation pour le camping <strong>{$camping->getNom()}</strong> est confirmée.</p>
+                <p>Montant : {$camping->getMontant()} DT</p>
+                <p>Date de début : {$camping->getDate_Deb()->format('d/m/Y')}</p>
+                <p>Merci pour votre confiance !</p>
+            ");
+    
+        $mailer->send($email);
+    
+        // ✅ Envoi SMS via Twilio (optionnel)
+        // require composer require twilio/sdk
+      
+        $sid = $_ENV['TWILIO_ACCOUNT_SID'];
+        $token = $_ENV['TWILIO_ACCOUNT_TOKEN'];
+        $twilio = new \Twilio\Rest\Client($sid, $token);
+    
+        $twilio->messages->create(
+            '+21629704431', // Numéro de l'utilisateur
+            [
+                'from' => '+19787339026', // Numéro Twilio
+                'body' => "Votre réservation pour le camping {$camping->getNom()} est confirmée. Merci !"
+            ]
+        );
+        
+    
+        $this->addFlash('success', 'Réservation effectuée avec succès. Un email de confirmation vous a été envoyé.');
+    
+        return $this->redirectToRoute('reservation_index');
     }
+    
     
 
     
@@ -98,13 +138,28 @@ class ReservationController extends AbstractController
 
     
     #[Route('/admin/reservation', name: 'admin_reservations_list')]
-    public function RESBack(ReservationRepository $reservationRepository): Response
-   {
-        $reservations = $reservationRepository->findAll();
+    public function RESBack(Request $request, ReservationRepository $repo): Response
+    {
+        // Get search filters from GET query
+        $filters = [
+            'camping'   => $request->query->get('camping'),
+            'dateDebut' => $request->query->get('dateDebut'),
+            'montant'   => $request->query->get('montant'),
+            'ville'     => $request->query->get('ville'),
+            'utilisateurid'    => $request->query->get('utilisateurid'),
 
-     return $this->render('back/reservation/show.html.twig', [
-           'reservations' => $reservations,
-      ]);
-  }
+            'sort'      => $request->query->get('sort'),
+        ];
+    
+        $reservations = $repo->searchFiltered($filters);
+    
+        return $this->render('back/reservation/show.html.twig', [
+            'reservations' => $reservations,
+            'filters'      => $filters,
+        ]);
+    }
+    
+    
+    
     
 }
