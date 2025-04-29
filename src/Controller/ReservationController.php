@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Knp\Component\Pager\PaginatorInterface;
+use DateTime;
 
 #[Route('/reservation')]
 class ReservationController extends AbstractController
@@ -153,5 +154,26 @@ public function RESBack(Request $request, ReservationRepository $repo, Paginator
         'filters'      => $filters,
     ]);
 }
-    
+#[Route('/admin/statistics', name: 'admin_statistics_cancellations')]
+public function statisticsCancellations(ReservationRepository $repo): Response
+{
+    $data = $repo->countCancellationsPerMonth();
+
+    $months = [];
+    $cancelCounts = [];
+
+    setlocale(LC_TIME, 'fr_FR.UTF-8'); // important
+
+    foreach ($data as $row) {
+        $months[] = ucfirst(strftime('%B', mktime(0, 0, 0, $row['month'], 1)));
+        $cancelCounts[] = $row['cancelCount'];
+    }
+
+    return $this->render('back/statistics/cancellations.html.twig', [
+        'months' => $months,
+        'cancelCounts' => $cancelCounts,
+    ]);
+}
+
+
 }

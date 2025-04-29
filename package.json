@@ -1,0 +1,23 @@
+{
+  "name": "campconnect",
+  "version": "1.0.0",
+  "description": "Pi Symfony 3A",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hamdibr7/CampConnect_Symfony.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hamdibr7/CampConnect_Symfony/issues"
+  },
+  "homepage": "https://github.com/Hamdibr7/CampConnect_Symfony#readme",
+  "dependencies": {
+    "chart.js": "^4.4.9"
+  }
+}

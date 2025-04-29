@@ -1,0 +1,65 @@
+{% extends 'CRUD.html.twig' %}
+
+{% block title %}Statistiques des Annulations{% endblock %}
+
+{% block body %}
+<div class="card">
+    <h2 class="mb-4 text-center text-primary">Statistiques des Annulations par Mois</h2>
+    <canvas id="cancellationsChart" style="max-height: 400px;"></canvas>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('cancellationsChart').getContext('2d');
+
+        const cancellationsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ months|json_encode()|raw }},
+                datasets: [{
+                    label: 'Nombre d\'annulations',
+                    data: {{ cancelCounts|json_encode()|raw }},
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nombre d\'annulations'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Mois'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: 'black'
+                        }
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

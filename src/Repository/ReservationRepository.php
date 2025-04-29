@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Reservation>
@@ -78,6 +79,28 @@ public function searchFilteredQuery(array $filters)
 
     return $qb->getQuery();
 }
+
+
+public function countCancellationsPerMonth(): array
+{
+    $conn = $this->getEntityManager()->getConnection();
+
+    $sql = '
+        SELECT 
+            MONTH(deleted_at) AS month, 
+            COUNT(id) AS cancelCount
+        FROM reservation
+        WHERE deleted_at IS NOT NULL
+        GROUP BY MONTH(deleted_at)
+        ORDER BY month ASC
+    ';
+
+    $stmt = $conn->prepare($sql);
+    $result = $stmt->executeQuery();
+
+    return $result->fetchAllAssociative();
+}
+
 
 
 
