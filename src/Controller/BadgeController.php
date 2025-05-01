@@ -24,16 +24,25 @@ class BadgeController extends AbstractController
         $filters = [
             'nomBadge' => $request->query->get('nomBadge'),
             'reservationsRequises' => $request->query->get('reservationsRequises'),
-            'sort' => $request->query->get('sort'),
+            'orderBy' => $request->query->get('customOrderBy'),
+            'sort' => $request->query->get('customSort'),
         ];
-    
-        $page = $request->query->getInt('page', 1);
-    
-        $badges = $repo->searchFiltered($filters, $paginator, $page);
-    
+
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = 10;
+
+        $query = $repo->searchFilteredQuery($filters);
+        $badges = $paginator->paginate(
+        $query,
+        $page,
+        10
+);
+
+
         return $this->render('back/badge/show.html.twig', [
             'badges' => $badges,
             'filters' => $filters,
+            
         ]);
     }
     

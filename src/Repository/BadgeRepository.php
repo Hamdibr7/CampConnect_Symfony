@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Badge;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
 
 /**
@@ -42,30 +43,37 @@ class BadgeRepository extends ServiceEntityRepository
     //        ;
     //    }
     
-    public function searchFiltered(array $filters, PaginatorInterface $paginator, int $page = 1)
+    
+
+public function searchFilteredQuery(array $filters): QueryBuilder
+
     {
         $qb = $this->createQueryBuilder('b');
-    
+
         if (!empty($filters['nomBadge'])) {
-            $qb->andWhere('b.nomBadge LIKE :nom')
-               ->setParameter('nom', '%' . $filters['nomBadge'] . '%');
+            $qb->andWhere('b.nom_badge LIKE :nom_badge')
+               ->setParameter('nom_badge', '%' . $filters['nomBadge'] . '%');
         }
-    
+
         if (!empty($filters['reservationsRequises'])) {
-            $qb->andWhere('b.reservationsRequises = :reservations')
+            $qb->andWhere('b.reservations_requises = :reservations')
                ->setParameter('reservations', $filters['reservationsRequises']);
         }
-    
-        if (!empty($filters['sort'])) {
-            $qb->orderBy('b.reservationsRequises', $filters['sort']);
+
+        $allowedFields = ['reservations_requises', 'nom_badge', 'id'];
+        if (!empty($filters['orderBy']) && in_array($filters['orderBy'], $allowedFields)) {
+            $direction = strtoupper($filters['sort'] ?? 'ASC');
+            $qb->orderBy('b.' . $filters['orderBy'], $direction);
+        } else {
+            $qb->orderBy('b.id', 'ASC');
         }
-    
-        return $paginator->paginate(
-            $qb,
-            $page,
-            10 // 10 badges par page
-        );
+
+        return $qb;
     }
+    
+    
+    
+    
     
     
     

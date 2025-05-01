@@ -42,7 +42,7 @@ class ReservationController extends AbstractController
         $hasFilters = array_filter($filters);
 
         $reservations = $hasFilters
-            ? $repo->searchFiltered($filters)
+            ? $repo->searchFilteredQuery($filters)
             : $repo->findAll();
 
         return $this->render('front/ListRes.html.twig', [

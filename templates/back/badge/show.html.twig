@@ -162,6 +162,7 @@
     <div class="card">
         <h2><i class="fas fa-award"></i> Liste des Badges</h2>
 
+{# Formulaire Recherche #}
 <form method="get" action="{{ path('app_badge_index') }}" class="mb-4">
     <div class="row">
         <div class="col-md-4 mb-2">
@@ -171,19 +172,29 @@
             <input type="number" name="reservationsRequises" class="form-control" placeholder="Réservations requises" value="{{ filters.reservationsRequises ?? '' }}">
         </div>
 
-        <div class="col-md-4 mb-2 d-flex gap-2">
-            <button class="btn btn-primary w-100" type="submit">Rechercher</button>
-
-            <button class="btn btn-secondary" name="sort" value="{{ filters.sort == 'asc' ? 'desc' : 'asc' }}" title="Trier par nb réservations">
-                {% if filters.sort == 'asc' %}
-                    <i class="fas fa-sort-amount-down-alt"></i>
-                {% else %}
-                    <i class="fas fa-sort-amount-up-alt"></i>
-                {% endif %}
+        <div class="col-md-4 mb-2">
+            <button class="btn btn-primary w-100" type="submit">
+                Rechercher
             </button>
         </div>
     </div>
 </form>
+
+<form method="get" action="{{ path('app_badge_index') }}" class="mb-4 d-flex justify-content-end">
+    <input type="hidden" name="customOrderBy" value="reservations_requises">
+    <input type="hidden" name="customSort" value="{{ filters.sort == 'asc' ? 'desc' : 'asc' }}">
+    <button class="btn btn-secondary" type="submit" title="Trier par nombre de réservations">
+        {% if filters.sort == 'asc' %}
+            <i class="fas fa-sort-amount-down-alt"></i> Desc
+        {% else %}
+            <i class="fas fa-sort-amount-up-alt"></i> Asc
+        {% endif %}
+    </button>
+</form>
+
+
+
+
 
 
             <table>
@@ -241,10 +252,9 @@
                 </tbody>
               
             </table>
-              <div class="pagination justify-content-center mt-4">
-    {{ knp_pagination_render(badges) }}
-</div>
-
+             <div class="pagination justify-content-center mt-4">
+                 {{ knp_pagination_render(badges) }}
+            </div>
         </div>
     </div>
 </div>

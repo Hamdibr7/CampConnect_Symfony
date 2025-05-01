@@ -77,7 +77,7 @@ public function searchFilteredQuery(array $filters)
         $qb->orderBy('c.Date_Deb', $filters['sort'] === 'asc' ? 'ASC' : 'DESC');
     }
 
-    return $qb->getQuery();
+    return $qb->getQuery()->getResult();
 }
 
 
