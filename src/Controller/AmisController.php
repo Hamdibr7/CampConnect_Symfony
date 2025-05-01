@@ -433,42 +433,49 @@ if ($request->isXmlHttpRequest() || $request->query->get('_ajax')) {
     {
         $session = $request->getSession();
         $userData = $session->get('user');
-
+        
         if (!$userData) {
             return $this->redirectToRoute('app_login');
         }
-
+        
         $currentUser = $utilisateurRepository->find($userData['id']);
         if (!$currentUser) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
         }
-
+        
+        // Count unread notifications for the badge
+        $unreadNotificationsCount = $notificationRepo->count([
+            'utilisateur' => $currentUser->getId(),
+            'isRead' => false
+        ]);
+        
         $notifications = $notificationRepo->findBy([
             'utilisateur' => $currentUser->getId(),
         ], ['date_creation' => 'DESC']);
-
+        
         $emetteurs = [];
         foreach ($notifications as $notification) {
             if (preg_match('/^([A-Za-z]+) ([A-Za-z]+) (vous a|a accepté)/', $notification->getMessage(), $matches)) {
                 $prenom = $matches[1];
                 $nom = $matches[2];
-
+                
                 $emetteur = $utilisateurRepository->findOneBy([
                     'prenom' => $prenom,
                     'nom' => $nom
                 ]);
-
+                
                 if ($emetteur) {
                     $emetteurs[$notification->getId()] = $emetteur;
                 }
             }
         }
-        $user = $this->getUser();
+        
+        // Pass the actual user object to the template, not $this->getUser()
         return $this->render('notifications.html.twig', [
-            'user' => $user,
+            'user' => $currentUser, // Use currentUser instead of $this->getUser()
             'notifications' => $notifications,
             'emetteurs' => $emetteurs,
-            'currentUser' => $currentUser
+            'unreadNotificationsCount' => $unreadNotificationsCount
         ]);
     }
 

@@ -22,11 +22,14 @@ use App\Service\PasswordHashService;
 use GuzzleHttp\Client;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Psr\Log\LoggerInterface;
 #[Route('/utilisateur')]
+
  class UserController extends AbstractController
 {
     #[Route(name: 'app_utilisateur_index', methods: ['GET'])]
+    
     public function index(Request $request, UtilisateurRepository $utilisateurRepository): Response
     {
         // Vérification des droits d'administrateur
