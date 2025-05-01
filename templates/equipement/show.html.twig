@@ -1,0 +1,281 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Liste des Équipements{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-bg: #2B2D3E;
+            --button-blue: #03A9F4;
+            --button-red: #FF5252;
+            --button-green: #8BC34A;
+        }
+
+        .pcoded-content {
+            margin-left: 200px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            width: calc(100% - 200px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: auto;
+        }
+
+        th {
+            background-color: var(--primary-bg);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+
+        td:nth-child(1) { width: 8%; }
+        td:nth-child(2) { width: 15%; }
+        td:nth-child(3) { width: 8%; }
+        td:nth-child(4) { width: 10%; }
+        td:nth-child(5) { width: 15%; }
+        td:nth-child(6) { width: 29%; }
+        td:nth-child(7) { width: 15%; }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .btn-edit {
+            background-color: var(--button-blue);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--button-red);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background-color: var(--button-green);
+            color: white;
+            padding: 10px 15px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .img-thumbnail {
+            max-width: 100px;
+            max-height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .text-muted {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        td:first-child {
+            white-space: nowrap;
+        }
+
+       .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    list-style: none;
+    gap: 8px;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.pagination a,
+.pagination span {
+    display: inline-block;
+    padding: 8px 14px;
+    color: var(--primary-bg);
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 500;
+}
+
+.pagination a:hover {
+    background-color: var(--button-blue);
+    color: #fff;
+    border-color: var(--button-blue);
+}
+
+.pagination .current {
+    background-color: var(--primary-bg);
+    color: #fff;
+    border-color: var(--primary-bg);
+    pointer-events: none;
+    cursor: default;
+}
+
+.pagination .disabled span {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #e9ecef;
+    color: #6c757d;
+}
+
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="pcoded-content">
+    <a href="{{ path('app_equipement_new') }}" class="btn btn-add">
+        <i class="fas fa-plus"></i> Ajouter un Équipement
+    </a>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card">
+        <h2><i class="fas fa-cubes"></i> Liste des Équipements</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Quantité</th>
+                        <th>Prix</th>
+                        <th>Image</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if equipements|length > 0 %}
+                        {% for equipement in equipements %}
+                            <tr>
+                                <td>{{ equipement.nomEquip }}</td>
+                                <td>{{ equipement.qte_dispo }}</td>
+                                <td>{{ equipement.prix|number_format(2, ',', ' ') }} dt</td>
+                                <td>
+                                    {% if equipement.image %}
+                                        <img src="{{ asset('uploads/equipements/' ~ equipement.image) }}" class="img-thumbnail" alt="{{ equipement.nomEquip }}">
+                                    {% else %}
+                                        <span class="text-muted">Aucune image</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if equipement.description %}
+                                        {{ equipement.description|length > 50 ? equipement.description|slice(0, 50) ~ '...' : equipement.description }}
+                                    {% else %}
+                                        <span class="text-muted">Aucune description</span>
+                                    {% endif %}
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{{ path('app_equipement_edit', {'id': equipement.id}) }}" class="btn btn-edit">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <form method="post" action="{{ path('app_equipement_delete', {'id': equipement.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipement.id) }}">
+                                        <button type="submit" class="btn btn-delete">
+                                            <i class="fas fa-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                <i class="fas fa-box-open"></i> Aucun équipement trouvé dans la base de données
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            {% if equipements|length > 0 %}
+                <div class="pagination-container">
+                    {{ knp_pagination_render(equipements) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

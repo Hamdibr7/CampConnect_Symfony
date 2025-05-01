@@ -1,0 +1,9 @@
+<div class="row">
+    {% for equipement in equipements %}
+        {% include 'frontequipement/_equipement_card.html.twig' with {equipement: equipement} %}
+    {% else %}
+        <div class="col-12 text-center mt-4">
+            <p class="text-muted">Aucun résultat ne correspond à votre recherche.</p>
+        </div>
+    {% endfor %}
+</div>

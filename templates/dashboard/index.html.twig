@@ -1,0 +1,130 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}📊 Tableau de Bord{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">📈 Tableau de Bord Administratif</h2>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">💰 Chiffre d'affaires</h5>
+                    <p class="card-text display-6 text-success">
+                        {{ totalRevenue|default(0)|number_format(2, ',', '.') }} DT
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-info shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">🛒 Nombre total de commandes</h5>
+                    <p class="card-text display-6 text-info">
+                        {{ totalOrders|default(0) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">🏆 Meilleure Vente</h5>
+                    <p class="card-text display-6 text-primary">
+                        {{ bestSeller.nomEquip ?? 'Aucune vente' }} ({{ bestSeller.totalSold ?? 0 }} unités)
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+     
+            
+        </div>
+    </div>
+
+    <div class="text-end mb-3">
+        <button id="barBtn" class="btn btn-outline-primary btn-sm me-2">Bar Chart</button>
+        <button id="doughnutBtn" class="btn btn-outline-secondary btn-sm">Doughnut Chart</button>
+    </div>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-dark text-white">
+            📊 Ventes par produit
+        </div>
+        <div class="card-body">
+ <canvas id="salesChart" style="height: 400px; width: 100%;"></canvas>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const labels = {{ productLabels|json_encode|raw }};
+        const data = {{ productSales|json_encode|raw }};
+
+        let chartType = 'bar';
+        let chartInstance = new Chart(ctx, getChartConfig(chartType));
+
+        document.getElementById('barBtn').addEventListener('click', function () {
+            chartType = 'bar';
+            chartInstance.destroy();
+            chartInstance = new Chart(ctx, getChartConfig(chartType));
+        });
+
+        document.getElementById('doughnutBtn').addEventListener('click', function () {
+            chartType = 'doughnut';
+            chartInstance.destroy();
+            chartInstance = new Chart(ctx, getChartConfig(chartType));
+        });
+
+        function getChartConfig(type) {
+            return {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ventes',
+                        data: data,
+                        backgroundColor: [
+                            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                            '#858796', '#fd7e14', '#20c997', '#6f42c1', '#17a2b8'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: type === 'doughnut' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + context.raw + ' unités';
+                                }
+                            }
+                        }
+                    },
+                    scales: type === 'bar' ? {
+                        y: {
+                            beginAtZero: true
+                        }
+                    } : {}
+                }
+            };
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+# Stripe payment routes
+stripe_create_session:
+    path: /paiement/create-session
+    controller: App\Controller\StripeController::createSession
+    methods: [POST]
+
+stripe_success:
+    path: /paiement/success
+    controller: App\Controller\StripeController::success
+    methods: [GET]
+
+stripe_cancel:
+    path: /paiement/cancel
+    controller: App\Controller\StripeController::cancel
+    methods: [GET]

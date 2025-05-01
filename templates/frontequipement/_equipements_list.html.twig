@@ -1,0 +1,68 @@
+{# frontequipement/_equipements_list.html.twig #}
+<div class="row">
+    {% for equipement in equipements %}
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="package-item bg-white mb-2">
+            <div class="img-container position-relative">
+                <img class="img-fluid" src="{{ asset('uploads/equipements/' ~ equipement.image) }}" alt="{{ equipement.nomEquip }}">
+                {% if equipement.qte_dispo == 0 %}
+                    <div class="position-absolute w-100 text-center bg-danger text-white font-weight-bold py-1" style="bottom: 0; opacity: 0.9;">
+                        🚫 En rupture de stock
+                    </div>
+                {% endif %}
+            </div>
+            <div class="p-4">
+                <div class="d-flex justify-content-between mb-3">
+                    <small class="m-0"><i class="fa fa-box text-primary mr-2"></i>{{ equipement.qte_dispo }} disponibles</small>
+                    <small class="m-0"><i class="fas fa-tags text-primary mr-2"></i>{{ equipement.prix }} DT</small>
+                    <input type="hidden" class="equipement-id" value="{{ equipement.id }}">
+                    <input type="hidden" class="prix-unitaire" value="{{ equipement.prix }}">
+                </div>
+                <a class="h5 text-decoration-none" href="#">{{ equipement.nomEquip }}</a>
+                <div class="description-container">
+                    <p class="mt-2">{{ equipement.description }}</p>
+                </div>
+
+                {% if equipement.qte_dispo > 0 %}
+                    <div class="border-top mt-4 pt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="input-group quantity-selector" style="width: 120px;">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-primary btn-minus" type="button">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control text-center quantity-input" value="1" min="1" max="{{ equipement.qte_dispo }}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary btn-plus" type="button">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-sm btn-add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="mt-4 text-center">
+                        <span class="badge badge-danger py-2 px-3" style="font-size: 1rem;">
+                            ❌ Article indisponible
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="col-12 text-center mt-4">
+        <p class="text-muted">Aucun résultat ne correspond à votre recherche.</p>
+    </div>
+{% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="container">
+    <div class="d-flex justify-content-center mt-5 mb-4">
+        {{ knp_pagination_render(equipements) }}
+    </div>
+</div>

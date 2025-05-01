@@ -1,0 +1,9 @@
+twig:
+    file_name_pattern: '*.twig'
+    globals:
+        knp_pagination:
+            template:
+                pagination: '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig'
+when@test:
+    twig:
+        strict_variables: true

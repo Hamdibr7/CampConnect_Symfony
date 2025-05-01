@@ -1,0 +1,359 @@
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport Administratif - CampConnect</title>
+    <style>
+        :root {
+            --primary-color: #1a3a5f;
+            --secondary-color: #0f4c81;
+            --accent-color: #ff6b35;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-color: #212529;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fff;
+            padding: 0;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+        }
+
+        .top-bar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .admin-label {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+        }
+
+        .top-bar .date {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 30px;
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        header img {
+            height: 70px;
+            margin-right: 20px;
+        }
+
+        header .title-container h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        header .title-container p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        header .report-info {
+            text-align: right;
+        }
+
+        header .report-info .report-id {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        header .report-info .confidential {
+            display: inline-block;
+            background-color: var(--danger);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header h2 {
+            font-size: 16px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        tr:hover {
+            background-color: rgba(26, 58, 95, 0.03);
+        }
+        
+        td {
+            font-size: 14px;
+        }
+        
+        .total-row {
+            background-color: var(--light-bg);
+            font-weight: 600;
+        }
+        
+        .total-row td {
+            border-top: 2px solid var(--primary-color);
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 20px 30px;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 150px;
+            color: rgba(26, 58, 95, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        @media print {
+            .top-bar {
+                background-color: #fff;
+                color: var(--primary-color);
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .section {
+                break-inside: avoid;
+                box-shadow: none;
+            }
+            
+            .watermark {
+                color: rgba(26, 58, 95, 0.05);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            header .logo-container {
+                flex-direction: column;
+            }
+            
+            header img {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            header .report-info {
+                text-align: center;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="watermark">ADMINISTRATEUR</div>
+<div class="page-container">
+    <div class="top-bar">
+        <div class="admin-label">Accès Administrateur</div>
+        <div class="date">{{ "now"|date("d F Y") }} à {{ "now"|date("H:i") }}</div>
+    </div>
+
+    <header>
+<div class="logo-container">
+    {% if logo_path %}
+        <img src="{{ logo_path }}" alt="Logo CampConnect" class="logo">
+   
+    {% endif %}
+
+    <div class="title-container">
+        <h1>CampConnect</h1>
+        <p>Rapport des Paniers</p>
+    </div>
+</div>
+        <div class="report-info">
+            <div class="report-id">Référence: ADM-{{ "now"|date("Ymd") }}-{{ random(1000, 9999) }}</div>
+            <div class="confidential">Document Confidentiel</div>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="section">
+            <div class="section-header">
+                <h2>Détails des Paniers</h2>
+            </div>
+            <div class="section-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Équipement</th>
+                            <th>Quantité</th>
+                            <th>Prix Unitaire (DT)</th>
+                            <th>Prix Total (DT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for panier in paniers %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ panier.equipement.nomEquip }}</td>
+                                <td>{{ panier.quantite }}</td>
+                                <td>{% if panier.quantite > 0 %}{{ (panier.prixTotal / panier.quantite)|round(2) }}{% else %}0{% endif %}</td>
+                                <td>{{ panier.prixTotal }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="empty-message">Aucun panier n'a été enregistré pour le moment.</td>
+                            </tr>
+                        {% endfor %}
+                        
+                        {% if paniers|length > 0 %}
+                        <tr class="total-row">
+                            <td colspan="2">Total</td>
+                            <td>
+                                {% set totalQuantite = 0 %}
+                                {% for panier in paniers %}
+                                    {% set totalQuantite = totalQuantite + panier.quantite %}
+                                {% endfor %}
+                                {{ totalQuantite }}
+                            </td>
+                            <td>-</td>
+                            <td>
+                                {% set coutTotal = 0 %}
+                                {% for panier in paniers %}
+                                    {% set coutTotal = coutTotal + panier.prixTotal %}
+                                {% endfor %}
+                                {{ coutTotal }} DT
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>Généré automatiquement le {{ "now"|date("d/m/Y") }} à {{ "now"|date("H:i") }}</div>
+        <div>CampConnect © {{ "now"|date("Y") }} • Document confidentiel à usage interne</div>
+        <img src="{{ asset('images/CampConnect_Logo.png') }}" alt="Logo CampConnect" style="max-width: 80px; margin-top: 10px;">
+    </div>
+</div>
+</body>
+</html>

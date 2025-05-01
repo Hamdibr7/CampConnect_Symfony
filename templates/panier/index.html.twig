@@ -1,0 +1,59 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}📦 Liste des Paniers{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark mb-0"><i class="fas fa-shopping-basket me-2"></i>Paniers enregistrés</h2>
+        <a href="{{ path('generer_pdf') }}" class="btn btn-danger shadow-sm">
+            <i class="fas fa-file-pdf me-1"></i>Exporter en PDF
+        </a>
+    </div>
+
+    {% if paniers is empty %}
+        <div class="alert alert-warning text-center">
+            Aucun panier trouvé pour le moment.
+        </div>
+    {% else %}
+       <form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="number" step="0.01" name="min_prix" class="form-control" placeholder="Prix Min" value="{{ app.request.get('min_prix') }}">
+    </div>
+    <div class="col-md-4">
+        <input type="number" step="0.01" name="max_prix" class="form-control" placeholder="Prix Max" value="{{ app.request.get('max_prix') }}">
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter"></i> Filtrer par Prix</button>
+    </div>
+</form>
+
+
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered align-middle text-center">
+                <thead class="bg-primary text-white">
+                    <tr>
+                     
+                        <th>Équipement</th>
+                        <th>Quantité</th>
+                        <th>Prix Total (DT)</th>
+                        <th>Utilisateur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for panier in paniers %}
+                        <tr>
+                        
+                            <td>{{ panier.equipement.nomEquip }}</td>
+                            <td>{{ panier.quantite }}</td>
+                            <td>{{ panier.prixTotal }}</td>
+                            <td>{{ panier.idUtilisateur }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

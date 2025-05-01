@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}CampConnect{% endblock %}</title>
+
+    <!-- Liens vers les styles CSS -->
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    {% endblock %}
+</head>
+<body>
+
+    <!-- Header de la page -->
+    <header class="bg-primary text-white py-3">
+        <div class="container">
+            <h1>CampConnect</h1>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main role="main">
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Footer de la page -->
+    <footer class="bg-dark text-white py-3">
+        <div class="container">
+            <p class="mb-0">© 2025 CampConnect. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts JS -->
+    {% block javascripts %}
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endblock %}
+
+</body>
+</html>

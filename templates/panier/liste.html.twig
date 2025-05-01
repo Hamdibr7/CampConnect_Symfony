@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CampConnect</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Topbar Start -->
+<div class="container-fluid bg-light pt-3 d-none d-lg-block">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+        <div class="d-inline-flex align-items-center">
+          <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+          <p class="text-body px-3">|</p>
+          <p><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</p>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center text-lg-right">
+        <div class="d-inline-flex align-items-center">
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a class="text-primary px-3" href="#">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a class="text-primary pl-3" href="#">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Navbar Start -->
+<div class="container-fluid position-relative nav-bar p-0">
+    <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+        <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+            <a href="/" class="navbar-brand">
+                <h1 class="m-0 text-primary"><span class="text-dark">CAMP</span>CONNECT</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                <div class="navbar-nav ml-auto py-0">
+                    <a href="/" class="nav-item nav-link ">Accueil</a>
+                    <a href="/about" class="nav-item nav-link">À propos</a>
+                    <a href="/mon-compte/commandes" class="nav-item nav-link active">Mes commandes</a>
+                    <a href="/equipement/shop" class="nav-item nav-link">Shop</a>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Autres</a>
+                        <div class="dropdown-menu border-0 rounded-0 m-0">
+                            <a href="/blog" class="dropdown-item">Blog</a>
+                            <a href="/guides" class="dropdown-item">Guides</a>
+                            <a href="/destinations" class="dropdown-item">Destinations</a>
+                            <a href="/avis" class="dropdown-item">Avis</a>
+                        </div>
+                    </div>
+                    <a href="/contact" class="nav-item nav-link">Contact</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- Navbar End -->
+
+
+
+    <!-- Header Start -->
+
+    <!-- Header End -->
+
+  <!DOCTYPE html>
+<html lang="en">
+<!-- ... [En-tête reste inchangé] ... -->
+
+<!-- Ajoutez ces styles dans la section <head> de votre fichier -->
+<style>
+    .package-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-item .img-container {
+        height: 200px; /* Hauteur fixe pour toutes les images */
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .package-item .img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Pour garder les proportions des images */
+    }
+    
+    .package-item .p-4 {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-item .description-container {
+        height: 80px; /* Hauteur fixe pour les descriptions */
+        overflow: auto;
+        margin-bottom: 10px;
+    }
+    
+    .border-top {
+        margin-top: auto !important;
+    }
+ 
+.badge-danger {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+
+</style>
+
+<!-- ... [Reste du code inchangé jusqu'à la section Packages] ... -->
+
+{% block body %}
+<!-- Header Start -->
+<div class="container-fluid page-header">
+    <div class="container">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h3 class="display-4 text-white text-uppercase">Vos Commandes</h3>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">MES COMMANDES</h6>
+        <h2>Historique de vos paniers</h2>
+    </div>
+
+    {% if paniers is empty %}
+        <div class="alert alert-info text-center">Vous n'avez pas encore de commandes enregistrées.</div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+                <thead class="bg-success text-white">
+                    <tr>
+                      
+                        <th>Image</th>
+                        <th>Équipement</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th>Payer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for panier in paniers %}
+                        <tr>
+                           
+                            <td>
+                                {% if panier.equipement.image %}
+                                    <img src="{{ asset('uploads/equipements/' ~ panier.equipement.image) }}" alt="Image" width="60" height="60" style="object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                    <i class="fas fa-image text-muted"></i>
+                                {% endif %}
+                            </td>
+                            <td>{{ panier.equipement.nomEquip }}</td>
+                            <td>{{ panier.quantite }}</td>
+                            <td>{{ panier.prixTotal }} DT</td>
+                            <td>
+                               <form action="{{ path('stripe_create_session') }}" method="POST">
+                                    <input type="hidden" name="panierId" value="{{ panier.id }}">
+                                    <button type="submit" class="btn btn-success btn-sm btn-pay">
+                                        <i class="fas fa-credit-card"></i> Payer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
